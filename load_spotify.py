@@ -12,12 +12,15 @@ def index():
 
 @app.route('/authorize')
 def authorize():
-    response = redirect('https://accounts.spotify.com/authorize?'
+    return redirect('https://accounts.spotify.com/authorize?'
                         +f'client_id={client_id}'
                         +f'&redirect_uri={redirect_uri}'
                         +f'&response_type=code'
                         )
-    return response
+
+@app.route('/callback')
+def callback():
+    return "안녕"
 
 if __name__ == '__main__':
     app.run(port=3000)
