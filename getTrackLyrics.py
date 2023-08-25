@@ -23,7 +23,7 @@ if st.button('검색'):
         page_content = response.content
         soup = BeautifulSoup(page_content, 'html.parser')
         
-        # ㄴlyrics_container = soup.find_all('span', __build_class__='lyrics__content__ok')
+        # lyrics_container = soup.find_all('span', __build_class__='lyrics__content__ok')
         lyrics_container = soup.find_all('span', class_='lyrics__content__ok')
 
         st.write(lyrics_container)
