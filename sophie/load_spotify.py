@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return redirect(url_for("authorize"),code=302)
+    return redirect(url_for("authorize"))
 
 @app.route('/authorize')
 def authorize():
@@ -28,6 +28,7 @@ def callback():
                                 ,data={
                                     'grant_type': 'authorization_code'
                                     ,'code': code
+                                    ,'redirect_uri': redirect_uri
                                 }
                                 ,headers={
                                     'Authorization': 'Basic ' + base64.b64encode((client_id + ':' + client_secrets).encode()).decode()
