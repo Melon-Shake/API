@@ -5,6 +5,44 @@ import streamlit as st
 
 GENIUS_API_KEY = "I_rUwBLI1_wEjXSvfEsyHeFK2Bj0V28EG9_6h6FFKR-3rSyGCj8kKWTN7jPmCtcx"
 
+import psycopg2
+
+def is_duplicated_data(artist,album,track):
+  # 데이터베이스 연결 정보
+  dbname = "postgres"
+  user = "postgres"
+  password = "12345678"
+  host = "database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com"
+  port = "5432"
+
+  # 데이터베이스 연결
+  conn = psycopg2.connect(
+      dbname=dbname,
+      user=user,
+      password=password,
+      host=host,
+      port=port
+  )
+
+  cursor = conn.cursor()
+  query = f"""SELECT *
+  FROM route
+  WHERE artist_name = '{artist}'
+    AND album_name = '{album}'
+    AND track_name = '{track}';
+  """
+  cursor.execute(query)
+  result = cursor.fetchall()
+  # 커밋
+  conn.commit()
+
+  # 연결 종료
+  conn.close()
+  if result:
+    return result # 데이터 삽입 진행
+  else:
+    return False # 터미널에 우선 추가
+
 
 def genius_search(search,GENIUS_API_KEY):     # 노래 id 및 기본 정보 수집
     
@@ -105,9 +143,46 @@ st.write("들어간 값이랑 나온 값이랑 교차검증 필요")
 artist = st.text_input("가수")
 track = st.text_input("제목")
 
-if st.button("검색"):
+if st.button("가사 검색"):
     search = artist +', '+ track
     data = genius_unique_search(search,GENIUS_API_KEY)
     for i in data:
         st.write(i)
+    if is_duplicated_data(artist=data[1],album=data[4],track=data[2]):
+        query = f'insert into lyrics (content, track_id genius) values ({data[5]}, ,True)'
+    else:
+          # 데이터베이스 연결 정보
+        dbname = "postgres"
+        user = "postgres"
+        password = "12345678"
+        host = "database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com"
+        port = "5432"
+
+        # 데이터베이스 연결
+        conn = psycopg2.connect(
+            dbname=dbname,
+            user=user,
+            password=password,
+            host=host,
+            port=port
+        )
+
+        # 커서 생성
+        cursor = conn.cursor()
+
+        # # 데이터 삽입
+        data_to_insert = (data[2], data[4] , data[1])
+        query = "INSERT INTO route (track_name, album_name, artist_name) VALUES (%s, %s, %s)"
+        cursor.execute(query, data_to_insert)
+
+        result = cursor.fetchall()
+        # 커밋
+        conn.commit()
+
+        # 연결 종료
+        conn.close()
+
+    # if is_duplicated_data(artist,track)
+# if st.button('삽입'):
+    
 
