@@ -4,6 +4,7 @@ import streamlit as st
 from musixmatch import Musixmatch
 from bs4 import BeautifulSoup
 
+
 apikey = '0140decf9ddfc9e2f5056cb6775fa493'
 
 # musixmatch = Musixmatch(apikey)
@@ -18,15 +19,22 @@ if st.button('검색'):
     result_url = url + artist_name + '/' + track_name
 
     response = requests.get(result_url, headers=headers)
-
+    cleaned_lyrics = list
     if response.status_code == 200 :
         page_content = response.content
         soup = BeautifulSoup(page_content, 'html.parser')
         
         # lyrics_container = soup.find_all('span', __build_class__='lyrics__content__ok')
         lyrics_container = soup.find_all('span', class_='lyrics__content__ok')
+        
+        lyrics_list = []
 
-        st.write(lyrics_container)
+        for container in lyrics_container:
+            lyrics_list.extend(container.stripped_strings)
+
+        lyrics = '\n'.join(lyrics_list)
+        st.write(lyrics)
+        
     else:
         st.write(result_url)
         st.write(response.status_code)
