@@ -7,6 +7,10 @@ client_id = client.ID
 client_secrets = client.SECRETS
 redirect_uri = client.REDIRECT_URI
 
+def func_base64(input):
+    input = input.encode()
+    output = base64.b64encode(input)
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -36,12 +40,22 @@ def callback():
                                 )
     
     if response.status_code == 200 :
-        print("!!!!!!!!!!!!!!!!!!!!!!!!")
+        response_json = response.json()
+        refresh_token = response_json.get('refresh_token', None)
+        return refresh_token
     else :
-        print(f'>>>>>>>>>> {response.status_code}')
+        return response.status_code
 
-
-    return "안녕"
+def get_token_by_refresh_token(refresh_token):
+    requests.post('https://accounts.spotify.com/api/token'
+                    ,data={
+                        'grant_type': 'refresh_token'
+                        ,'refresh_token': refresh_token
+                    }
+                    ,headers={
+                        'Authorization': 'Basic ' + base64.b64encode((client_id + ':' + client_secrets).encode()).decode()
+                    }
+                    )
 
 if __name__ == '__main__':
     app.run(port=3000)
