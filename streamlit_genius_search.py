@@ -2,8 +2,8 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 import streamlit as st
-
-GENIUS_API_KEY = "I_rUwBLI1_wEjXSvfEsyHeFK2Bj0V28EG9_6h6FFKR-3rSyGCj8kKWTN7jPmCtcx"
+# https://genius.com/api-clients
+GENIUS_API_KEY = "U8Bj95uLfXFHnAkwYV67p1a5tdzmJD7vQSKWMGxi_w_BekWl_gMSLb7sRwl-rI5gqwop8gawaDjzF1mqyYl-6A"
 
 import psycopg2
 
