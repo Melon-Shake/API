@@ -2,9 +2,18 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 
-GENIUS_API_KEY = "I_rUwBLI1_wEjXSvfEsyHeFK2Bj0V28EG9_6h6FFKR-3rSyGCj8kKWTN7jPmCtcx"
+GENIUS_API_KEY = "6_Qvih8nVAJPwcO9_mRstBxlukq7uAVwXbJDTPmzMYG_ojCWZmbSdaLph4mpgycU"
 
+import re
 
+def normalize(url):
+    if "Genius-romanizations-" in url:
+        new_url = url.replace("Genius-romanizations-","")
+        new_url = new_url.replace("romanized-","")
+        return new_url
+    else:
+        return url
+        
 def genius_search(search,GENIUS_API_KEY):     # 노래 id 및 기본 정보 수집
     
     GENIUS_API_KEY = GENIUS_API_KEY
@@ -50,8 +59,6 @@ def get_lyric(ID,GENIUS_API_KEY):   # 가사 주소 및 앨범 정보 수집
     # data['response']['song']['album']['full_title']
     
 
-
-
 def genius_lyric_search(url):   # 가사 크롤링
     url = url
 
@@ -73,10 +80,9 @@ def genius_lyric_search(url):   # 가사 크롤링
     else:
         return '페이지를 가져올 수 없습니다.'
     
-    
-def genius_unique_search(search, GENIUS_API_KEY):   # 종합
+def genius_unique_search(artist, track, GENIUS_API_KEY):   # 종합
     GENIUS_API_KEY = GENIUS_API_KEY
-    
+    search = artist+', '+track
     # 노래 id 및 기본 정보
     genius_search_data = genius_search(search, GENIUS_API_KEY)
     ID = genius_search_data.loc[0][0]
@@ -86,14 +92,44 @@ def genius_unique_search(search, GENIUS_API_KEY):   # 종합
     # 가사 주소 및 앨범
     get_lyric_data = get_lyric(ID, GENIUS_API_KEY)['response']['song']
     LYIRC_URL = get_lyric_data['url']
+    LYIRC_URL = normalize(LYIRC_URL)
     if get_lyric_data['album'] != None:
         ALBUM = get_lyric_data['album']['name']
     
-    #크롤링
-    LYRIC = genius_lyric_search(LYIRC_URL)
-    print("ID = ",ID)
-    print("ARTIST =",ARTIST)
-    print("TITEL =",TITEL)
-    print("LYIRC_URL =",LYIRC_URL)
-    print("ALBUM =",ALBUM)
-    print("LYRIC =",LYRIC)
+        #크롤링
+        LYRIC = genius_lyric_search(LYIRC_URL)
+        return (ID,ARTIST, TITEL, LYIRC_URL, ALBUM, LYRIC)
+    else:
+        LYRIC = genius_lyric_search(LYIRC_URL)
+        return (ID,ARTIST, TITEL, LYIRC_URL, LYRIC)
+    
+def musix_match_lyric_search(artist,track):
+    url = 'https://www.musixmatch.com/lyrics/'
+    headers = {'User-agent': 'Googlebot'}
+    result_url = url + artist + '/' + track
+
+    response = requests.get(result_url, headers=headers)
+
+    if response.status_code == 200 :
+        page_content = response.content
+        soup = BeautifulSoup(page_content, 'html.parser')
+
+        # 가사부분class를 find_all 받으면 list형태
+        lyrics_container = soup.find_all('span', class_='lyrics__content__ok')
+
+        lyrics_list = []
+
+        for container in lyrics_container:
+            lyrics_list.extend(container.stripped_strings)
+
+        lyrics = '\n'.join(lyrics_list)
+        return lyrics
+
+def lyric_search(artist, track, GENIUS_API_KEY):
+    lyric = musix_match_lyric_search(artist,track)
+    if lyric:
+        print("musix_match")
+        return lyric
+    else:
+        print("genius")
+        return genius_unique_search(artist,track,GENIUS_API_KEY)[-1] 
