@@ -8,7 +8,7 @@ access_token = module.read_AuthToken_from_file()
 #   --url 'https://api.spotify.com/v1/search?q=%EC%A2%8B%EC%9D%80%EB%82%A0&type=album%2Cartist%2Ctrack&market=kr' \
 #   --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
 
-input_data = st.text_input('검색')
+input_data = '좋은날'
 
 url = f'https://api.spotify.com/v1/search?q={input_data}&type=album%2Cartist%2Ctrack&market=kr'
 header = {
@@ -17,6 +17,6 @@ header = {
 
 response = requests.get(url, headers=header)
 response_json = response.json()
+print(response_json)
+
 # st.write(response_json["albums"]["items"])
-for i in response_json["albums"]["items"]:
-    st.write(i["artists"][0]["external_urls"])
