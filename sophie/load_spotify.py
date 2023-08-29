@@ -8,8 +8,10 @@ client_secrets = client.SECRETS
 redirect_uri = client.REDIRECT_URI
 
 def func_base64(input):
-    input = input.encode()
-    output = base64.b64encode(input)
+    input_byte = input.encode()
+    output_byte = base64.b64encode(input_byte)
+    output = output_byte.decode()
+    return output
 
 app = Flask(__name__)
 
@@ -35,13 +37,14 @@ def callback():
                                     ,'redirect_uri': redirect_uri
                                 }
                                 ,headers={
-                                    'Authorization': 'Basic ' + base64.b64encode((client_id + ':' + client_secrets).encode()).decode()
+                                    'Authorization': 'Basic ' + func_base64(client_id + ':' + client_secrets)
                                 }
                                 )
     
     if response.status_code == 200 :
         response_json = response.json()
         refresh_token = response_json.get('refresh_token', None)
+        access_token = response_json.get('access_token', None)
         return refresh_token
     else :
         return response.status_code
@@ -53,7 +56,7 @@ def get_token_by_refresh_token(refresh_token):
                         ,'refresh_token': refresh_token
                     }
                     ,headers={
-                        'Authorization': 'Basic ' + base64.b64encode((client_id + ':' + client_secrets).encode()).decode()
+                        'Authorization': 'Basic ' + func_base64(client_id + ':' + client_secrets)
                     }
                     )
 
