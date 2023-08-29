@@ -6,7 +6,7 @@ GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrl
 
 
 
-def insert_data(content, track_id):
+def insert_data(content, track_id,api):
     try:
         connection = psycopg2.connect(
             user="postgres",
@@ -17,7 +17,11 @@ def insert_data(content, track_id):
         )
 
         cursor = connection.cursor()
-        query = f"INSERT INTO your_table_name (content, track_id) VALUES ({content}, {track_id})"
+        escaped_content = content.replace("'", "''")
+        if api == "musix_match":
+            query = f"INSERT INTO lyrics (content, track_id, musix_match) VALUES ('{escaped_content}', '{track_id}', 'True')"
+        elif api == "genius":
+            query = f"INSERT INTO lyrics (content, track_id, genius) VALUES ('{escaped_content}', '{track_id}', 'True')"
         cursor.execute(query)
 
         connection.commit()
@@ -164,15 +168,15 @@ def lyric_search(artist, track, GENIUS_API_KEY):
 def lyric_search_and_input(artist, track, track_id, GENIUS_API_KEY):
     lyric = musix_match_lyric_search(artist,track)
     if lyric:
-        print("musix_match")
-        insert_data(lyric,track_id)
+        api = "musix_match"
+        insert_data(lyric,track_id,api)
         return True
     else:
-        print("genius")
+        api = "genius"
         lyric = genius_unique_search(artist,track,GENIUS_API_KEY)[-1] 
-        insert_data(lyric,track_id)
+        insert_data(lyric,track_id,api)
         return True
 
-artist = "(여자) 아이들"
-track = "All Night"
-print(lyric_search(artist,track,GENIUS_API_KEY))
+# artist = "(여자) 아이들"
+# track = "All Night"
+# print(lyric_search(artist,track,GENIUS_API_KEY))
