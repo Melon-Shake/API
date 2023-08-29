@@ -12,6 +12,10 @@ class input_data(BaseModel):
     track_id : int
     GENIUS_API_KEY : str
 
+@app.get("/")
+def hello():
+    return {"result":"hi"}
+
 @app.post("/lyric_input/")
 def lyric_input(item : input_data):
     artist = item.artist
@@ -23,3 +27,7 @@ def lyric_input(item : input_data):
         return {"result" : f"Lyrics have been added to track_id : {track_id}"}
     else:
         raise HTTPException(status_code=404, detail="Lyric ERR.")
+    
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
