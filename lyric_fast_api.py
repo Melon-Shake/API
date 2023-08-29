@@ -1,23 +1,30 @@
 from fastapi import FastAPI,HTTPException
 from pydantic import BaseModel
 from lyric import *
+from sp_track import *
 app = FastAPI()
 
 
-GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
+# GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
 
-class input_data(BaseModel):
+class lyric_data(BaseModel):
     artist : str
     track : str
     track_id : int
-    GENIUS_API_KEY : str
+    GENIUS_API_KEY : str = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
 
+class sp_data(BaseModel):
+    artist : str
+    album : str
+    track : str
+    
+    
 @app.get("/")
 def hello():
     return {"result":"hi"}
 
 @app.post("/lyric_input/")
-def lyric_input(item : input_data):
+def lyric_input(item : lyric_data):
     artist = item.artist
     track = item.track
     track_id = item.track_id
@@ -27,6 +34,17 @@ def lyric_input(item : input_data):
         return {"result" : f"Lyrics have been added to track_id : {track_id}"}
     else:
         raise HTTPException(status_code=404, detail="Lyric ERR.")
+    
+    
+@app.post("/sp_and_track_update/")
+def sp_track_input(item : sp_data):
+    artist = item.artist
+    album = item.album
+    track = item.track
+    track_id = get_sp_track_id(artist, album, track)
+    result = sp_and_track_input(track_id)
+    return result
+    
     
 if __name__ == "__main__":
     import uvicorn
