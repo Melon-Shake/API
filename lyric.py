@@ -1,10 +1,36 @@
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
-
+import psycopg2
 GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
 
-import re
+
+
+def insert_data(content, track_id):
+    try:
+        connection = psycopg2.connect(
+            user="postgres",
+            password="12345678",
+            host="database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com",
+            port="5432",
+            database="postgres"
+        )
+
+        cursor = connection.cursor()
+        query = f"INSERT INTO your_table_name (content, track_id) VALUES ({content}, {track_id})"
+        cursor.execute(query)
+
+        connection.commit()
+        print("데이터가 성공적으로 삽입되었습니다.")
+
+    except (Exception, psycopg2.Error) as error:
+        print("데이터 삽입 중 에러 발생:", error)
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
 
 def normalize(url):
     if "Genius-romanizations-" in url:
@@ -135,15 +161,17 @@ def lyric_search(artist, track, GENIUS_API_KEY):
         return genius_unique_search(artist,track,GENIUS_API_KEY)[-1] 
     
     
-def lyric_search_and_input(artist, track,track_id, GENIUS_API_KEY):
+def lyric_search_and_input(artist, track, track_id, GENIUS_API_KEY):
     lyric = musix_match_lyric_search(artist,track)
     if lyric:
         print("musix_match")
-        return lyric
+        insert_data(lyric,track_id)
+        return True
     else:
         print("genius")
-        return genius_unique_search(artist,track,GENIUS_API_KEY)[-1] 
-
+        lyric = genius_unique_search(artist,track,GENIUS_API_KEY)[-1] 
+        insert_data(lyric,track_id)
+        return True
 
 artist = "(여자) 아이들"
 track = "All Night"
