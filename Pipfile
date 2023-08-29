@@ -9,6 +9,7 @@ name = "pypi"
 flask = "*"
 requests = "*"
 sqlalchemy = "*"
+pydantic = "*"
 
 [requires]
 python_version = "3.9"
