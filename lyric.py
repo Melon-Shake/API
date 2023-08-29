@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 
-GENIUS_API_KEY = "6_Qvih8nVAJPwcO9_mRstBxlukq7uAVwXbJDTPmzMYG_ojCWZmbSdaLph4mpgycU"
+GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
 
 import re
 
@@ -133,3 +133,18 @@ def lyric_search(artist, track, GENIUS_API_KEY):
     else:
         print("genius")
         return genius_unique_search(artist,track,GENIUS_API_KEY)[-1] 
+    
+    
+def lyric_search_and_input(artist, track,track_id, GENIUS_API_KEY):
+    lyric = musix_match_lyric_search(artist,track)
+    if lyric:
+        print("musix_match")
+        return lyric
+    else:
+        print("genius")
+        return genius_unique_search(artist,track,GENIUS_API_KEY)[-1] 
+
+
+artist = "(여자) 아이들"
+track = "All Night"
+print(lyric_search(artist,track,GENIUS_API_KEY))
