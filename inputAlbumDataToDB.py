@@ -27,7 +27,7 @@ album_type = response_json['album_type']
 total_tracks = response_json['total_tracks']
 external_urls = response_json['external_urls']['spotify']
 href = response_json['href']
-id = response_json['id']
+sp_album_id = response_json['id']
 images_url= response_json['images'][0]['url']
 name = response_json['name']
 release_date = response_json['release_date']
@@ -43,7 +43,7 @@ popularity = response_json['popularity']
 artist_id = response_json['artists'][0]['id']
 
 # album
-id = '2'
+id = '1'
 name_has = module.has_non_english_characters(response_json['name'])
 type = response_json['album_type']
 tracks_cnt = response_json['total_tracks']
@@ -63,7 +63,7 @@ with conn:
             query2 = "INSERT INTO album (id,name_org,name_eng, type, tracks_cnt,release_date,image,artist_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
             cur.execute(query2, (id,name_org,name_eng,type,tracks_cnt,release_date,image,artist_id))
         query1 = "INSERT INTO sp_album (album_type,total_tracks,external_urls,href,id,images_url,name,release_date,release_date_precision,type,uri,copyrights_text,copyrights_type,genres,label,popularity,artist_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        cur.execute(query1, (album_type,total_tracks,external_urls,href,id,images_url,name,release_date,release_date_precision,type,uri,copyright_text,copyright_type,genres,label,popularity,artist_id))
+        cur.execute(query1, (album_type,total_tracks,external_urls,href,sp_album_id,images_url,name,release_date,release_date_precision,type,uri,copyright_text,copyright_type,genres,label,popularity,artist_id))
         
 conn.close()
 

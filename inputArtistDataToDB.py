@@ -35,7 +35,7 @@ external_urls = response_json['external_urls']['spotify']
 # print(external_urls)
 genres = response_json['genres']
 href = response_json['href']
-id = response_json['id']
+sp_artist_id = response_json['id']
 images_url = response_json['images'][0]['url']
 name = response_json['name']
 popularity = response_json['popularity']
@@ -52,7 +52,7 @@ image = response_json['images'][0]['url']
 cur = conn.cursor()
 query1 = "INSERT INTO sp_artist (external_urls,genres,href,id,images_url,name,popularity,type,uri) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
 query2 = "INSERT INTO artist (id, name_org, name_sub, image) VALUES(%s,%s,%s,%s)"
-cur.execute(query1, (external_urls,genres,href,id,images_url,name,popularity,type,uri))
+cur.execute(query1, (external_urls,genres,href,sp_artist_id,images_url,name,popularity,type,uri))
 cur.execute(query2, (art_id,name_org,name_sub,image))
 # # 커밋 및 연결 닫기
 conn.commit()
