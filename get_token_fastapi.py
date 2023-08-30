@@ -68,3 +68,7 @@ def refresh_token(refresh_token: str):
         return {"access_token": access_token}
     else:
         raise HTTPException(status_code=response.status_code, detail="Failed to refresh token")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
