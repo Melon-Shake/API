@@ -43,7 +43,7 @@ def sp_track_input(item : sp_data):
     track = item.track
     d = get_sp_track_id(artist, album, track)
     print(d)
-    result = sp_and_track_input(d[0],d[1])
+    result = sp_and_track_input(d[0],d[1],artist, album, track)
     return result
     
     

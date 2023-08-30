@@ -4,7 +4,6 @@ import string
 import psycopg2
 import psycopg2
 import requests
-import json
 from urllib.parse import quote
 # from config.info import *   
 import base64
@@ -119,7 +118,7 @@ def has_non_english_characters(text):
     return False
 
 
-def sp_and_track_input(track_id,route_id):
+def sp_and_track_input(track_id,route_id, artist, album, track):
     sp_input_result = {}
     try:
         sp_input_result['track_id'] = track_id
