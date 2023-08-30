@@ -17,10 +17,11 @@ def search_spotify(q: str):
         'Authorization': 'Bearer '+access_token
     }
     response = requests.get(url, headers=headers)
-    # if response.status_code == 200:
-    response_json = response.json()
-    return response_json    # else:
-        # return {"error": "Spotify API request failed"}
+    if response.status_code == 200:
+        response_json = response.json()
+        return response_json
+    else:
+        return {"error": "Spotify API request failed"}
 
 if __name__ == "__main__":
     import uvicorn
