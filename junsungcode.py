@@ -1,11 +1,11 @@
-import streamlit as st
+# import streamlit as st
 import psycopg2
 import bcrypt
 from pydantic import BaseModel
 from fastapi import FastAPI
 from datetime import datetime
 from config import db_params
-from typing import Optional
+# from typing import Optional
 #from multistate_page import MultiPage
 class LoginData(BaseModel):
     email : str
