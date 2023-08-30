@@ -5,13 +5,13 @@ from sp_track import *
 app = FastAPI()
 
 
-# GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
+# GENIUS_API_KEY = "U1RN70QWau9zk3qi3BPn_A-q4Bft_3jnw8uLBp2lVafQgOQiA_kjSEyxzr88eI9d"
 
 class lyric_data(BaseModel):
     artist : str
     track : str
     track_id : int
-    GENIUS_API_KEY : str = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
+    GENIUS_API_KEY : str = "U1RN70QWau9zk3qi3BPn_A-q4Bft_3jnw8uLBp2lVafQgOQiA_kjSEyxzr88eI9d"
 
 class sp_data(BaseModel):
     artist : str
