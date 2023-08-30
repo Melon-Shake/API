@@ -35,16 +35,30 @@ def lyric_input(item : lyric_data):
     else:
         raise HTTPException(status_code=404, detail="Lyric ERR.")
     
-    
 @app.post("/sp_and_track_update/")
-def sp_track_input(item : sp_data):
+def sp_track_input(item: sp_data):
     artist = item.artist
     album = item.album
     track = item.track
     d = get_sp_track_id(artist, album, track)
-    print(d)
-    result = sp_and_track_input(d[0],d[1],artist, album, track)
-    return result
+    
+    if d[0] is not None and d[1] is not None:  # get_sp_track_id 함수의 반환값이 None이 아닌지 확인
+        result = sp_and_track_input(d[0], d[1], artist, album, track)
+        return result
+    else:
+        raise HTTPException(status_code=404, detail="Track not found or error in processing.")
+
+
+    
+# @app.post("/sp_and_track_update/")
+# def sp_track_input(item : sp_data):
+#     artist = item.artist
+#     album = item.album
+#     track = item.track
+#     d = get_sp_track_id(artist, album, track)
+#     print(d)
+#     result = sp_and_track_input(d[0],d[1],artist, album, track)
+#     return result
     
     
 if __name__ == "__main__":

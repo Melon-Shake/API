@@ -34,8 +34,8 @@ def create_access_token():
         
 def get_sp_track_id(artist, album, track):
     
-    # access_token = create_access_token()
-    access_token = 'BQBHoKti8-hK7dhaoKJw4KPdQ8EZ1JlJinRbPz6mEVuQVR3rW_rELo8bLoO5yk6qRwXDnr9g6ASaGf5Z-Bvav44H4n9CuF_NQBAdX0ipsSFNP5jI-JGzhBGcuwvO0_29gomJsZfmg2rInyuYx9JsBbTI-8WQ9k3N6QOCn1BiggGRQ0yFr2kMeLom-YuOga5DH_DbbbYUug2SkyxAZv79ixG69Ko5Gb1Nv6sAEDH90cLRe5Xo0pRUQfy2JHBYy85AwPcrQgOREOZU0M5C3BQ9IQUUii16'
+    access_token = create_access_token()
+    # access_token = 'BQBHoKti8-hK7dhaoKJw4KPdQ8EZ1JlJinRbPz6mEVuQVR3rW_rELo8bLoO5yk6qRwXDnr9g6ASaGf5Z-Bvav44H4n9CuF_NQBAdX0ipsSFNP5jI-JGzhBGcuwvO0_29gomJsZfmg2rInyuYx9JsBbTI-8WQ9k3N6QOCn1BiggGRQ0yFr2kMeLom-YuOga5DH_DbbbYUug2SkyxAZv79ixG69Ko5Gb1Nv6sAEDH90cLRe5Xo0pRUQfy2JHBYy85AwPcrQgOREOZU0M5C3BQ9IQUUii16'
     con = psycopg2.connect(
             user="postgres",
             password="12345678",
@@ -133,8 +133,8 @@ def sp_and_track_input(track_id,route_id, artist, album, track):
         
         with conn:
             with conn.cursor() as cur:
-                # access_token = create_access_token()
-                access_token = 'BQBHoKti8-hK7dhaoKJw4KPdQ8EZ1JlJinRbPz6mEVuQVR3rW_rELo8bLoO5yk6qRwXDnr9g6ASaGf5Z-Bvav44H4n9CuF_NQBAdX0ipsSFNP5jI-JGzhBGcuwvO0_29gomJsZfmg2rInyuYx9JsBbTI-8WQ9k3N6QOCn1BiggGRQ0yFr2kMeLom-YuOga5DH_DbbbYUug2SkyxAZv79ixG69Ko5Gb1Nv6sAEDH90cLRe5Xo0pRUQfy2JHBYy85AwPcrQgOREOZU0M5C3BQ9IQUUii16'    
+                access_token = create_access_token()
+                # access_token = 'BQBHoKti8-hK7dhaoKJw4KPdQ8EZ1JlJinRbPz6mEVuQVR3rW_rELo8bLoO5yk6qRwXDnr9g6ASaGf5Z-Bvav44H4n9CuF_NQBAdX0ipsSFNP5jI-JGzhBGcuwvO0_29gomJsZfmg2rInyuYx9JsBbTI-8WQ9k3N6QOCn1BiggGRQ0yFr2kMeLom-YuOga5DH_DbbbYUug2SkyxAZv79ixG69Ko5Gb1Nv6sAEDH90cLRe5Xo0pRUQfy2JHBYy85AwPcrQgOREOZU0M5C3BQ9IQUUii16'    
                 url = f'https://api.spotify.com/v1/tracks/{track_id}?market=kr'
                 header = {
                     'Authorization': 'Bearer ' + access_token
@@ -186,8 +186,8 @@ def sp_and_track_input(track_id,route_id, artist, album, track):
         url = "http://localhost:8000/lyric_input/"  
 
         data = {
-            "artist": "(G)I-DLE",
-            "track": "All Night",
+            "artist": artist,
+            "track": track,
             "track_id": route_id,
             "GENIUS_API_KEY" : "U1RN70QWau9zk3qi3BPn_A-q4Bft_3jnw8uLBp2lVafQgOQiA_kjSEyxzr88eI9d"
         }
