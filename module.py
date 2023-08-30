@@ -1,4 +1,3 @@
-import requests
 import string
 
 # AuthToken 읽기
