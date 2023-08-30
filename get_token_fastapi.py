@@ -4,11 +4,13 @@ import requests
 import base64
 import config.client as client
 
+from model.spotify_client import SpotifyClientEntity
+
 client_id = client.ID
 client_secrets = client.SECRETS
 redirect_uri = client.REDIRECT_URI
 
-app = FastAPI()
+api = FastAPI()
 
 def func_base64(input):
     input_byte = input.encode()
@@ -16,20 +18,25 @@ def func_base64(input):
     output = output_byte.decode()
     return output
 
-@app.get("/")
-def index():
-    return RedirectResponse(url="/authorize")
+@api.post('/test')
+def test(client: SpotifyClientEntity):
+    response = requests.get('https://accounts.spotify.com/authorize?'
+                            +f'client_id={client.id}'
+                            +f'&redirect_uri={client.redirect_uri}'
+                            +f'&response_type=code'
+                            )
+    return response.text
 
-@app.get("/authorize")
+@api.get("/authorize")
 def authorize():
     return RedirectResponse(
         url=f'https://accounts.spotify.com/authorize?'
-        +f'client_id={client_id}'
-        +f'&redirect_uri={redirect_uri}'
+        +f'client_id={client.id}'
+        +f'&redirect_uri={client.redirect_uri}'
         +f'&response_type=code'
     )
 
-@app.get("/callback")
+@api.get("/callback")
 def callback(code: str):
     response = requests.post('https://accounts.spotify.com/api/token',
                              data={
@@ -50,7 +57,7 @@ def callback(code: str):
     else:
         raise HTTPException(status_code=response.status_code, detail="Failed to get access token")
 
-@app.get("/refresh_token")
+@api.get("/refresh_token")
 def refresh_token(refresh_token: str):
     response = requests.post('https://accounts.spotify.com/api/token',
                              data={
@@ -71,4 +78,4 @@ def refresh_token(refresh_token: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(api, host="127.0.0.1", port=8000)

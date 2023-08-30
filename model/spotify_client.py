@@ -1,9 +1,10 @@
 from sqlalchemy import String
 from sqlalchemy.sql.schema import Column
 
-from config.database import Base
+from config.database import Base, session_scope
+from pydantic import BaseModel, ConfigDict
 
-class SpotifyClient(Base) :
+class SpotifyClientORM(Base) :
     __tablename__ = 'spotify_client'
 
     user = Column(String, nullable=True)
@@ -16,3 +17,23 @@ class SpotifyClient(Base) :
         self.id = id
         self.secret = secret
         self.redirect_uri = redirect_uri
+
+    def set(self, client):
+        with session_scope() as session :
+            session.add(client)
+            session.commit()
+
+    def get(self, client_user):
+        with session_scope() as session :
+            clients = session.query(SpotifyClientORM).all()
+            for client in clients :
+                if client.user == client_user :
+                    return SpotifyClientORM(client.user,client.id,client.secret,client.redirect_uri)
+
+class SpotifyClientEntity(BaseModel) :
+    model_config = ConfigDict(from_attributes=True)
+
+    user: str
+    id: str
+    secret: str
+    redirect_uri: str
