@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, request
 import requests
 import base64
-import client
+import config.client as client
 
 client_id = client.ID
 client_secrets = client.SECRETS
