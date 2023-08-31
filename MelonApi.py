@@ -10,73 +10,45 @@ _CP_ID = "AS40"
 _USER_AGENT = f"{_CP_ID}; Android 13; {_APP_VERSION}; sdk_gphone64_arm64"
 _CHART_API_URL = f"https://m2.melon.com/m6/chart/ent/songChartList.json?cpId={_CP_ID}&cpKey=14LNC3&appVer={_APP_VERSION}"
 
+class MelonChartRequestException(Exception):
+    pass
+
+class MelonChartParseException(Exception):
+    pass
+
 @app.post("/chart/melon_chart/")
 def get_melonChat():
-
-    class MelonChartRequestException(Exception):
-        pass
-
-    class MelonChartParseException(Exception):
-        pass
-
-    class ChartEntry:
-        def __init__(self, title: str, artist: str, image: str, lastPos: int, rank: int, isNew: bool):
-            self.title = title
-            self.artist = artist
-            self.image = image
-            self.lastPos = lastPos
-            self.rank = rank
-            self.isNew = isNew
-
-        def __repr__(self):
-            return f"{self.__class__.__module__}.{self.__class__.__name__}(title={self.title!r}, artist={self.artist!r})"
-    
-        def __str__(self):
-            if self.title:
-                s = f"'{self.title}' by {self.artist}"
-            else:
-                s = f"{self.artist}"
-
-            if sys.version_info.major < 3:
-                return s.encode(getattr(sys.stdout, "encoding", "") or "utf8")
-            else:
-                return s
-
-        def json(self):
-            """json 형태로 반환"""
-            return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4, ensure_ascii=False)  
-    
-    def _getResizedImage(url, imageSize):
-        pattern = r"resize/\d+"
-        return re.sub(pattern, f"resize/{imageSize}", url)
-
-
     headers = {"User-Agent": _USER_AGENT}
     res = requests.get(_CHART_API_URL, headers=headers)
     data = res.json()
-    name = data["response"]["PAGE"]
-    date = f"{data['response']['RANKDAY']} {data['response']['RANKHOUR']}"
-    date_format = "%Y.%m.%d %H:%M"
-    pre_date = datetime.strptime(date, date_format)
-    entries = []
 
-    for item in data['response']['SONGLIST']:
-        entry = ChartEntry(
-            title=item['SONGNAME'],
-            artist=item['ARTISTLIST'][0]['ARTISTNAME'],
-            image=_getResizedImage(item['ALBUMIMG'], 256),
-            rank=int(item["CURRANK"]),
-            lastPos=int(item["PASTRANK"]),
-            isNew=item["RANKTYPE"] == "NEW"
-        )
-        entries.append(entry)
+    ## 멜론차트_TOP100NOW
+    page_name = data["response"]["PAGE"]
     
-    if res.status_code == 200:
-        entries_json = json.dumps(entries, default=lambda o: o.__dict__, sort_keys=True, indent=4, ensure_ascii=False)
-        return entries_json
-    else:
-        return {"error": "Spotify API request failed"}
+    ## 2023.08.31 15:00
+    update_time = f"{data['response']['RANKDAY']} {data['response']['RANKHOUR']}"
     
+    ## datetime.datetime(2023, 8, 31, 15, 0)
+    date_format = "%Y.%m.%d %H:%M"
+    pre_date = datetime.strptime(update_time, date_format)
+    
+    entries = {}
+    song_list = data['response']['SONGLIST'] 
+
+    # len(data['response']['SONGLIST'])
+
+    for item in range(len(song_list)):
+        song_name = song_list[item]['SONGNAME'] 
+        artist = song_list[item]['ARTISTLIST'][0]['ARTISTNAME']
+        image = song_list[item]['ALBUMIMG']
+        # rank = song_list[item]['CURRANK']
+        pastrank = song_list[item]['PASTRANK']
+        isNew = song_list[item]['RANKTYPE'] == "NEW"
+
+        entries[str(item+1)]= [song_name, artist, image, pastrank, isNew]
+        # entries["top"+ item]= [data['response']['SONGLIST'][item]['SONGNAME']]
+
+    return entries
     
     # try:
     #     entries_json = json.dumps(entries, default=lambda o: o.__dict__, sort_keys=True, indent=4,ensure_ascii=False)
