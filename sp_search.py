@@ -42,12 +42,12 @@ def search_spotify(data:SearchKeyword):
             return_data["tracks"+str(i)]=[[response_json["tracks"]["items"][i]["name"]],
                             [response_json["tracks"]["items"][i]["album"]["name"]],
                             list_artist]                
-        for i in range(len(response_json["albums"]["items"])):
-            # print(response_json["albums"]["items"][i]["name"])
-            return_data["albums"+str(i)]=[[response_json["albums"]["items"][i]["name"]]]
-        for i in range(len(response_json["artists"]["items"])):
-            # print(response_json["artists"]["items"][i]["name"])
-            return_data["artists"+str(i)]=[[response_json["artists"]["items"][i]["name"]]]
+        # for i in range(len(response_json["albums"]["items"])):
+        #     # print(response_json["albums"]["items"][i]["name"])
+        #     return_data["albums"+str(i)]=[[response_json["albums"]["items"][i]["name"]]]
+        # for i in range(len(response_json["artists"]["items"])):
+        #     # print(response_json["artists"]["items"][i]["name"])
+        #     return_data["artists"+str(i)]=[[response_json["artists"]["items"][i]["name"]]]
             # response_json["tracks"]["items"]["name"]
         # print(len(response_json))
         print(return_data)
