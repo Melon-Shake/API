@@ -144,7 +144,7 @@ def get_daily_search_ranking():
     for rank, (keyword, search_count) in enumerate(search_ranking, start=1):
         cursor.execute(value_check_query, (keyword,))
         if cursor.fetchone():
-            result.append({rank,keyword})
+            result['rank'] = keyword
 
     connection.close()
     return result
