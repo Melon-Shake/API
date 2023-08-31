@@ -110,3 +110,41 @@ def get_use_data(data: search_track):
     connection.commit()
     cursor.close()
     connection.close()
+
+@api.get("/daily_search_ranking")
+def get_daily_search_ranking():
+    connection = psycopg2.connect(**db_params)
+    cursor = connection.cursor()
+
+    search_query = """
+        SELECT keyword, COUNT(*) as search_count
+        FROM search_log_keywords
+        WHERE created_datetime >= NOW() - INTERVAL '1 DAY'
+        GROUP BY keyword
+        ORDER BY search_count DESC;
+    """
+
+    value_check_query = """
+        SELECT item
+        FROM (
+            SELECT name_org as item FROM artist
+            UNION ALL
+            SELECT name_org as item FROM track
+            UNION ALL
+            SELECT name_org as item FROM album
+        ) AS items
+        WHERE item IS NOT NULL
+        AND item = %s;
+    """
+
+    cursor.execute(search_query)
+    search_ranking = cursor.fetchall()
+
+    result = []
+    for rank, (keyword, search_count) in enumerate(search_ranking, start=1):
+        cursor.execute(value_check_query, (keyword,))
+        if cursor.fetchone():
+            result.append({rank,keyword})
+
+    connection.close()
+    return result
