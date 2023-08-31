@@ -7,16 +7,38 @@ import warnings
 from bs4 import BeautifulSoup
 import requests
 
+# add variable
+_TARGET_SITE = "https://www.billboard.com"
+
+# defaut variable
 _APP_VERSION = "6.5.8.1"
 _CP_ID = "AS40"
 _USER_AGENT = f"{_CP_ID}; Android 13; {_APP_VERSION}; sdk_gphone64_arm64"
 _CHART_API_URL = f"https://m2.melon.com/m6/chart/ent/songChartList.json?cpId={_CP_ID}&cpKey=14LNC3&appVer={_APP_VERSION}"
 
-class MelonChartRequestException(Exception):
-  pass
-  
-class MelonChartParseException(Exception):
-  pass
+# css selector constants
+_CHART_NAME_SELECTOR = 'meta[property="og:title"]'
+_DATE_ELEMENT_SELECTOR = "button.chart-detail-header__date-selector-button"
+_PREVIOUS_DATE_SELECTOR = "span.fa-chevron-left"
+_NEXT_DATE_SELECTOR = "span.fa-chevron-right"
+_ENTRY_LIST_SELECTOR = "div.chart-list-item"
+_ENTRY_TITLE_ATTR = "data-title"
+_ENTRY_ARTIST_ATTR = "data-artist"
+_ENTRY_IMAGE_SELECTOR = "img.chart-list-item__image"
+_ENTRY_RANK_ATTR = "data-rank"
+
+# constants for the getMinistatsCellValue helper function
+_MINISTATS_CELL = "div.chart-list-item__ministats-cell"
+_MINISTATS_CELL_HEADING = "span.chart-list-item__ministats-cell-heading"
+
+class BillboardNotFoundException(Exception):
+    pass
+
+class BillboardParseException(Exception):
+    pass
+
+class UnsupportedYearWarning(UserWarning):
+    pass
 
 class ChartEntry:
   """차트에 있는 항목을 나타냅니다(일반적으로 단일 트랙).
@@ -52,6 +74,11 @@ class ChartEntry:
       s = f"'{self.title}' by {self.artist}"
     else:
       s = f"{self.artist}"
+      
+    if sys.version_info.major < 3:
+      return s.encode(getattr(sys.stdout, "encoding", "") or "utf8")
+    else:
+      return s
       
   def json(self):
     """json 형태로 반환"""
@@ -100,32 +127,79 @@ class ChartData:
       if fetch:
         self.fetchEntries()
         
-    def __repr__(self):
-      if self.year:
-        return f"{self.__class__.__module__},{self.__class__.__name__}({self.name!r}, year={self.year!r})"
-      return f"{self.__class__.__module__}, {self.__class__.__name__}({self.name!r}, year={self.date!r})"
+  def __repr__(self):
+    if self.year:
+      return f"{self.__class__.__module__},{self.__class__.__name__}({self.name!r}, year={self.year!r})"
+    return f"{self.__class__.__module__}, {self.__class__.__name__}({self.name!r}, year={self.date!r})"
     
-    def __str__(self):
-      """차트를 사람이 읽을수 있게 문자열로 반환"""
-      if self.year:
-        s = f"{self.name} chart ({self.year})"
-      elif not self.date:
-        s = f"{self.name}"
+  def __str__(self):
+    """차트를 사람이 읽을수 있게 문자열로 반환"""
+    if self.year:
+      s = f"{self.name} chart ({self.year})"
+    elif not self.date:
+      s = f"{self.name}"
+    else:
+      s = f"{self.name} chart from {self.date}"
+    s += "\n" +"-" *len(s)
+    for n, entry in enumerate(self.entries):
+      s += f"\n{entry.rank}. {str(entry)}"
+    return s
+    
+  def __getitem__(self, key):
+    """(key +1)번째 차트 항목을 반환합니다.
+
+    Args:
+        key (_type_): _description_
+    """
+    return self.entries[key]
+  def __len__(self):
+    """차트 엔트리(항목)의 개수를 반환, 길이가 0이라면 잘못된 요청"""
+    return len(self.entries)
+  
+  def json(self):
+    """문자열 json으로 반환"""
+    return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent = 4)
+  
+  def _parsePage(self, soup):
+    chartTitleElement = soup.select_one(_CHART_NAME_SELECTOR)
+    if chartTitleElement:
+      self.title = re.sub(
+        " Chart$",
+        "",
+        chartTitleElement.get("content", "").split("|")[0].strip(),
+      )
+    if self.year:
+      self._parseYearEndPage(soup)
+    elif soup.select("table"):
+      self._parseOldStylePage(soup)
+    else:
+      self._parseNewStylePage(soup)
+        
+  def fetchEntries(self):
+      """차트에서 해당 차트 데이터를 가져오고, BeautifulSoup을 사용하여 데이터를 파싱합니다"""
+      if not self.date:
+        if not self.year:
+          # fetch latest chart
+          url = f"{_TARGET_SITE}/charts/{self.name}"
+        else:
+          url = f"{_TARGET_SITE}/charts/year-end/{self.year}/{self.name}"
       else:
-        s = f"{self.name} chart from {self.date}"
-      s += "\n" +"-" *len(s)
-      for n, entry in enumerate(self.entries):
-        s += f"\n{entry.rank}. {str(entry)}"
-      return s
-    
-    def __getitem__(self, key):
-      """(key +1)번째 차트 항목을 반환합니다.
-
-      Args:
-          key (_type_): _description_
-      """
-      return self.entries[key]
+        url = f"{_TARGET_SITE}/chart/{self.name}/{self.date}"
+        
+      session = _get_session_with_retries(max_retries=self._max_retries)
+      req = session.get(url, timeout= self._timeout)
+      if req.status_code == 404:
+        message = "Chart not found (perhaps the name is misspelled?)"
+        raise BillboardNotFoundException(message)
+      req.raise_for_status()
       
+      soup = BeautifulSoup(req.text, "html.parser")
+      self._parsePage(soup)
 
-    
-    
+def _get_session_with_retries(max_retries):
+  session = requests.Session()
+  session.mount(
+    _TARGET_SITE,
+    requests.adapters.HTTPAdapter(max_retries = max_retries),
+  )
+  return session
