@@ -77,39 +77,6 @@ def get_keyword_data(data: Keyword):
     cursor.close()
     connection.close()
 
-class search_track(BaseModel):
-   email : str
-   track_title : str
-@api.post("/get_use_data/")
-def get_use_data(data: search_track):
-    email = data.email
-    track_title = data.track_title
-
-    connection = psycopg2.connect(**db_params)
-    cursor = connection.cursor()
-    
-    user_query = "SELECT id FROM \"user\" WHERE email = %s;"
-    user_values = (email,)
-    cursor.execute(user_query, user_values)
-    user_query_result = cursor.fetchone()
-    if user_query_result:
-        user_id = user_query_result[0]
-    else:
-        user_id = None
-
-    track_search = "SELECT id from track where name_org = %s"
-    track_value = (track_title,)
-    cursor.execute(track_search, track_value)
-    track_query_result = cursor.fetchone()
-    if user_query_result:
-        track_id = track_query_result[0]
-
-    search_query = "INSERT INTO search_log_tracks(track_id,user_id) values (%s,%s);"
-    user_values = (track_id, user_id)
-    cursor.execute(search_query, user_values)
-    connection.commit()
-    cursor.close()
-    connection.close()
 
 @api.get("/daily_search_ranking")
 def get_daily_search_ranking():
