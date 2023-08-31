@@ -77,36 +77,41 @@ def get_keyword_data(data: Keyword):
     cursor.close()
     connection.close()
 
-class search_track(BaseModel):
-   email : str
-   track_title : str
-@api.post("/get_use_data/")
-def get_use_data(data: search_track):
-    email = data.email
-    track_title = data.track_title
 
+@api.get("/daily_search_ranking")
+def get_daily_search_ranking():
     connection = psycopg2.connect(**db_params)
     cursor = connection.cursor()
-    
-    user_query = "SELECT id FROM \"user\" WHERE email = %s;"
-    user_values = (email,)
-    cursor.execute(user_query, user_values)
-    user_query_result = cursor.fetchone()
-    if user_query_result:
-        user_id = user_query_result[0]
-    else:
-        user_id = None
 
-    track_search = "SELECT id from track where name_org = %s"
-    track_value = (track_title,)
-    cursor.execute(track_search, track_value)
-    track_query_result = cursor.fetchone()
-    if user_query_result:
-        track_id = track_query_result[0]
+    search_query = """
+        SELECT keyword, COUNT(*) as search_count
+        FROM search_log_keywords
+        WHERE created_datetime >= NOW() - INTERVAL '1 DAY'
+        GROUP BY keyword
+        ORDER BY search_count DESC;
+    """
 
-    search_query = "INSERT INTO search_log_tracks(track_id,user_id) values (%s,%s);"
-    user_values = (track_id, user_id)
-    cursor.execute(search_query, user_values)
-    connection.commit()
-    cursor.close()
+    value_check_query = """
+        SELECT item
+        FROM (
+            SELECT name_org as item FROM artist
+            UNION ALL
+            SELECT name_org as item FROM track
+            UNION ALL
+            SELECT name_org as item FROM album
+        ) AS items
+        WHERE item IS NOT NULL
+        AND item = %s;
+    """
+
+    cursor.execute(search_query)
+    search_ranking = cursor.fetchall()
+
+    result = []
+    for rank, (keyword, search_count) in enumerate(search_ranking, start=1):
+        cursor.execute(value_check_query, (keyword,))
+        if cursor.fetchone():
+            result['rank'] = keyword
+
     connection.close()
+    return result
