@@ -29,3 +29,21 @@ if __name__ == '__main__' :
         result = response.json()
         access_token = result.get('access_token')
         print(access_token)
+
+def return_token() :
+    with session_scope() as session :
+        client = session.query(SpotifyClientORM).one()
+
+        response = requests.post('https://accounts.spotify.com/api/token'
+                      ,headers={
+                          'Authorization': 'Basic '+func_base64(f'{client.id}:{client.secret}')
+                      }
+                      ,data={
+                          'grant_type': 'refresh_token'
+                          ,'refresh_token': client.refresh_token
+                      }
+                      )
+    if response.status_code == 200 :
+        result = response.json()
+        access_token = result.get('access_token')
+        return access_token
