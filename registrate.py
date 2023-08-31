@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     with session_scope() as session :
         # session.add(client_orm)
-        
+
         client_orm = session.query(SpotifyClientORM).filter_by(user=client.get('user')).first()
         client_entity = SpotifyClientEntity.model_validate(client_orm)
         client_json = SpotifyClientEntity.model_dump_json(client_entity)
