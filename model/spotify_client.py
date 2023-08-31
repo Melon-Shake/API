@@ -1,8 +1,8 @@
-from sqlalchemy import String
-from sqlalchemy.sql.schema import Column
-
-from config.database import Base
+from model.database import Base
 from pydantic import BaseModel, ConfigDict
+
+from sqlalchemy.sql.schema import Column
+from sqlalchemy import String
 
 class SpotifyClientORM(Base) :
     __tablename__ = 'spotify_client'
@@ -28,3 +28,11 @@ class SpotifyClientEntity(BaseModel) :
     secret: str
     redirect_uri: str
     refresh_token: str
+
+if __name__ == '__main__' :
+    from sqlalchemy import inspect
+    mapper = inspect(SpotifyClientORM)
+    table_name = mapper.persist_selectable.name
+    print("Table Name:", table_name)
+    column_names = [column.key for column in mapper.columns]
+    print("Column Names:", column_names)

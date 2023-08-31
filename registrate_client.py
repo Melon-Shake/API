@@ -1,5 +1,5 @@
 from model.spotify_client import SpotifyClientORM, SpotifyClientEntity
-from config.database import session_scope
+from model.database import session_scope
 
 import requests
 import json
@@ -13,11 +13,11 @@ if __name__ == '__main__':
         , 'redirect_uri': 'http://localhost:8000/callback'
      }
     
-    client_orm = SpotifyClientORM(client)
+    # with session_scope() as session :
+    #     client_orm = SpotifyClientORM(client)
+    #     session.add(client_orm)
 
     with session_scope() as session :
-        session.add(client_orm)
-
         client_orm = session.query(SpotifyClientORM).filter_by(user=client.get('user')).first()
         client_entity = SpotifyClientEntity.model_validate(client_orm)
         client_json = SpotifyClientEntity.model_dump_json(client_entity)
@@ -39,20 +39,3 @@ if __name__ == '__main__':
             result_get = response_get.json()
         else :
             print(response_get.status_code)
-
-    def checks() :
-        print(type(client_orm))
-        print(client_orm)
-        
-        print(type(client_entity))
-        print(client_entity)
-
-        print(type(client_json))
-        print(client_json)
-
-        print(type(result_post))
-        print(result_post)
-
-        print(type(result_get))
-        print(result_get)
-    checks()
