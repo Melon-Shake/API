@@ -1,5 +1,5 @@
 import requests
-import module
+import lib.module as module
 import streamlit as st
 
 access_token = module.read_AuthToken_from_file()
@@ -19,4 +19,3 @@ response = requests.get(url, headers=header)
 response_json = response.json()
 print(response_json)
 
-# st.write(response_json["albums"]["items"])

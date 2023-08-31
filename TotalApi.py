@@ -1,14 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 import requests
-import module
+import lib.module as module
 from pydantic import BaseModel
 import bcrypt
 import psycopg2
 from datetime import datetime
 from config.db_info import db_params
-from lyric import *
-from sp_track import *
+from lyric import lyric_search_and_input
+from sp_track import sp_and_track_input, get_sp_track_id
 import sys, numpy as np, pandas as pd, json, requests, re
 
 
@@ -55,6 +55,7 @@ class sp_data(BaseModel):
 # ssg search api
 @app.post("/search/track/")
 async def search_spotify(data:SearchKeyword):
+    #***************** access_token = requests.get('http://0.0.0.0:8000/token')*****************
     q = data.searchInput
     url = f'https://api.spotify.com/v1/search?q={q}&type=album%2Cartist%2Ctrack&market=kr'
     headers = {
@@ -78,6 +79,7 @@ async def search_spotify(data:SearchKeyword):
     
 @app.post("/search/artist/")
 async def search_spotify(data:SearchKeyword):
+    #***************** access_token = requests.get('http://0.0.0.0:8000/token')*****************
     q = data.searchInput
     url = f'https://api.spotify.com/v1/search?q={q}&type=album%2Cartist%2Ctrack&market=kr'
     headers = {
@@ -88,12 +90,9 @@ async def search_spotify(data:SearchKeyword):
         response_json = response.json()
         return_data ={}
         for i in range(len(response_json["artists"]["items"])):
-            # print(response_json["artists"]["items"][i]["name"])
             return_data["artists"+str(i)]=[[response_json["artists"]["items"][i]["name"]],
                                            [response_json["artists"]["items"][i]["genres"]],
                                            [response_json["artists"]["items"][i]["images"][0]["url"]]]
-            # response_json["tracks"]["items"]["name"]
-        # print(len(response_json))
         print(return_data)
         return return_data
     else:
@@ -101,6 +100,7 @@ async def search_spotify(data:SearchKeyword):
 
 @app.post("/search/album/")
 async def search_spotify(data:SearchKeyword):
+    #***************** access_token = requests.get('http://0.0.0.0:8000/token')*****************
     q = data.searchInput
     url = f'https://api.spotify.com/v1/search?q={q}&type=album%2Cartist%2Ctrack&market=kr'
     headers = {
@@ -111,13 +111,10 @@ async def search_spotify(data:SearchKeyword):
         response_json = response.json()
         return_data ={}              
         for i in range(len(response_json["albums"]["items"])):
-            # print(response_json["albums"]["items"][i]["name"])
             return_data["albums"+str(i)]=[[response_json["albums"]["items"][i]["name"]],
                                           [response_json["albums"]["items"][i]["images"][0]['url']],
                                           [response_json["albums"]["items"][i]["artists"]["name"]],
                                           [response_json["albums"]["items"][i]["release_date"]]]
-            # response_json["tracks"]["items"]["name"]
-        # print(len(response_json))
         print(return_data)
         return return_data
     else:
@@ -243,8 +240,6 @@ def get_melonChat():
     entries = {}
     song_list = data['response']['SONGLIST'] 
 
-    # len(data['response']['SONGLIST'])
-
     for item in range(len(song_list)):
         song_name = song_list[item]['SONGNAME'] 
         artist = song_list[item]['ARTISTLIST'][0]['ARTISTNAME']
@@ -254,7 +249,6 @@ def get_melonChat():
         isNew = song_list[item]['RANKTYPE'] == "NEW"
 
         entries[str(item+1)]= [song_name, artist, image, pastrank, isNew]
-        # entries["top"+ item]= [data['response']['SONGLIST'][item]['SONGNAME']]
 
     return entries
 
@@ -266,6 +260,7 @@ def lyric_input(item : lyric_data):
     track = item.track
     track_id = item.track_id
     GENIUS_API_KEY = item.GENIUS_API_KEY
+    
     result = lyric_search_and_input(artist,track,track_id,GENIUS_API_KEY)
     if result:
         return {"result" : f"Lyrics have been added to track_id : {track_id}"}

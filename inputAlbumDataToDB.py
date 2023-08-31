@@ -1,19 +1,20 @@
 import requests
-import module
+import main.lib.module as module
 import string
 import psycopg2
 import config.db_info as db
 
 conn = psycopg2.connect(
-    database = db.database,
-    user = db.user,
-    password = db.password,
-    host = db.host,
-    port = db.port
+    database = db.db_params['database'],
+    user = db.db_params['user'],
+    password = db.db_params['password'],
+    host = db.db_params['host'],
+    port = db.db_params['port'],
 )
 
 access_token = module.read_AuthToken_from_file()
 
+# test용
 album_id = '2cBuoAocFtOZU31Tk6UmTt'
 
 url = f'https://api.spotify.com/v1/albums/{album_id}'

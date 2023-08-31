@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 import psycopg2
+import config.db_info as db
 GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
 
 
@@ -9,11 +10,11 @@ GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrl
 def insert_data(content, track_id,api):
     try:
         connection = psycopg2.connect(
-            user="postgres",
-            password="12345678",
-            host="database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com",
-            port="5432",
-            database="postgres"
+            user= db.db_params['user'],
+            password= db.db_params['password'],
+            host = db.db_params['host'] ,
+            port= db.db_params['port'],
+            database= db.db_params['database']
         )
 
         cursor = connection.cursor()
