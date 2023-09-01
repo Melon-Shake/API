@@ -46,4 +46,11 @@ def return_token() :
     if response.status_code == 200 :
         result = response.json()
         access_token = result.get('access_token')
-        return access_token
+        # return access_token
+    with session_scope() as session :
+        token_orm = SpotifyTokenORM(access_token)
+        session.add(token_orm)
+    with session_scope() as session :
+        from sqlalchemy import desc
+        token_orm = session.query(SpotifyTokenORM).order_by(desc(SpotifyTokenORM.id)).first()
+        return token_orm.value

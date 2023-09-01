@@ -9,7 +9,7 @@ conn = psycopg2.connect(**db.db_params)
 access_token = module.read_AuthToken_from_file()
 
 # test용
-album_id = '2cBuoAocFtOZU31Tk6UmTt'
+album_id = '7i2YLTVQ0dyngRuUqtGmr9'
 
 url = f'https://api.spotify.com/v1/albums/{album_id}'
 header = {
@@ -38,25 +38,25 @@ popularity = response_json['popularity']
 artist_id = response_json['artists'][0]['id']
 
 # album
-id = '1'
+# id = '1'
 name_has = module.has_non_english_characters(response_json['name'])
 type = response_json['album_type']
 tracks_cnt = response_json['total_tracks']
 release_date = response_json['release_date']
 image = response_json['images'][0]['url']
-artist_id = '1'
+# artist_id = '1'
 
 with conn:
     with conn.cursor() as cur:
         if name_has != True:
             name_org = response_json['name']
-            query2 = "INSERT INTO album (id,name_org, type, tracks_cnt,release_date,image,artist_id) VALUES(%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(query2, (id,name_org,type,tracks_cnt,release_date,image,artist_id))         
+            query2 = "INSERT INTO album (name_org, type, tracks_cnt,release_date,image,artist_id) VALUES(%s,%s,%s,%s,%s,%s)"
+            cur.execute(query2, (name_org,type,tracks_cnt,release_date,image,artist_id))
         else:
             name_org = response_json['name']
             name_eng = response_json['name']
-            query2 = "INSERT INTO album (id,name_org,name_eng, type, tracks_cnt,release_date,image,artist_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(query2, (id,name_org,name_eng,type,tracks_cnt,release_date,image,artist_id))
+            query2 = "INSERT INTO album (name_org,name_eng, type, tracks_cnt,release_date,image,artist_id) VALUES(%s,%s,%s,%s,%s,%s,%s)"
+            cur.execute(query2, (name_org,name_eng,type,tracks_cnt,release_date,image,artist_id))
         query1 = "INSERT INTO sp_album (album_type,total_tracks,external_urls,href,id,images_url,name,release_date,release_date_precision,type,uri,copyrights_text,copyrights_type,genres,label,popularity,artist_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         cur.execute(query1, (album_type,total_tracks,external_urls,href,sp_album_id,images_url,name,release_date,release_date_precision,type,uri,copyright_text,copyright_type,genres,label,popularity,artist_id))
         

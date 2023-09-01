@@ -12,9 +12,10 @@ class SpotifyTokenORM(Base) :
     is_expired = Column(Boolean, default=False)
     
     def __init__(self,token):
-        self.id = token.get('id')
-        self.value = token.get('value')
-        self.is_expired = token.get('is_expired')
+        # self.id = token.get('id')
+        # self.value = token.get('value')
+        # self.is_expired = token.get('is_expired')
+        self.value = token
 
 class SpotifyTokenEntity(BaseModel) :
     model_config = ConfigDict(from_attributes=True)

@@ -15,7 +15,7 @@ import sys, numpy as np, pandas as pd, json, requests, re
 
 app = FastAPI()
 
-access_token = module.read_AuthToken_from_file()
+# access_token = module.read_AuthToken_from_file()
 
 _APP_VERSION = "6.5.8.1"
 _CP_ID = "AS40"
@@ -63,6 +63,7 @@ def update_token():
 @app.post("/search/track/")
 async def search_spotify(data:SearchKeyword):
     #***************** access_token = requests.get('http://0.0.0.0:8000/token')*****************
+    access_token = return_token()
     q = data.searchInput
     url = f'https://api.spotify.com/v1/search?q={q}&type=album%2Cartist%2Ctrack&market=kr'
     headers = {
@@ -87,6 +88,7 @@ async def search_spotify(data:SearchKeyword):
 @app.post("/search/artist/")
 async def search_spotify(data:SearchKeyword):
     #***************** access_token = requests.get('http://0.0.0.0:8000/token')*****************
+    access_token = return_token()
     q = data.searchInput
     url = f'https://api.spotify.com/v1/search?q={q}&type=album%2Cartist%2Ctrack&market=kr'
     headers = {
@@ -108,6 +110,7 @@ async def search_spotify(data:SearchKeyword):
 @app.post("/search/album/")
 async def search_spotify(data:SearchKeyword):
     #***************** access_token = requests.get('http://0.0.0.0:8000/token')*****************
+    access_token = return_token()
     q = data.searchInput
     url = f'https://api.spotify.com/v1/search?q={q}&type=album%2Cartist%2Ctrack&market=kr'
     headers = {
