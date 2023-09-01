@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
 
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import String
-
+a = 0 
 class SpotifyClientORM(Base) :
     __tablename__ = 'spotify_client'
 

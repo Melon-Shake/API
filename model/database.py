@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
-
+a = 0
 db_url = "postgresql://{username}:{password}@{host}:{port}/{dbname}".format(
     username='postgres',
     password='12345678',
