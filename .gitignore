@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 
 /config
 =======
 ## 인프라
 *.idea
+=======
+/config
+## 인프라
+*.idea
+/.deprecated
+>>>>>>> v0.1.0/api
