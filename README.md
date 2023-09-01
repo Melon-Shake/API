@@ -41,7 +41,7 @@ __음원정보 종합 서비스 “Melon Shake”는 다양한 음악 플랫폼�
 ![Python](https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
 ---
-## achitacure
+## Achitecture
 
 
 ---
