@@ -5,18 +5,9 @@ import psycopg2
 import config.db_info as db
 GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
 
-
-
 def insert_data(content, track_id,api):
     try:
-        connection = psycopg2.connect(
-            user= db.db_params['user'],
-            password= db.db_params['password'],
-            host = db.db_params['host'] ,
-            port= db.db_params['port'],
-            database= db.db_params['database']
-        )
-
+        connection = psycopg2.connect(**db.db_params)
         cursor = connection.cursor()
         escaped_content = content.replace("'", "''")
         if api == "musix_match":
@@ -36,7 +27,6 @@ def insert_data(content, track_id,api):
             cursor.close()
             connection.close()
 
-
 def normalize(url):
     if "Genius-romanizations-" in url:
         new_url = url.replace("Genius-romanizations-","")
@@ -49,18 +39,14 @@ def genius_search(search,GENIUS_API_KEY):     # 노래 id 및 기본 정보 수�
     
     GENIUS_API_KEY = GENIUS_API_KEY
 
-
     base_url = "https://api.genius.com"
     headers = {"Authorization": "Bearer " + GENIUS_API_KEY}
-
 
     search = search
     search_url = f"{base_url}/search?q={search}"
 
-
     response = requests.get(search_url, headers=headers)
     data = response.json()
-
 
     if "response" in data and "hits" in data["response"]:
         hits = data["response"]["hits"]
@@ -72,8 +58,7 @@ def genius_search(search,GENIUS_API_KEY):     # 노래 id 및 기본 정보 수�
             return pd.DataFrame(a,columns=col)
     else:
         return "검색 결과를 찾을 수 없습니다."
-    
-    
+        
 def get_lyric(ID,GENIUS_API_KEY):   # 가사 주소 및 앨범 정보 수집
     # Genius API Key
     GENIUS_API_KEY = GENIUS_API_KEY
@@ -89,7 +74,6 @@ def get_lyric(ID,GENIUS_API_KEY):   # 가사 주소 및 앨범 정보 수집
     return data
     # data['response']['song']['album']['full_title']
     
-
 def genius_lyric_search(url):   # 가사 크롤링
     url = url
 
@@ -164,7 +148,6 @@ def lyric_search(artist, track, GENIUS_API_KEY):
     else:
         print("genius")
         return genius_unique_search(artist,track,GENIUS_API_KEY)[-1] 
-    
     
 def lyric_search_and_input(artist, track, track_id, GENIUS_API_KEY):
     lyric = musix_match_lyric_search(artist,track)

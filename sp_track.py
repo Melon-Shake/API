@@ -36,13 +36,8 @@ def create_access_token():
 def get_sp_track_id(artist, album, track):
     
     access_token = create_access_token()
-    con = psycopg2.connect(
-            user= db.db_params['user'],
-            password= db.db_params['password'],
-            host = db.db_params['host'] ,
-            port= db.db_params['port'],
-            database= db.db_params['database']
-        )
+    con = psycopg2.connect(**db.db_params)
+
 
     cur = con.cursor()
 
@@ -111,13 +106,8 @@ def sp_and_track_input(track_id,route_id, artist, album, track):
     try:
         sp_input_result['track_id'] = track_id
         
-        conn = psycopg2.connect(
-            user= db.db_params['user'],
-            password= db.db_params['password'],
-            host = db.db_params['host'] ,
-            port= db.db_params['port'],
-            database= db.db_params['database']
-        )
+        conn = psycopg2.connect(**db.db_params)
+
         
         with conn:
             with conn.cursor() as cur:

@@ -1,16 +1,10 @@
 import requests
-import main.lib.module as module
+import lib.module as module
 import string
 import psycopg2
 import config.db_info as db
 
-conn = psycopg2.connect(
-    database = db.db_params['database'],
-    user = db.db_params['user'],
-    password = db.db_params['password'],
-    host = db.db_params['host'],
-    port = db.db_params['port'],
-)
+conn = psycopg2.connect(**db.db_params)
 
 access_token = module.read_AuthToken_from_file()
 
