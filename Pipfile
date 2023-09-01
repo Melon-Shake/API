@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+sqlalchemy = "*"
+
+[dev-packages]
+flask = "*"
+requests = "*"
+sqlalchemy = "*"
+pydantic = "*"
+psycopg2-binary = "*"
+fastapi = "*"
+uvicorn = "*"
+
+[requires]
+python_version = "3.9"
+python_full_version = "3.9.16"
