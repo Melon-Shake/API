@@ -1,16 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 /config
-=======
 ## 인프라
 *.idea
-
->>>>>>> v0.1.0/bkson/crawling_DomesticChart
-=======
 /.deprecated
-<<<<<<< HEAD
-/config
->>>>>>> origin/v0.1.0/sophie/load_spotify
-=======
-# /model/database.py
->>>>>>> origin/v0.1.0/sophie/load_spotify
