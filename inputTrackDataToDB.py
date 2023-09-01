@@ -1,25 +1,21 @@
 import requests
-import module
+import lib.module as module
 import string
 import psycopg2
 import config.db_info as db
 
-def has_non_english_characters(text):
-    for char in text:
-        if char not in string.printable or char in string.ascii_letters:
-            return True
-    return False
 
 conn = psycopg2.connect(
-    database = db.database,
-    user = db.user,
-    password = db.password,
-    host = db.host,
-    port = db.port
+    user= db.db_params['user'],
+    password= db.db_params['password'],
+    host = db.db_params['host'] ,
+    port= db.db_params['port'],
+    database= db.db_params['database']
 )
 
 access_token = module.read_AuthToken_from_file()
 
+# test용
 track_id = '3rrYAxy6f1Aj5GO9vVRyDr'
 
 url = f'https://api.spotify.com/v1/tracks/{track_id}?market=kr'
@@ -52,7 +48,7 @@ artist_id = response_json['artists'][0]['id']
 duration = response_json['duration_ms']/1000
 genres = response_json
 image = response_json['album']['images'][0]['url']
-name_has = has_non_english_characters(response_json['name'])
+name_has = module.has_non_english_characters(response_json['name'])
 
 if name_has != True:
     name_org = response_json['name']

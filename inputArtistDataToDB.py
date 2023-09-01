@@ -1,25 +1,20 @@
 import requests
-import module
+import lib.module as module
 import string
 import psycopg2
 import config.db_info as db
 
-def has_non_english_characters(text):
-    for char in text:
-        if char not in string.printable or char in string.ascii_letters:
-            return True
-    return False
-
 conn = psycopg2.connect(
-    database = db.database,
-    user = db.user,
-    password = db.password,
-    host = db.host,
-    port = db.port
+    user= db.db_params['user'],
+    password= db.db_params['password'],
+    host = db.db_params['host'] ,
+    port= db.db_params['port'],
+    database= db.db_params['database']
 )
 
 access_token = module.read_AuthToken_from_file()
 
+# test용
 artist_id = '2AfmfGFbe0A0WsTYm0SDTx'
 
 url = f'https://api.spotify.com/v1/artists/{artist_id}'

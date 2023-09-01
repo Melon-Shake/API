@@ -1,15 +1,17 @@
 import requests
-import module
+import lib.module as module
 import string
 import psycopg2
+import config.info as info
+import config.db_info as db
 import requests
 from urllib.parse import quote
 # from config.info import *   
 import base64
 
 def create_access_token():
-    client_id = "1180fb31cb794ef887bb18daa3eccd90"
-    client_secret = "e1e314e15fa84210bb4cebd6cc13a0d5"
+    client_id = info.id
+    client_secret = info.secret
 
     Refresh_token = module.read_RefreshToken_from_file()
 
@@ -34,13 +36,12 @@ def create_access_token():
 def get_sp_track_id(artist, album, track):
     
     access_token = create_access_token()
-    # access_token = 'BQBHoKti8-hK7dhaoKJw4KPdQ8EZ1JlJinRbPz6mEVuQVR3rW_rELo8bLoO5yk6qRwXDnr9g6ASaGf5Z-Bvav44H4n9CuF_NQBAdX0ipsSFNP5jI-JGzhBGcuwvO0_29gomJsZfmg2rInyuYx9JsBbTI-8WQ9k3N6QOCn1BiggGRQ0yFr2kMeLom-YuOga5DH_DbbbYUug2SkyxAZv79ixG69Ko5Gb1Nv6sAEDH90cLRe5Xo0pRUQfy2JHBYy85AwPcrQgOREOZU0M5C3BQ9IQUUii16'
     con = psycopg2.connect(
-            user="postgres",
-            password="12345678",
-            host="database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com",
-            port="5432",
-            database="postgres"
+            user= db.db_params['user'],
+            password= db.db_params['password'],
+            host = db.db_params['host'] ,
+            port= db.db_params['port'],
+            database= db.db_params['database']
         )
 
     cur = con.cursor()
@@ -88,7 +89,6 @@ def get_sp_track_id(artist, album, track):
         print(f'데이터 적재 후 재실행')
         # get_sp_track_id(artist, album, track)
         
-        
     
     for item in items :
         tracks = item.get('name')
@@ -106,28 +106,17 @@ def get_sp_track_id(artist, album, track):
             return ('c','d')
 
 
-
-
-
-
-def has_non_english_characters(text):
-    for char in text:
-        if char not in string.printable or char in string.ascii_letters:
-            return True
-    return False
-
-
 def sp_and_track_input(track_id,route_id, artist, album, track):
     sp_input_result = {}
     try:
         sp_input_result['track_id'] = track_id
         
         conn = psycopg2.connect(
-            user="postgres",
-            password="12345678",
-            host="database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com",
-            port="5432",
-            database="postgres"
+            user= db.db_params['user'],
+            password= db.db_params['password'],
+            host = db.db_params['host'] ,
+            port= db.db_params['port'],
+            database= db.db_params['database']
         )
         
         with conn:
@@ -163,7 +152,7 @@ def sp_and_track_input(track_id,route_id, artist, album, track):
                 
                 # 데이터베이스에 삽입
                 query2 = "INSERT INTO track (name_org, duration, image) VALUES (%s, %s, %s)"
-                if has_non_english_characters(name):
+                if module.has_non_english_characters(name):
                     query2 = "INSERT INTO track (name_org, name_eng, duration, image, id) VALUES (%s, %s, %s, %s, %s)"
                     cur.execute(query2, (name, name, duration, image, route_id))
                 else:

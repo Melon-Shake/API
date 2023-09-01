@@ -1,7 +1,7 @@
 import requests
 import config.info as info
 import base64
-import module
+import lib.module as module
 client_id = info.id
 client_secret = info.secret
 
