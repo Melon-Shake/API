@@ -1,0 +1,4 @@
+config/
+Pipfile
+Pipfile.lock
+*.pyc
