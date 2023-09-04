@@ -1,4 +1,4 @@
-from model.database import Base
+from database import Base
 from pydantic import BaseModel, ConfigDict
 
 from sqlalchemy.sql.schema import Column
