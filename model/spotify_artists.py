@@ -1,4 +1,4 @@
-from database import Base
+from model.database import Base
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import String
@@ -16,7 +16,14 @@ class SpotifyArtistsORM(Base) :
     popularity = Column(String, nullable=True)
 
     def __init__(self, artists) :
-        pass
+        self.id = artists.get('id', None)
+        self.name = artists.get('name', None)
+        self.uri = artists.get('uri', None)
+        self.href = artists.get('href', None)
+        self.external_urls = artists.get('external_urls', None)
+        self.images_url = artists.get('images_url', None)
+        self.genres = artists.get('genres', None)
+        self.popularity = artists.get('popularity', None)
 
 class SpotifyArtistsEntity(BaseModel) :
     model_config = ConfigDict(from_attributes=True)

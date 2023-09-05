@@ -1,4 +1,4 @@
-from database import Base
+from model.database import Base
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import String
@@ -19,9 +19,24 @@ class SpotifyAlbumsORM(Base) :
     available_markets = Column(String, nullable=True)
     release_date = Column(String, nullable=True)
     release_date_precision = Column(String, nullable=True)
-    artists_id = Column(String, nullable=True)
-    tracks_ids = Column(String, nullable=True)
+    # artists_id = Column(String, nullable=True)
+    # tracks_ids = Column(String, nullable=True)
 
+    def __init__(self, albums) :
+        self.id = albums.get('id',None)
+        self.name = albums.get('name',None)
+        self.uri = albums.get('uri',None)
+        self.href = albums.get('href',None)
+        self.external_urls = albums.get('external_urls',None)
+        self.images_url = albums.get('images_url',None)
+        self.genres = albums.get('genres',None)
+        self.popularity = albums.get('popularity',None)
+        self.album_type = albums.get('album_type',None)
+        self.total_tracks = albums.get('total_tracks',None)
+        self.available_markets = albums.get('available_markets',None)
+        self.release_date = albums.get('release_date',None)
+        self.release_date_precision = albums.get('release_date_precision',None)
+        
 class SpotifyAlbumsEntity(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
 

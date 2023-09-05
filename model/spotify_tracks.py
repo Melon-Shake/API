@@ -1,4 +1,4 @@
-from database import Base
+from model.database import Base
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import String
@@ -22,8 +22,26 @@ class SpotifyTracksORM(Base) :
     popularity = Column(String, nullable=True)
     preview_url = Column(String, nullable=True)
     is_local = Column(String, nullable=True)
-    albums_id = Column(String, nullable=True)
-    artists_ids = Column(String, nullable=True)
+    # albums_id = Column(String, nullable=True)
+    # artists_ids = Column(String, nullable=True)
+
+    def __init__(self, tracks) :
+        self.id = tracks.get('id', None)
+        self.name = tracks.get('name', None)
+        self.uri = tracks.get('uri', None)
+        self.href = tracks.get('href', None)
+        self.external_urls = tracks.get('external_urls', None)
+        self.duration_ms = tracks.get('duration_ms', None)
+        self.explicit = tracks.get('explicit', None)
+        self.restrictions_reason = tracks.get('restrictions_reason', None)
+        self.is_playable = tracks.get('is_playable', None)
+        self.linked_form = tracks.get('linked_form', None)
+        self.available_markets = tracks.get('available_markets', None)
+        self.disc_number = tracks.get('disc_number', None)
+        self.track_number = tracks.get('track_number', None)
+        self.popularity = tracks.get('popularity', None)
+        self.preview_url = tracks.get('preview_url', None)
+        self.is_local = tracks.get('is_local', None)
 
 class SpotifyTracksEntity(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
