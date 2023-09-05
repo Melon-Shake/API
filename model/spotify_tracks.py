@@ -28,6 +28,14 @@ class SpotifyTracksORM(Base) :
 class SpotifyTracksEntity(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
 
+    id: str
+    name: str
+    albums_id: str
+    albums_images_url: str
+    artists_ids: str
+    artists_names: str
+    duration_ms: str
+
 if __name__ == '__main__' :
     from sqlalchemy import inspect
     mapper = inspect(SpotifyTracksORM)

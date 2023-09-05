@@ -28,7 +28,9 @@ class SpotifyAlbumsEntity(BaseModel) :
     id: str
     name: str
     images_url: str
-    release_date: str
+    release_date_precision: str
+    artists_id: str
+    artists_name: str
 
 if __name__ == '__main__' :
     from sqlalchemy import inspect
