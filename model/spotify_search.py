@@ -1,7 +1,36 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Dict, List, Union
+from database import Base
+from sqlalchemy.sql.schema import Column
+from sqlalchemy import String, Integer, ARRAY
+
+class SpotifyArtistsORM(Base) :
+    __tablename__ = 'spotify_artists'
+
+    id = Column(String, primary_key=True)
+    name = Column(String, nullable=True)
+    uri = Column(String, nullable=True)
+    href = Column(String, nullable=True)
+    external_urls = Column(String, nullable=True)
+    images_url = Column(String, nullable=True)
+    popularity = Column(Integer, nullable=True)
+    followers_total = Column(Integer, nullable=True)
+    genres = Column(ARRAY(String))
+
+    def __init__(self,artists):
+        self.id = artists.get('id')
+        self.name = artists.get('name')
+        self.uri = artists.get('uri')
+        self.href = artists.get('href')
+        self.external_urls = artists.get('external_urls').get('spotify')
+        self.images_url = artists.get('images')[0].get('url')
+        self.popularity = artists.get('popularity')
+        self.followers_total = artists.get('followers').get('total')
+        self.genres = artists.get('genres')
 
 class SpotifyArtists(BaseModel) :
+    model_config = ConfigDict(from_attributes=True)
+
     external_urls: Dict[str,str]
     followers: Dict[str,Union[int,None]]
     genres: List[str]
@@ -26,7 +55,7 @@ class SpotifySearch(BaseModel) :
 
 if __name__ == '__main__':
     import requests
-    access_token = 'BQDISv37-0sT-nwXNif8X6fvP4NRNL06Qu7WhtgFsi1EVrFUyGSkm25cm9Zoz1Gnpz-pu5dbQDjp8uMsI04mEUMnIhcsVWj1j7E4NXkBCl5o32MrpQ3mRAm6UrLiOLhYbVgu1-zCvd-hvO1gs_IaOQepIy1feH7Cd7eKr0E-5e6qYMezrLTk2EGjVqf2OPTqegijFzzALQ'
+    access_token = 'BQAVXHCFzLIt4y1K4E9EGK7Ml337hn2gbq5Kd84b_dXzACtvXUJnZL1nejwlC-mWupkzPah4_EyRXjUbbkht-DZsiW11od-Z1HQ0JAdWT30YxoSPhJKrbNIYXR27SiJ4ZhL4l3rmIJuar4LAza_B2rSO9BF_ibe0XwoMJtrqjXafYBbhSUI_0_A3XXPEJUswMWyNTRXYDQ'
     response = requests.get('https://api.spotify.com/v1/search?'
                             +'q=아이유'
                             +'&type=artist%2Calbum%2Ctrack'
@@ -36,14 +65,15 @@ if __name__ == '__main__':
                       )
     if response.status_code == 200 :
         responsed_data = response.json()
-        # print(responsed_data)
         parsed_data = SpotifySearch(**responsed_data)
-        print(type(parsed_data))
-        print(type(parsed_data.artists))
-        print(type(parsed_data.artists.items))
-        x = parsed_data.artists.items[0].uri
-        print(type(x))
-        print(x)
+        artists = parsed_data.artists.items
+
+        for entity in artists :
+            orm = SpotifyArtistsORM(entity.__dict__)
+
+            from database import session_scope
+            with session_scope() as session :
+                session.add(orm)
 
     else : print(response.status_code)
     
