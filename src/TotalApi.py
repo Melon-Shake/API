@@ -10,8 +10,8 @@ from config.db_info import db_params
 from lyric import lyric_search_and_input
 from sp_track import sp_and_track_input, get_sp_track_id
 from update_token import return_token
-import sys, numpy as np, pandas as pd, json, requests, re
-
+# import sys, numpy as np, pandas as pd, json, requests, re
+import requests
 
 app = FastAPI()
 
@@ -337,3 +337,4 @@ def sp_track_input(item: sp_data):
         return result
     else:
         raise HTTPException(status_code=404, detail="Track not found or error in processing.")
+
