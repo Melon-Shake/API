@@ -20,8 +20,8 @@ class SpotifyArtistsORM(Base) :
         self.name = artists.get('name', None)
         self.uri = artists.get('uri', None)
         self.href = artists.get('href', None)
-        self.external_urls = artists.get('external_urls', None)
-        self.images_url = artists.get('images_url', None)
+        self.external_urls = artists.get('external_urls').get('spotify', None)
+        self.images_url = artists.get('images')[0].get('url', None)
         self.genres = artists.get('genres', None)
         self.popularity = artists.get('popularity', None)
 
