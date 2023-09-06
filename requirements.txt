@@ -1,0 +1,9 @@
+fastapi==0.103.0
+bcrypt==4.0.1
+beautifulsoup4==4.12.2
+psycopg2==2.9.7
+pydantic==2.3.0
+requests==2.31.0
+SQLAlchemy==2.0.20
+uvicorn==0.23.2
+pandas==2.1.0
