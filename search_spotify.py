@@ -2,7 +2,7 @@ from model.database import session_scope
 from model.spotify_artists import SpotifyArtists, SpotifyArtistsORM
 from model.spotify_search import SpotifySearch, SpotifySearchArtists
 
-from get_token import update_token, return_token
+from src.get_token import update_token, return_token
 
 import requests
 
