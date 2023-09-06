@@ -1,7 +1,8 @@
-from model.database import Base
 from pydantic import BaseModel, ConfigDict
+from typing import Dict, List, Union
+from model.database import Base
 from sqlalchemy.sql.schema import Column
-from sqlalchemy import String
+from sqlalchemy import String, Integer, ARRAY
 
 class SpotifyArtistsORM(Base) :
     __tablename__ = 'spotify_artists'
@@ -12,30 +13,30 @@ class SpotifyArtistsORM(Base) :
     href = Column(String, nullable=True)
     external_urls = Column(String, nullable=True)
     images_url = Column(String, nullable=True)
-    genres = Column(String, nullable=True)
-    popularity = Column(String, nullable=True)
+    popularity = Column(Integer, nullable=True)
+    followers_total = Column(Integer, nullable=True)
+    genres = Column(ARRAY(String))
 
-    def __init__(self, artists) :
-        self.id = artists.get('id', None)
-        self.name = artists.get('name', None)
-        self.uri = artists.get('uri', None)
-        self.href = artists.get('href', None)
-        self.external_urls = artists.get('external_urls').get('spotify', None)
-        self.images_url = artists.get('images')[0].get('url', None)
-        self.genres = artists.get('genres', None)
-        self.popularity = artists.get('popularity', None)
+    def __init__(self,artists):
+        self.id = artists.get('id')
+        self.name = artists.get('name')
+        self.uri = artists.get('uri')
+        self.href = artists.get('href')
+        self.external_urls = artists.get('external_urls').get('spotify')
+        self.images_url = artists.get('images')[0].get('url')
+        self.popularity = artists.get('popularity')
+        self.followers_total = artists.get('followers').get('total')
+        self.genres = artists.get('genres')
 
-class SpotifyArtistsEntity(BaseModel) :
+class SpotifyArtists(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
 
+    external_urls: Dict[str,str]
+    followers: Dict[str,Union[int,None]]
+    genres: List[str]
+    href: str
     id: str
+    images: List[Dict[str,Union[int,str]]]
     name: str
-    images_url: str
-
-if __name__ == '__main__' :
-    from sqlalchemy import inspect
-    mapper = inspect(SpotifyArtistsORM)
-    table_name = mapper.persist_selectable.name
-    column_names = [column.key for column in mapper.columns]
-    print("Table Name:", table_name)
-    print("Column Names:", column_names)
+    popularity: int
+    uri: str
