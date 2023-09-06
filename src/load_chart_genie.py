@@ -12,6 +12,13 @@ if __name__ == '__main__' :
                             )
 
     if response.status_code == 200 :
-        pass
+        responsed_data = response.json()
+        arr = responsed_data.get('DataSet').get('DATA')
+        
+        print(len(arr))
+        print(arr[0])        
+        
+        for a in arr :
+            pass
 
     else : print(response.status_code)
