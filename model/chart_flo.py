@@ -15,7 +15,7 @@ class Albuminfo(BaseModel):
     title: str
     releaseYmd : str
 
-class FloEntity(BaseModel) :
+class ChartFlo(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -23,6 +23,3 @@ class FloEntity(BaseModel) :
     representationArtist: RepresentationArtistInfo
     artistList: List[Dict[str,Union[str,int]]]
     album: Albuminfo
-
-class Flo_Load(BaseModel) :
-    flo: List[FloEntity]
