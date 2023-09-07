@@ -19,18 +19,9 @@ if __name__ == '__main__' :
                             )
 
     if response.status_code == 200 :
-        # print(response.status_code)
-        # responsed_data = response.json()
         responsed_data = response.json().get('DataSet').get('DATA')
-        # print(responsed_data)
-        # print(type(responsed_data))
-        # print(len(responsed_data))
-        # print(responsed_data[0])
 
         for x in responsed_data :
             entity = ChartGenie(**x)
-            # print(type(entity))
-            print(entity.SONG_ID)
-            print(entity.SONG_NAME)
 
     else : print(response.status_code)
