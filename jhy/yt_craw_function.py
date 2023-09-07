@@ -117,6 +117,7 @@ def yt_craw_start(weeks_ago : int):
     past_week = yt_get_weeks()
     start_date = past_week[weeks_ago][0]
     end_date = past_week[weeks_ago][1]
+    weeks_ago -=1
     if weeks_ago == -1:
         url = 'https://charts.youtube.com/charts/TopSongs/kr?hl=ko'
     else:
