@@ -23,8 +23,38 @@ if __name__ == '__main__':
     print(type(test_var))
     print(test_var)
     ##############################################
+    data_type_counts = {
+      "str": 0,
+      "int": 0,
+      "None": 0,
+      "bool": 0,
+      }
+
+    for song_data in song_list:
+    # type 확인
+      if song_data is None:
+        data_type = "None"
+      elif isinstance(song_data, bool):
+        data_type = "bool"
+      elif isinstance(song_data, int):
+        data_type = "int"
+      else:
+        data_type = "str"
+
+      data_type_counts[data_type] += 1
+
+    print(data_type_counts)
+    
+    
     testlist = []
+    data_type_conts = {
+      "str":0,
+      "int":0,
+      "None":0,
+      "bool":0,
+      }
     for i in range(len(song_list)):
+      # type 확인
       song_data = song_list[i].get('ALBUMNAME')
       
       # 값이 none인지 확인
@@ -44,16 +74,20 @@ if __name__ == '__main__':
       
       testlist.append(data_type)
       
-      data_type_conts = {
-        "str":0,
-        "int":0,
-        "None":0,
-        "bool":0,
-      }
-      
       for item in testlist:
-        # data_type = item[1]
-        print(item)
+        
+        if item == 'int':
+          data_type_conts["int"] +=1
+          
+        elif item == 'str':
+          data_type_conts["str"] +=1
+        elif item == 'bool':
+         data_type_conts["bool"] +=1
+        elif item == 'int':
+          data_type_conts["int"] +=1
+          
+    print(data_type_conts)
+    
         # data_type_conts[data_type] +=1
       # song_data = ChartMelon(**song_list[i])
       # song_data_input= song_data.ALBUMNAME
