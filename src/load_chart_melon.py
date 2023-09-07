@@ -15,14 +15,23 @@ if __name__ == '__main__':
   if response.status_code == 200 :
     response_data = response.json()
     song_list = response_data['response']['SONGLIST'] 
-    print(type(song_list)) # <class 'list'>
-    print(type(song_list[0])) # <class 'dict'>
-    print(song_list[0]) # list[dict]
+    print(song_list[0])
+    # print(type(song_list)) # <class 'list'>
+    # print(type(song_list[0])) # <class 'dict'>
+    # print(song_list[0]['GENRELIST'][0]['GENRENAME']) # list[dict]
+    # print(type(song_list[0]['GENRELIST'][0]['GENRENAME'])) # list[dict]
+    # print(type(song_list[0]['GENRELIST'][1]['GENRENAME'])) # list[dict]
 
-    test_var= song_list[0].get('ALBUMNAME')
-    print(type(test_var))
-    print(test_var)
+    # test_var= song_list[0].get('ALBUMNAME')
+    # print(type(test_var))
+    # print(test_var)
+    aa=0
     ##############################################
+    song_list_list = []
+    for i in range(len(song_list)):
+      song_data = song_list[i]['ARTISTLIST'][0]['ARTISTNAME']
+      song_list_list.append(song_data)
+    # song_data = song_list['SONGNAME']
     data_type_counts = {
       "str": 0,
       "int": 0,
@@ -30,13 +39,13 @@ if __name__ == '__main__':
       "bool": 0,
       }
 
-    for song_data in song_list:
+    for song_datas in song_list_list:
     # type 확인
-      if song_data is None:
+      if song_datas is None:
         data_type = "None"
-      elif isinstance(song_data, bool):
+      elif isinstance(song_datas, bool):
         data_type = "bool"
-      elif isinstance(song_data, int):
+      elif isinstance(song_datas, int):
         data_type = "int"
       else:
         data_type = "str"
@@ -44,50 +53,7 @@ if __name__ == '__main__':
       data_type_counts[data_type] += 1
 
     print(data_type_counts)
-    
-    
-    testlist = []
-    data_type_conts = {
-      "str":0,
-      "int":0,
-      "None":0,
-      "bool":0,
-      }
-    for i in range(len(song_list)):
-      # type 확인
-      song_data = song_list[i].get('ALBUMNAME')
-      
-      # 값이 none인지 확인
-      if song_data is None:
-        data_type = "None"
-        
-      # bool 타임지 확인
-      elif isinstance(song_data, bool):
-        data_type = "bool"
-      
-      # int 타입인지 확인
-      elif isinstance(song_data, int):
-        data_type = "int"
-        
-      else:
-        data_type = "str"
-      
-      testlist.append(data_type)
-      
-      for item in testlist:
-        
-        if item == 'int':
-          data_type_conts["int"] +=1
-          
-        elif item == 'str':
-          data_type_conts["str"] +=1
-        elif item == 'bool':
-         data_type_conts["bool"] +=1
-        elif item == 'int':
-          data_type_conts["int"] +=1
-          
-    print(data_type_conts)
-    
+
         # data_type_conts[data_type] +=1
       # song_data = ChartMelon(**song_list[i])
       # song_data_input= song_data.ALBUMNAME
