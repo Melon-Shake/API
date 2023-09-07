@@ -36,5 +36,6 @@ if __name__ == '__main__' :
     column_names = [column.key for column in mapper.columns]
 
     print("Column Names:", column_names)
+
     print("Table Name:", table_name)
     print("Column Names:", column_names)
