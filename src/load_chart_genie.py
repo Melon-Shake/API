@@ -14,8 +14,7 @@ if __name__ == '__main__' :
                                  'Content_Type' : 'application/x-www-form-urlencoded'
                              }
                              ,data={
-                                 'dict': 'R'
-                                 ,'pg_size': '200'
+                                 'pg_size': '100'
                              }
                             )
 
