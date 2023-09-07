@@ -1,2 +1,9 @@
+<<<<<<< HEAD
 *.ipynb
 *.pyc
+=======
+config/
+Pipfile
+Pipfile.lock
+*.pyc
+>>>>>>> v0.2.0/bkson/chart_melon
