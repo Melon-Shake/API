@@ -1,2 +1,2 @@
 .ipynb
-.pyc
+*.pyc
