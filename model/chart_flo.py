@@ -1,8 +1,9 @@
-from model.database import Base
 from pydantic import BaseModel, ConfigDict
+from typing import Dict, List, Union
+
+from model.database import Base
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import Integer, String, Boolean
-from typing import Dict, List, Union
 
 class RepresentationArtistInfo(BaseModel):
     id: int

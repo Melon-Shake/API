@@ -1,6 +1,11 @@
 import requests
+
 import sys
-from model.flo_db import FloEntity
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
+
+from model.chart_flo import FloEntity
 
 if __name__ == '__main__':
 
