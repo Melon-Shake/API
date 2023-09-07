@@ -5,11 +5,11 @@ from model.database import Base
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import Integer, String, Boolean
 
-class RepresentationArtistInfo(BaseModel):
+class RepresentationArtist(BaseModel):
     id: int
     name:str
 
-class Albuminfo(BaseModel):
+class Album(BaseModel):
     id: int
     imgList:List[Dict[str,Union[str,int]]]
     title: str
@@ -20,6 +20,6 @@ class ChartFlo(BaseModel) :
 
     id: int
     name: str
-    representationArtist: RepresentationArtistInfo
+    representationArtist: RepresentationArtist
     artistList: List[Dict[str,Union[str,int]]]
-    album: Albuminfo
+    album: Album
