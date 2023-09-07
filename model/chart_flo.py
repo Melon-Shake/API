@@ -11,6 +11,10 @@ class Album(BaseModel):
     title: str
     releaseYmd : str
 
+class Artist(BaseModel) :
+    id: int
+    name: str
+
 class RepresentationArtist(BaseModel):
     id: int
     name:str
@@ -21,5 +25,5 @@ class ChartFlo(BaseModel) :
     id: int
     name: str
     representationArtist: RepresentationArtist
-    artistList: List[Dict[str,Union[str,int]]]
+    artistList: List[Artist]
     album: Album
