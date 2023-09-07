@@ -27,3 +27,6 @@ class ChartFlo(BaseModel) :
     representationArtist: RepresentationArtist
     artistList: List[Artist]
     album: Album
+
+class ChartFloORM(Base) :
+    pass
