@@ -105,10 +105,11 @@ def yt_craw(url):
             query_params = parse_qs(url_parts.query)
             video_id = query_params.get('v', [''])[0]
             VIDEO_ID.append(video_id)
-
-    VIEWS.pop(0)
-    CHANGE.pop(0)
     rank_const.pop(0)
+    CHANGE.pop(0)
+    VIEWS.pop(0)
+
+    
     df = pd.DataFrame({'Title': titles, 'Artist': artists, 'Rank_const': rank_const, 'Change':CHANGE, 'View':VIEWS, 'Previous_rank':PRE_RANK, 'Url':URL, 'Video_ID':VIDEO_ID})
     driver.quit()
     return df
