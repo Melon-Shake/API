@@ -5,7 +5,8 @@ import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
-from model.chart_flo import ChartFlo
+from model.chart_flo import ChartFlo, ChartFloORM
+from model.database import session_scope
 
 if __name__ == '__main__':
 
@@ -19,6 +20,10 @@ if __name__ == '__main__':
     if response.status_code == 200 :
         responsed_data = response.json()
         parsed_data = responsed_data.get('data').get('trackList')
-        
+
         for e in parsed_data :
             entity = ChartFlo(**e)
+            orm = ChartFloORM(entity)
+            x = orm.album.releaseYmd
+            print(type(x))
+            print(x)

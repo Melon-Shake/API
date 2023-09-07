@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 
 from model.database import Base
 from sqlalchemy.sql.schema import Column
-from sqlalchemy import Integer, String, Boolean
+from sqlalchemy import Integer, String, Boolean, JSON
 
 class Album(BaseModel):
     id: int
@@ -29,4 +29,17 @@ class ChartFlo(BaseModel) :
     album: Album
 
 class ChartFloORM(Base) :
-    pass
+    __tablename__ = 'chart_flo'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=True)
+    representation_artist = Column(JSON, nullable=True)
+    artist_list = Column(JSON, nullable=True)
+    album = Column(JSON, nullable=True)
+
+    def __init__(self, flo) :
+        self.id = flo.id
+        self.name = flo.name
+        self.representation_artist = flo.representationArtist
+        self.artist_list = flo.artistList
+        self.album = flo.album
