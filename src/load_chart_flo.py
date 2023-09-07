@@ -24,6 +24,3 @@ if __name__ == '__main__':
         for e in parsed_data :
             entity = ChartFlo(**e)
             orm = ChartFloORM(entity)
-            x = orm.album.imgList[0].url
-            print(type(x))
-            print(x)
