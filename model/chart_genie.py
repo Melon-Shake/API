@@ -6,7 +6,7 @@ from sqlalchemy.sql.schema import Column
 from sqlalchemy import String, Integer, ARRAY
 
 class ChartGenieORM(Base) :
-    __tablename__ = 'genie_chart'
+    __tablename__ = 'chart_genie'
 
     song_id = Column(String, primary_key=True)
     song_name = Column(String, nullable=True)
