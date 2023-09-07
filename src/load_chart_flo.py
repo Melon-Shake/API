@@ -24,3 +24,6 @@ if __name__ == '__main__':
         for e in parsed_data :
             entity = ChartFlo(**e)
             orm = ChartFloORM(entity)
+
+            with session_scope() as session :
+                session.add(orm)
