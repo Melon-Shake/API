@@ -50,13 +50,14 @@ class ChartFloORM(Base) :
     artist_list = Column(String, nullable=True)
     album = Column(String, nullable=True)
 
-    def __init__(self, flo) :
+    def __init__(self, flo: ChartFlo) :
         self.id = flo.id
         self.name = flo.name
-        self.representation_artist = json.dumps(flo.representationArtist.__dict__)
-        self.artist_list = json.dumps([artist.__dict__ for artist in flo.artistList])
+
+        # self.representation_artist = json.dumps(flo.representationArtist.__dict__)
+        # self.artist_list = json.dumps([artist.__dict__ for artist in flo.artistList])
         # self.album = json.dumps(flo.album.__dict__)
 
         # self.representation_artist = flo.representationArtist
         # self.artist_list = flo.artistList
-        # self.album = flo.album
+        # self.album = flo.album)

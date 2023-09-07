@@ -25,5 +25,5 @@ if __name__ == '__main__':
             entity = ChartFlo(**e)
             orm = ChartFloORM(entity)
 
-            with session_scope() as session :
-                session.add(orm)
+            # with session_scope() as session :
+            #     session.add(orm)
