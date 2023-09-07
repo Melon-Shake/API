@@ -238,9 +238,8 @@ def get_daily_search_ranking():
     cursor = connection.cursor()
 
     search_query = """
-        SELECT keyword, RANK() OVER (ORDER BY COUNT(*) DESC) as search_rank
+        SELECT keyword, RANK() OVER (ORDER BY created_datetime DESC, COUNT(*) DESC) as search_rank
         FROM search_log_keywords
-        WHERE created_datetime >= NOW() - INTERVAL '1 DAY'
         GROUP BY keyword
         ORDER BY search_rank;
     """
@@ -268,12 +267,13 @@ def get_daily_search_ranking():
     for _, (keyword, search_rank) in enumerate(search_ranking):
         cursor.execute(value_check_query, (keyword,))
         if cursor.fetchone():
-            if search_rank != prev_search_rank:  # 동일한 순위가 아니면 순위 업데이트
-                rank += 1
+            if exists:
+                if search_rank != prev_search_rank:  # 동일한 순위가 아니면 순위 업데이트
+                    rank += 1
             result[rank] = keyword
             prev_search_rank = search_rank
             
-            if rank >= 10:  # 10위까지만 결과 저장
+            if rank >= 20:  # 20위까지만 결과 저장
                 break
     
     connection.close()
