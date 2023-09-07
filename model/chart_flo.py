@@ -5,9 +5,12 @@ from model.database import Base
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import Integer, String, Boolean, JSON
 
+class Img(BaseModel):
+    url: str
+
 class Album(BaseModel):
     id: int
-    imgList:List[Dict[str,Union[str,int]]]
+    imgList:List[Img]
     title: str
     releaseYmd : str
 
