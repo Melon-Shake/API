@@ -14,19 +14,21 @@ if __name__ == '__main__' :
                                  'Content_Type' : 'application/x-www-form-urlencoded'
                              }
                              ,data={
-                                 'dict': 'R'
-                                 ,'pg_size': '200'
+                                'pgsize': '100'
                              }
                             )
 
     if response.status_code == 200 :
         responsed_data = response.json().get('DataSet').get('DATA')
-
+        print(len(responsed_data))
         for e in responsed_data :
             entity = ChartGenie(**e)
             orm = ChartGenieORM(entity)
 
-            with session_scope() as session :
-                session.add(orm)
+    #         with session_scope() as session :
+    #             session.add(orm)
+    #     with session_scope() as session:
+    #         x = session.query(ChartGenieORM).first()
+    #         print(type(x))
 
-    else : print(response.status_code)
+    # else : print(response.status_code)
