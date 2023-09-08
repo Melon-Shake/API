@@ -5,7 +5,8 @@ import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
-from model.chart_vibe import VibeEntity
+from model.chart_vibe import VibeEntity, VibeORM
+from model.database import session_scope
 
 if __name__ == '__main__':
 
@@ -28,21 +29,10 @@ if __name__ == '__main__':
 
     if response.status_code == 200 :
         responsed_data = response.json().get('response').get('result').get('chart').get('items').get('tracks')
-    
-        # e = VibeEntity(**responsed_data[0])
-        # x = e.artists
-        # print(type(x))
-        # print(x)
 
         for x in responsed_data :
             entity = VibeEntity(**x)
-            # print(entity.trackId)
-            # print(entity.trackTitle)
-            # print(entity.artists[0].artistId)
-            # print(entity.artists[0].artistName)
-            # print(entity.album.albumId)
-            # print(entity.album.albumTitle)
-            # print(entity.album.releaseDate)
-            # print(entity.album.imageUrl)
-            # print(entity.album.albumGenres)
-            # print(entity.rank.currentRank)
+            orm = VibeORM(entity)
+
+            with session_scope() as session :
+                session.add(orm)
