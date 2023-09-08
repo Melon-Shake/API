@@ -14,7 +14,7 @@ if __name__ == '__main__' :
                                  'Content_Type' : 'application/x-www-form-urlencoded'
                              }
                              ,data={
-                                'pg_size': '200'
+                                'pgSize': '100'
                              }
                             )
 
