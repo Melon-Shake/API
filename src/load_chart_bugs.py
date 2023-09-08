@@ -5,7 +5,8 @@ import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
-from model.chart_bugs import BugsEntity
+from model.chart_bugs import BugsEntity, BugsORM
+from model.database import session_scope
 
 if __name__ == '__main__':
 
@@ -27,17 +28,7 @@ if __name__ == '__main__':
     
         for x in responsed_data :
             entity = BugsEntity(**x)
-            # print(entity.track_id)
-            # print(entity.track_title)
-            # print(entity.album.album_id)
-            # print(entity.album.title)
-            # print(_IMAGE_PREFIX_URL+'/256'+entity.album.image.path)
-            # print(entity.album.release_ymd)
-            # print(entity.album.release_local_ymd)
-            # print(entity.artists[0].artist_id)
-            # print(entity.artists[0].artist_nm)
-            # print(entity.artists[0].genres[0].svc_nm)
-            # print(entity.adhoc_attr.likes_count)
-            # print(entity.list_attr.rank)
-            # print(entity.list_attr.rank_peak)
-            print(entity.list_attr.rank_last)
+            orm = BugsORM(entity)
+
+            with session_scope() as session :
+                session.add(orm)
