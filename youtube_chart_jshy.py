@@ -5,11 +5,13 @@ import pandas as pd
 import re
 import json
 from urllib.parse import urlparse, parse_qs
+import requests
+import config.youtubekey as youtube
 import sys
 import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
-from model.hy_ytmusic import ChartYoutube, Response
+from model.ytmusic import js_ChartYoutube, Response, hy_ChartYoutube, js_SumChart
 
 def yt_get_weeks():
     chrome_options = webdriver.ChromeOptions()
@@ -61,11 +63,11 @@ def yt_craw(url):
     titles = []
     artists = []
     rank_const = []
-    CHANGE = []
-    VIEWS = []
-    PRE_RANK = []
-    URL = []
-    VIDEO_ID =  []
+    changes = []
+    views = []
+    pre_ranks = []
+    urls = []
+    video_ids =  []
     # ResultSet 내에서 값을 추출
     for div_element in articles:
         # 각 div 요소에서 원하는 값을 찾음
@@ -81,13 +83,13 @@ def yt_craw(url):
         for const in consts:
             rank_const.append(const.get_text().strip())
         
-        changes = div_element.find_all('div', class_ = 'views-change-cell style-scope ytmc-chart-table')
-        for change in changes:
-            CHANGE.append(change.get_text().strip())
+        craw_changes = div_element.find_all('div', class_ = 'views-change-cell style-scope ytmc-chart-table')
+        for change in craw_changes:
+            changes.append(change.get_text().strip())
             
-        views = div_element.find_all('div', class_ = 'views-cell style-scope ytmc-chart-table')
-        for view in views:
-            VIEWS.append(view.get_text().strip())
+        craw_views = div_element.find_all('div', class_ = 'views-cell style-scope ytmc-chart-table')
+        for view in craw_views:
+            views.append(view.get_text().strip())
             
         previous = div_element.find_all('div', class_ = 'previous-rank style-scope ytmc-chart-table')
         for view in previous:
@@ -96,25 +98,30 @@ def yt_craw(url):
                 match = (re.search(r'#(\d+)', text)).group(1)
             except:
                 match = None
-            PRE_RANK.append(match)
+            pre_ranks.append(match)
 
-        urls = div_element.find_all('img', class_='chart-entry-thumbnail clickable style-scope ytmc-chart-table')
-        for url in urls:
+        craw_urls = div_element.find_all('img', class_='chart-entry-thumbnail clickable style-scope ytmc-chart-table')
+        for url in craw_urls:
             ep = url.get('endpoint')
             url_data = json.loads(ep)
             full_url = url_data['urlEndpoint']['url']
-            URL.append(full_url)
+            urls.append(full_url)
             url_parts = urlparse(full_url)
             query_params = parse_qs(url_parts.query)
             video_id = query_params.get('v', [''])[0]
-            VIDEO_ID.append(video_id)
+            video_ids.append(video_id)
 
-    VIEWS.pop(0)
-    CHANGE.pop(0)
     rank_const.pop(0)
-    df = pd.DataFrame({'Title': titles, 'Artist': artists, 'Rank_const': rank_const, 'Change':CHANGE, 'View':VIEWS, 'Previous_rank':PRE_RANK, 'Url':URL, 'Video_ID':VIDEO_ID})
+    changes.pop(0)
+    views.pop(0)
+    # df = pd.DataFrame({'Title': titles, 'Artist': artists, 'Rank_const': rank_const, 'Change':changes, 'View':views, 'Previous_rank':pre_ranks, 'Url':urls, 'Video_ID':video_ids})
     driver.quit()
-    return df
+    
+    youtube_chart = [{'title': title,'artist': artist ,'rank_const': rank_const, 'change':change, 'view':view, 'previous_rank':pre_rank, 'url':url, 'video_Id':video_id} for title, artist, rank_const, change, view, pre_rank, url, video_id in zip(titles,artists,rank_const,changes,views,pre_ranks,urls,video_ids)]
+    response = {'args':youtube_chart}
+    
+    x = Response(**response)
+    return x
     
 def yt_craw_start(weeks_ago : int):
     past_week = yt_get_weeks()
@@ -125,8 +132,54 @@ def yt_craw_start(weeks_ago : int):
         url = 'https://charts.youtube.com/charts/TopSongs/kr?hl=ko'
     else:
         url = f"https://charts.youtube.com/charts/TopSongs/kr/{start_date}-{end_date}?hl=ko"
-    df = yt_craw(url)
-    return df
+    x = yt_craw(url)
+    return x
 
-yt_chart = yt_craw_start(1)
-print(yt_chart)
+hy_chart = yt_craw_start(0)
+
+# ---------------------------------------------------------------------------------------
+key= youtube.key
+
+url = f'https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet%2C%20contentDetails&maxResults=100&playlistId=PL4fGSI1pDJn6jXS_Tv_N9B8Z0HTRVJE0m&key={key}'
+
+response = requests.get(url)
+
+if response.status_code == 200:
+    response_json = response.json()
+    next_page_token = response_json['nextPageToken']
+    # print(next_page_token)
+    playlist_item = response_json.get('items')
+    youtube_args1 = []
+    # print(type(playlist_item[0]['contentDetails']['videoPublishedAt']))
+    for item in playlist_item : 
+        youtube_item = js_ChartYoutube(**item)
+        # print(youtube_item)
+        youtube_args1.append(youtube_item)
+        
+        
+    url2 = f'https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet%2C%20contentDetails&maxResults=100&pageToken={next_page_token}&playlistId=PL4fGSI1pDJn6jXS_Tv_N9B8Z0HTRVJE0m&key={key}'
+    response2 = requests.get(url2)
+    
+    response2_json = response2.json()
+    playlist_item2 = response2_json.get('items')
+    
+    youtube_args2 = []
+    for item2 in playlist_item2:
+        # print(item2.get('contentDetails'))
+        youtube_item2 = js_ChartYoutube(**item2)
+        youtube_args2.append(youtube_item2)
+        # print(youtube_item2)
+        # print(type(youtube_item2))
+else:
+    print('error_code ='+ response.status_code)
+
+result_item = youtube_args1+youtube_args2
+result_chart = js_SumChart(result_item=result_item)
+
+total_youtube_chart = {'all':[]}
+
+for i in range(100):
+    combined_item = (hy_chart.args[i],result_chart.result_item[i])
+    total_youtube_chart['all'].append(combined_item)
+
+print(total_youtube_chart['all'])

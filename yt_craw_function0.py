@@ -6,7 +6,7 @@ import sys
 import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
-from model.hy_ytmusic import ChartYoutube, Response
+from model.ytmusic import ChartYoutube, Response
 
 driver = webdriver.Chrome()
 
