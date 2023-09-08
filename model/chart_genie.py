@@ -10,15 +10,15 @@ from sqlalchemy.sql import func
 class ChartGenieORM(Base) :
     __tablename__ = 'chart_genie'
 
-    song_id = Column(String, primary_key=True)
+    song_id = Column(Integer, primary_key=True)
     song_name = Column(String, nullable=True)
-    artist_id = Column(String, nullable=True)
+    artist_id = Column(Integer, nullable=True)
     artist_name = Column(String, nullable=True)
-    album_id = Column(String, nullable=True)
+    album_id = Column(Integer, nullable=True)
     album_name = Column(String, nullable=True)
     album_img_path = Column(String, nullable=True)
-    rank_no = Column(String, nullable=True)
-    pre_rank_no = Column(String, nullable=True)
+    rank_no = Column(Integer, nullable=True)
+    pre_rank_no = Column(Integer, nullable=True)
     points = Column(Float, nullable=True)
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
