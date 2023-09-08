@@ -33,7 +33,6 @@ speechiness = response_json['speechiness']
 valence = response_json['valence']
 tempo = response_json['tempo']
 
-
 with conn:
     with conn.cursor() as cur:
         query1 = "INSERT INTO sp_audio_features (acousticness,danceability,energy,instrumentalness,liveness,loudness,speechiness,valence,tempo) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
