@@ -8,11 +8,7 @@ from urllib.parse import urlparse, parse_qs
 def yt_get_weeks():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--headless')  
-
-
     driver = webdriver.Chrome(options=chrome_options)
-
-
 
     url = f"https://charts.youtube.com/charts/TopSongs/kr?hl=ko"
 
