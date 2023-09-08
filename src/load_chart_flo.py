@@ -1,6 +1,12 @@
 import requests
+
 import sys
-from model.flo_db import FloEntity
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
+
+from model.chart_flo import ChartFlo, ChartFloORM
+from model.database import session_scope
 
 if __name__ == '__main__':
 
@@ -12,10 +18,12 @@ if __name__ == '__main__':
                       )
 
     if response.status_code == 200 :
-        responsed_data = response.json().get('data').get('trackList')
-        #print(responsed_data[0].get('trackTitle'))
-        #print(type(responsed_data.get('data').get('trackList')[0].get('id')))
-        for x in responsed_data :
-            entity = FloEntity(**x)
-            print(entity)
-      
+        responsed_data = response.json()
+        parsed_data = responsed_data.get('data').get('trackList')
+
+        for i, e in enumerate(parsed_data) :
+            entity = ChartFlo(**e)
+            orm = ChartFloORM(i,entity)
+            
+            with session_scope() as session :
+                session.add(orm)

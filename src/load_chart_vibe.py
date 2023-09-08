@@ -1,6 +1,12 @@
 import requests
+
 import sys
-from model.vibe_db import VibeEntity
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
+
+from model.chart_vibe import VibeEntity, VibeORM
+from model.database import session_scope
 
 if __name__ == '__main__':
 
@@ -23,7 +29,10 @@ if __name__ == '__main__':
 
     if response.status_code == 200 :
         responsed_data = response.json().get('response').get('result').get('chart').get('items').get('tracks')
-    
+
         for x in responsed_data :
             entity = VibeEntity(**x)
-            print(entity)
+            orm = VibeORM(entity)
+
+            with session_scope() as session :
+                session.add(orm)
