@@ -27,5 +27,21 @@ if __name__ == '__main__':
     
         for x in responsed_data :
             entity = BugsEntity(**x)
+            print(entity.track_id)
             print(entity)
-            
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
+            # print(entity)
