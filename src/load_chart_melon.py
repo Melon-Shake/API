@@ -5,7 +5,7 @@ import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
-from model.chart_melon import ChartMelon
+from model.chart_melon import ChartMelon, MelonORM
 import  requests
 
 if __name__ == '__main__':
@@ -22,14 +22,7 @@ if __name__ == '__main__':
     song_list = response_data['response']['SONGLIST']
     for item in song_list:
       entity = ChartMelon(**item)
-      # print(entity.SONGID)
-      # print(entity.SONGNAME)
-      # print(entity.ALBUMID)
-      # print(entity.ALBUMNAME)
-      # print(entity.ALBUMIMG)
-      # print(entity.CURRANK)
-      # print(entity.PASTRANK)
-      # print(entity.ISSUEDATE)
-      # print(entity.ARTISTLIST[0].ARTISTID)
-      # print(entity.ARTISTLIST[0].ARTISTNAME)
-      print(entity.GENRELIST[0].GENRENAME)
+      orm = MelonORM(entity)
+
+      with session_scope() as session :
+        session.add(orm)
