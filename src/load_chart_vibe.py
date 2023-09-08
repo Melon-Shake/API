@@ -29,6 +29,20 @@ if __name__ == '__main__':
     if response.status_code == 200 :
         responsed_data = response.json().get('response').get('result').get('chart').get('items').get('tracks')
     
+        # e = VibeEntity(**responsed_data[0])
+        # x = e.artists
+        # print(type(x))
+        # print(x)
+
         for x in responsed_data :
             entity = VibeEntity(**x)
-            print(entity)
+            # print(entity.trackId)
+            # print(entity.trackTitle)
+            # print(entity.artists[0].artistId)
+            # print(entity.artists[0].artistName)
+            # print(entity.album.albumId)
+            # print(entity.album.albumTitle)
+            # print(entity.album.releaseDate)
+            # print(entity.album.imageUrl)
+            # print(entity.album.albumGenres)
+            # print(entity.rank.currentRank)

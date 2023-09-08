@@ -12,13 +12,19 @@ class Albuminfo(BaseModel):
     albumTitle: str
     releaseDate : str
     imageUrl:str
+    albumGenres: str
+
+class ArtistInfo(BaseModel):
+    artistId: int
+    artistName: str
 
 class VibeEntity(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
 
     trackId: int
     trackTitle: str
-    artists: List[Dict[str,Union[str,int]]]
+    artists: List[ArtistInfo]
+    # artists: List[Dict[str,Union[str,int]]]
     # artistList: List[Dict[str,Union[str,int]]]
     album: Albuminfo
     rank:rankInfo
