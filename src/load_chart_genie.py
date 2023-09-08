@@ -1,7 +1,7 @@
 import requests
-
-import sys
-import os
+from pydantic import BaseModel, ConfigDict
+from typing import Dict, List, Union
+import sys, os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
@@ -20,15 +20,42 @@ if __name__ == '__main__' :
 
     if response.status_code == 200 :
         responsed_data = response.json().get('DataSet').get('DATA')
-        print(len(responsed_data))
         for e in responsed_data :
             entity = ChartGenie(**e)
             orm = ChartGenieORM(entity)
 
-    #         with session_scope() as session :
-    #             session.add(orm)
-    #     with session_scope() as session:
-    #         x = session.query(ChartGenieORM).first()
-    #         print(type(x))
+            # with session_scope() as session :
+            #     session.add(orm)
+        
+        class TotalChart(BaseModel) :
+            track_name : str
+            artist_name : str
+            album_name : str
+            points : Union[int, float]
+        
+        with session_scope() as session:
+            genieOrms = session.query(ChartGenieORM).all()
+            entries =[]
+            for genieOrm in genieOrms :
+                genieChart = TotalChart(
+                    track_name=genieOrm.song_name,
+                    artist_name=genieOrm.artist_name,
+                    album_name=genieOrm.album_name,
+                    points=genieOrm.points
+                           )
+                entries.append(genieChart)
+            print(entries)
+            
+            
+            
+            
+            
+            # genieOrm_list = []
+            # for item in genieOrm:
+            #     name_orm= item.song_name
+            #     artist_orm= item.artist_name
+            #     album_orm= item.album_name
+            #     point_orm= item.points
+            # print(print(x))
 
     # else : print(response.status_code)
