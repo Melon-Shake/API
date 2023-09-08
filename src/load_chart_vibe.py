@@ -1,6 +1,11 @@
 import requests
+
 import sys
-from model.vibe_db import VibeEntity
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
+
+from model.chart_vibe import VibeEntity
 
 if __name__ == '__main__':
 
