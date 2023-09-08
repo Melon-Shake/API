@@ -21,27 +21,9 @@ if __name__ == '__main__':
         responsed_data = response.json()
         parsed_data = responsed_data.get('data').get('trackList')
 
-        from model.flo_db import FloChart, FloArtist, FloAlbum, FloTrack
-
-        # parsed_data.reverse()
         for i, e in enumerate(parsed_data) :
             entity = ChartFlo(**e)
+            orm = ChartFloORM(i,entity)
             
-            track_orm = FloTrack(id=entity.id, name=entity.name)
-            print(track_orm.name)
-            album_orm = FloAlbum(entity.album)
-            print(album_orm.title)
-            artist_orm = FloArtist(entity.representationArtist)
-            print(artist_orm.name)
-
-            chart_orm = FloChart(index=i, artist=artist_orm, album=album_orm, track=track_orm)
-            print(chart_orm.id)
-            print(chart_orm.rank)
-            print(chart_orm.points)
-            print(chart_orm.artist)
-            print(chart_orm.album)
-            print(chart_orm.track)
-
             with session_scope() as session :
-                session.add(chart_orm)
-            
+                session.add(orm)

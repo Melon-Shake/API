@@ -17,7 +17,6 @@ class Album(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    # imgList:List[Dict[str,Union[str,int]]]
     imgList:List[Img]
     title: str
     releaseYmd : str
@@ -70,13 +69,3 @@ class ChartFloORM(Base) :
         self.release_ymd = entity.album.releaseYmd
         self.rank = idx+1
         self.points = (100-idx)*6.1
-
-        # self.id = flo.id
-        # self.name = flo.name
-        # self.representation_artist = json.dumps(flo.representationArtist.__dict__)
-        # self.artist_list = json.dumps([artist.__dict__ for artist in flo.artistList])
-        # self.album = json.dumps(flo.album.__dict__)
-        
-        # self.representation_artist = flo.representationArtist
-        # self.artist_list = flo.artistList
-        # self.album = flo.album)
