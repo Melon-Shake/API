@@ -5,13 +5,14 @@ from typing import List, Optional
 class Artistinfo(BaseModel):
   ARTISTID: str
   ARTISTNAME: str
-# 
+
 class GenreInfo(BaseModel):
   GENRECODE: Union[str, int]
   GENRENAME: Union[str, int]
   
-
 class ChartMelon(BaseModel):
+  model_config = ConfigDict(from_attributes=True)
+  
   SONGID: int
   SONGNAME: str
   ALBUMID: int
