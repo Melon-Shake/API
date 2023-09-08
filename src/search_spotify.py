@@ -23,7 +23,8 @@ if __name__ == '__main__':
         artists = parsed_data.artists.items
 
         for entity in artists :
-            orm = SpotifyArtistsORM(entity.__dict__)
+            # orm = SpotifyArtistsORM(entity.__dict__)
+            orm = SpotifyArtistsORM(entity)
 
             with session_scope() as session :
                 session.add(orm)

@@ -18,15 +18,24 @@ class SpotifyArtistsORM(Base) :
     genres = Column(ARRAY(String))
 
     def __init__(self,artists):
-        self.id = artists.get('id')
-        self.name = artists.get('name')
-        self.uri = artists.get('uri')
-        self.href = artists.get('href')
-        self.external_urls = artists.get('external_urls').get('spotify')
-        self.images_url = artists.get('images')[0].get('url')
-        self.popularity = artists.get('popularity')
-        self.followers_total = artists.get('followers').get('total')
-        self.genres = artists.get('genres')
+        # self.id = artists.get('id')
+        # self.name = artists.get('name')
+        # self.uri = artists.get('uri')
+        # self.href = artists.get('href')
+        # self.external_urls = artists.get('external_urls').get('spotify')
+        # self.images_url = artists.get('images')[0].get('url')
+        # self.popularity = artists.get('popularity')
+        # self.followers_total = artists.get('followers').get('total')
+        # self.genres = artists.get('genres')
+        self.id = artists.id
+        self.name = artists.name
+        self.uri = artists.uri
+        self.href = artists.href
+        self.external_urls = artists.external_urls.get('spotify')
+        self.images_url = artists.images[0].get('url')
+        self.popularity = artists.popularity
+        self.followers_total = artists.followers.get('total')
+        self.genres = artists.genres
 
 class SpotifyArtists(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
