@@ -277,7 +277,7 @@ def get_daily_search_ranking():
             result[rank] = keyword
             prev_search_rank = search_rank
             
-            if rank >= 10:  # 20위까지만 결과 저장
+            if rank >= 20:  # 20위까지만 결과 저장
                 break
     
     connection.close()
