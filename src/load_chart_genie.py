@@ -25,17 +25,7 @@ if __name__ == '__main__' :
             entity = ChartGenie(**e)
             orm = ChartGenieORM(entity)
 
-            if entity.SONG_ID == '102664199' :
-                print(entity.SONG_NAME)
-
-            if entity.ARTIST_ID == '80197389' :
-                print(entity.ARTIST_NAME)
-
-            if entity.ALBUM_ID == '84193518' :
-                print(entity.ALBUM_NAME)
-                print(entity.ALBUM_IMG_PATH)
-
-            # with session_scope() as session :
-            #     session.add(orm)
+            with session_scope() as session :
+                session.add(orm)
 
     else : print(response.status_code)
