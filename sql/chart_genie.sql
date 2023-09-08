@@ -1,14 +1,16 @@
-CREATE TABLE IF NOT EXISTS genie_chart (
-	song_id varchar(255),
+CREATE TABLE IF NOT EXISTS chart_genie (
+	id serial,
+	song_id integer,
     song_name varchar(255),
-    artist_id varchar(255),
+    artist_id integer,
     artist_name varchar(255),
-    album_id varchar(255),
+    album_id integer,
     album_name varchar(255),
     album_img_path varchar(255),
-    rank_no varchar(255),
-    pre_rank_no varchar(255),
+    rank_no integer,
+    pre_rank_no integer,
+    points NUMERIC(10,3),
     created_datetime timestamp DEFAULT current_timestamp,
-	modified_datetime timestamp DEFAULT current_timestamp
+    PRIMARY KEY (id)
 )
 ;
