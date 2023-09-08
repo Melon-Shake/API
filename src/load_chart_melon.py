@@ -1,6 +1,11 @@
 from model.database import session_scope
-# from model.chart_melon import ChartMelonORM
-from model.melon_api import ChartMelon
+
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
+
+from model.chart_melon import ChartMelon
 import  requests
 
 if __name__ == '__main__':
@@ -17,4 +22,4 @@ if __name__ == '__main__':
     song_list = response_data['response']['SONGLIST']
     for item in song_list:
       parsed_data = ChartMelon(**item)
-      print(type(parsed_data))
+      print(type(parsed_data.ALBUMID))
