@@ -1,6 +1,11 @@
 import requests
+
 import sys
-from model.bugs_db import BugsEntity
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
+
+from model.chart_bugs import BugsEntity
 
 if __name__ == '__main__':
 

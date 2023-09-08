@@ -1,4 +1,4 @@
-from database import Base
+from model.database import Base
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import Integer, String, Boolean
