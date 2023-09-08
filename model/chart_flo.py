@@ -3,7 +3,8 @@ from typing import Dict, List, Union
 
 from model.database import Base
 from sqlalchemy.sql.schema import Column
-from sqlalchemy import Integer, String, Boolean, JSON
+from sqlalchemy import Integer, String, Boolean, JSON, DateTime
+from sqlalchemy.sql import func
 
 import json
 
@@ -16,6 +17,7 @@ class Album(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    # imgList:List[Dict[str,Union[str,int]]]
     imgList:List[Img]
     title: str
     releaseYmd : str
@@ -45,19 +47,36 @@ class ChartFloORM(Base) :
     __tablename__ = 'chart_flo'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=True)
-    representation_artist = Column(String, nullable=True)
-    artist_list = Column(String, nullable=True)
-    album = Column(String, nullable=True)
+    track_id = Column(Integer, nullable=True)
+    track_name = Column(String, nullable=True)
+    artist_id = Column(Integer, nullable=True)
+    artist_name = Column(String, nullable=True)
+    album_id = Column(Integer, nullable=True)
+    album_name = Column(String, nullable=True)
+    img_url = Column(String, nullable=True)
+    release_ymd = Column(String, nullable=True)
+    rank = Column(Integer, nullable=True)
+    points = Column(Integer, nullable=True)
+    created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
-    def __init__(self, flo: ChartFlo) :
-        self.id = flo.id
-        self.name = flo.name
+    def __init__(self, idx, entity: ChartFlo) :
+        self.track_id = entity.id
+        self.track_name = entity.name
+        self.artist_id = entity.representationArtist.id
+        self.artist_name = entity.representationArtist.name
+        self.album_id = entity.album.id
+        self.album_name = entity.album.title
+        self.img_url = entity.album.imgList[0].url
+        self.release_ymd = entity.album.releaseYmd
+        self.rank = idx+1
+        self.points = (100-idx)*6.1
 
+        # self.id = flo.id
+        # self.name = flo.name
         # self.representation_artist = json.dumps(flo.representationArtist.__dict__)
         # self.artist_list = json.dumps([artist.__dict__ for artist in flo.artistList])
         # self.album = json.dumps(flo.album.__dict__)
-
+        
         # self.representation_artist = flo.representationArtist
         # self.artist_list = flo.artistList
         # self.album = flo.album)
