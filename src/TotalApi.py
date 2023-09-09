@@ -16,6 +16,10 @@ from sp_track import sp_and_track_input, get_sp_track_id
 from update_token import return_token
 # import sys, numpy as np, pandas as pd, json, requests, re
 import requests
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
 
 app = FastAPI()
 
@@ -157,7 +161,7 @@ def get_user_data(data: LoginData):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     # INSERT 쿼리 실행
     user_query = "INSERT INTO \"user\"(password,email,name) values (%s, %s,%s) RETURNING id;"
-    user_values = (hashed_password,email,name)
+    user_values = (hashed_password.decode("utf-8"),email,name)
     cursor.execute(user_query, user_values)
     user_detail_query = "INSERT INTO user_properties(gender,age,mbti,favorite_tracks,favorite_artists,user_id) values (%s,%s,%s,%s,%s,%s)"
     try:
@@ -174,6 +178,31 @@ def get_user_data(data: LoginData):
         else:
             print("다른 예외 발생:", e)
             return "다른 예외 발생"
+class Login(BaseModel):
+    email:str
+    password:str
+
+@api.post("/login/")
+def login(login_data:Login):  
+    email = login_data.email
+    password = login_data.password
+    connection = psycopg2.connect(**db_params)
+    cursor = connection.cursor()
+
+    # 등록한 이메일인 경우 ID 가져오기
+    user_query = "SELECT password FROM \"user\" WHERE email = %s;"
+    user_values = (email,)
+    cursor.execute(user_query, user_values)
+    user_query_result = cursor.fetchone()
+
+    if user_query_result:
+        condition = bcrypt.checkpw(password.encode("utf-8"), user_query_result[0].encode("utf-8"))
+        cursor.close()
+        if condition:
+                # 패스워드가 일치하면 로그인 성공
+                return True
+        else:
+            return False
         
 class Keyword(BaseModel):
     searchInput: str
@@ -242,7 +271,10 @@ def get_daily_search_ranking():
     cursor = connection.cursor()
 
     search_query = """
+
         SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
+
+        SELECT keyword, RANK() OVER (ORDER BY created_datetime DESC, COUNT(*) DESC) as search_rank
         FROM search_log_keywords
         GROUP BY keyword
         ORDER BY search_rank;
@@ -272,8 +304,9 @@ def get_daily_search_ranking():
     for _, (keyword, search_rank) in enumerate(search_ranking):
         cursor.execute(value_check_query, (keyword,))
         if cursor.fetchone():
-            if search_rank != prev_search_rank:  # 동일한 순위가 아니면 순위 업데이트
-                rank += 1
+            if exists:
+                if search_rank != prev_search_rank:  # 동일한 순위가 아니면 순위 업데이트
+                    rank += 1
             result[rank] = keyword
             prev_search_rank = search_rank
             
