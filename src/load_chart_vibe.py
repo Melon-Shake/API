@@ -30,9 +30,19 @@ if __name__ == '__main__':
     if response.status_code == 200 :
         responsed_data = response.json().get('response').get('result').get('chart').get('items').get('tracks')
 
-        for x in responsed_data :
-            entity = VibeEntity(**x)
-            orm = VibeORM(entity)
+        entries = {}
+        for itme in responsed_data:
+            for index, item in enumerate(responsed_data):
+                track_title = item['trackTitle']
+                artists = item.get('artists')
+                artist_pre = []
+                for artist in artists:
+                    artist_nm = artist['artistName']
+                    artist_pre.append(artist_nm)
+                entries[index+1] = [track_title, artist_pre]
+        # for x in responsed_data :
+        #     entity = VibeEntity(**x)
+        #     orm = VibeORM(entity)
 
-            with session_scope() as session :
-                session.add(orm)
+        #     with session_scope() as session :
+        #         session.add(orm)
