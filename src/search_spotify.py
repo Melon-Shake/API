@@ -25,21 +25,8 @@ if __name__ == '__main__':
         responsed_data = response.json()
 
         parsed_data = Spotify.Search(**responsed_data)
-        artists = parsed_data.artists.items
-        albums = parsed_data.albums.items
-        tracks = parsed_data.tracks.items
+        # for entity in parsed_data.tracks.items :
 
-        for entity in artists :
-            orm = Spotify.ArtistsORM(entity)
-            with session_scope() as session :
-                session.add(orm)
-
-        for entity in albums :
-            orm = Spotify.AlbumsORM(entity)
-            with session_scope() as session :
-                session.add(orm)
-
-        for entity in tracks :
-            orm = Spotify.TracksORM(entity)
-            with session_scope() as session :
-                session.add(orm)
+        #     orm = Spotify.TracksORM(entity)
+        #     with session_scope() as session :
+        #         session.add(orm)

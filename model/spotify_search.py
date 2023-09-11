@@ -21,13 +21,13 @@ class Artists(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
 
     external_urls: ExternalUrls
-    followers: Followers
-    genres: List[str]
+    # followers: Followers
+    # genres: List[str]
     href: str
     id: str
-    images: List[Images]
+    # images: List[Images]
     name: str
-    popularity: int
+    # popularity: int
     uri: str
 
 class ArtistsORM(Base) :
@@ -67,6 +67,7 @@ class Albums(BaseModel) :
     total_tracks: int
     release_date: str
     release_date_precision: str
+    artists: List[Artists]
 
 class AlbumsORM(Base) :
     __tablename__ = 'spotify_albums'
@@ -106,6 +107,8 @@ class Tracks(BaseModel) :
     track_number: int
     disc_number: int
     duration_ms: int
+    artists: List[Artists]
+    album: Albums
 
 class TracksORM(Base) :
     __tablename__ = 'spotify_tracks'
@@ -159,6 +162,6 @@ class SearchArtists(BaseModel) :
     items: List[Artists]
 
 class Search(BaseModel) :
-    artists: SearchArtists
-    albums: SearchAlbums
+    # artists: SearchArtists
+    # albums: SearchAlbums
     tracks: SearchTracks
