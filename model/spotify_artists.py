@@ -4,6 +4,19 @@ from model.database import Base
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import String, Integer, ARRAY
 
+class SpotifyArtists(BaseModel) :
+    model_config = ConfigDict(from_attributes=True)
+
+    external_urls: Dict[str,str]
+    followers: Dict[str,Union[int,None]]
+    genres: List[str]
+    href: str
+    id: str
+    images: List[Dict[str,Union[int,str]]]
+    name: str
+    popularity: int
+    uri: str
+
 class SpotifyArtistsORM(Base) :
     __tablename__ = 'spotify_artists'
 
@@ -17,16 +30,7 @@ class SpotifyArtistsORM(Base) :
     followers_total = Column(Integer, nullable=True)
     genres = Column(ARRAY(String))
 
-    def __init__(self,artists):
-        # self.id = artists.get('id')
-        # self.name = artists.get('name')
-        # self.uri = artists.get('uri')
-        # self.href = artists.get('href')
-        # self.external_urls = artists.get('external_urls').get('spotify')
-        # self.images_url = artists.get('images')[0].get('url')
-        # self.popularity = artists.get('popularity')
-        # self.followers_total = artists.get('followers').get('total')
-        # self.genres = artists.get('genres')
+    def __init__(self,artists:SpotifyArtists):
         self.id = artists.id
         self.name = artists.name
         self.uri = artists.uri
@@ -36,16 +40,3 @@ class SpotifyArtistsORM(Base) :
         self.popularity = artists.popularity
         self.followers_total = artists.followers.get('total')
         self.genres = artists.genres
-
-class SpotifyArtists(BaseModel) :
-    model_config = ConfigDict(from_attributes=True)
-
-    external_urls: Dict[str,str]
-    followers: Dict[str,Union[int,None]]
-    genres: List[str]
-    href: str
-    id: str
-    images: List[Dict[str,Union[int,str]]]
-    name: str
-    popularity: int
-    uri: str
