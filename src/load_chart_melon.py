@@ -25,13 +25,13 @@ if __name__ == '__main__':
     for itme in responsed_data:
         for index, item in enumerate(responsed_data):
             track_title = item['SONGNAME']
+            album_title = item['ALBUMNAME']
             artists = item.get('ARTISTLIST')
             artist_pre = []
             for artist in artists:
                 artist_nm = artist['ARTISTNAME']
                 artist_pre.append(artist_nm)
-            entries[index+1] = [track_title, artist_pre]
-    print(entries)
+            entries[index+1] = [track_title, artist_pre, album_title]
     # for item in song_list:
     #   entity = ChartMelon(**item)
     #   orm = MelonORM(entity)

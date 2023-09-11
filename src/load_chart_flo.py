@@ -24,14 +24,13 @@ if __name__ == '__main__':
         for itme in responsed_data:
             for index, item in enumerate(responsed_data):
                 track_title = item['name']
+                album_title = item['album']['title']
                 artists = item.get('artistList')
                 artist_pre = []
                 for artist in artists:
                     artist_nm = artist['name']
                     artist_pre.append(artist_nm)
-                    # print(artist_pre)
-                entries[index+1] = [track_title, artist_pre]
-
+                entries[index+1] = [track_title, artist_pre, album_title]
         # for i, e in enumerate(parsed_data) :
         #     entity = ChartFlo(**e)
         #     orm = ChartFloORM(i,entity)

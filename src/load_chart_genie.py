@@ -32,8 +32,10 @@ if __name__ == '__main__' :
                 pre_artists = item.get('ARTIST_NAME')
                 artists = urllib.parse.unquote(pre_artists)  # URL 디코딩
 
-                entries[index+1] = [track_title, artists]
-        print(entries)
+                # 앨범제목
+                pre_album = item['ALBUM_NAME']
+                album = urllib.parse.unquote(pre_album)
+                entries[index+1] = [track_title, artists, album]
     #     for e in responsed_data :
     #         entity = ChartGenie(**e)
     #         orm = ChartGenieORM(entity)

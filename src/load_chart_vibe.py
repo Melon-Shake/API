@@ -34,12 +34,13 @@ if __name__ == '__main__':
         for itme in responsed_data:
             for index, item in enumerate(responsed_data):
                 track_title = item['trackTitle']
+                album_title = item['album']['albumTitle']
                 artists = item.get('artists')
                 artist_pre = []
                 for artist in artists:
                     artist_nm = artist['artistName']
                     artist_pre.append(artist_nm)
-                entries[index+1] = [track_title, artist_pre]
+                entries[index+1] = [track_title, artist_pre, album_title]
         # for x in responsed_data :
         #     entity = VibeEntity(**x)
         #     orm = VibeORM(entity)
