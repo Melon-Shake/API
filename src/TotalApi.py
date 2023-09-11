@@ -1,5 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
 import requests, pandas as pd
 import lib.module as module
 from pydantic import BaseModel
@@ -280,10 +284,14 @@ def get_daily_search_ranking():
     cursor = connection.cursor()
 
     search_query = """
+
+        SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
+
         SELECT keyword, RANK() OVER (ORDER BY created_datetime DESC, COUNT(*) DESC) as search_rank
         FROM search_log_keywords
         GROUP BY keyword
         ORDER BY search_rank;
+
     """
 
     value_check_query = """
