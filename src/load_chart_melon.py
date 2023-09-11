@@ -1,12 +1,11 @@
-from model.database import session_scope
-
 import sys
 import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
+from model.database import session_scope
 from model.chart_melon import ChartMelon, MelonORM
-import  requests
+import requests
 
 if __name__ == '__main__':
   _APP_VERSION = "6.5.8.1"
