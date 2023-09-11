@@ -48,8 +48,8 @@ class ChartFloORM(Base) :
     id = Column(Integer, primary_key=True)
     track_id = Column(Integer, nullable=True)
     track_name = Column(String, nullable=True)
-    artist_id = Column(Integer, nullable=True)
-    artist_name = Column(String, nullable=True)
+    artist_ids = Column(Integer, nullable=True)
+    artist_names = Column(String, nullable=True)
     album_id = Column(Integer, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
@@ -61,8 +61,14 @@ class ChartFloORM(Base) :
     def __init__(self, idx, entity: ChartFlo) :
         self.track_id = entity.id
         self.track_name = entity.name
-        self.artist_id = entity.representationArtist.id
-        self.artist_name = entity.representationArtist.name
+        self.artist_ids = list()
+        self.artist_names = list()
+        self.artist_ids.append(entity.representationArtist.id)
+        self.artist_names.append(entity.representationArtist.name)
+        for artist in entity.artistList :
+            self.artist_ids.append(artist.id)
+            self.artist_names.append(entity.name)
+        
         self.album_id = entity.album.id
         self.album_name = entity.album.title
         self.img_url = entity.album.imgList[0].url
