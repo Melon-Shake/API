@@ -14,13 +14,14 @@ if __name__ == '__main__' :
                                  'Content_Type' : 'application/x-www-form-urlencoded'
                              }
                              ,data={
-                                'pg_size': '200'
+                                'pgSize': '100'
                              }
                             )
 
     if response.status_code == 200 :
         responsed_data = response.json().get('DataSet').get('DATA')
 
+        print(responsed_data)
         # for e in responsed_data :
             # entity = ChartGenie(**e)
             # orm = ChartGenieORM(entity)
