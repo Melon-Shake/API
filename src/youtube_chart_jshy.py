@@ -13,6 +13,8 @@ root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 from model.ytmusic import js_ChartYoutube, Response, hy_ChartYoutube, js_SumChart
 
+
+# Lucete youtube top100 크롤링
 def yt_get_weeks():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--headless')  
@@ -137,7 +139,7 @@ def yt_craw_start(weeks_ago : int):
 
 hy_chart = yt_craw_start(0)
 
-# ---------------------------------------------------------------------------------------
+# ssg youtube api ---------------------------------------------------------------------------------------
 key= youtube.key
 
 url = f'https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet%2C%20contentDetails&maxResults=100&playlistId=PL4fGSI1pDJn6jXS_Tv_N9B8Z0HTRVJE0m&key={key}'

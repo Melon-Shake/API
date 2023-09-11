@@ -1,5 +1,7 @@
+#youtube model
 from pydantic import BaseModel, ConfigDict
 from typing import Dict, List, Union
+
 class DefaultInfo(BaseModel):
     url:str
 class ThumbnailInfo(BaseModel):
