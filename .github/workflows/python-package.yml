@@ -25,14 +25,14 @@ jobs:
             zip -r v0.2.0-dev-release.zip .
         fi
     - name: Upload Release
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v0.2.0-dev
       with:
         name: ${{ github.ref }}-release
         path: ${{ github.ref }}-release.zip
 
     - name: Create GitHub Release
       id: create_release
-      uses: actions/create-release@v0.2.0/dev
+      uses: actions/create-release@v0.2.0-dev
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
