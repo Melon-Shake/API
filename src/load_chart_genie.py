@@ -29,30 +29,38 @@ if __name__ == '__main__' :
         artist_name = []
         album_name = []
         album_img = []
+        from urllib import parse
+        q_77 = parse.unquote(responsed_data[77]['SONG_NAME'])
+        print(type(responsed_data[77]['SONG_NAME']))
+        print(responsed_data[77]['ARTIST_NAME'])
+        print(responsed_data[77]['ALBUM_NAME'])
+        
         for i in range(len(responsed_data)):
 
             q = responsed_data[i]['SONG_NAME'] +' '+ responsed_data[i]['ARTIST_NAME'] + ' ' + responsed_data[i]['ALBUM_NAME']
-            url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=kr&limit=1'
+            url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
             headers = {
                 'Authorization': 'Bearer '+access_token
             }
-            response_sp = requests.get(url, headers=headers)
-            if response_sp.status_code == 200:
-                sp_json = response_sp.json()
-                return_data ={}
-                artists = []
-                song_name.append(sp_json['tracks']['items'][0]['name'])
-                album_name.append(sp_json['tracks']['items'][0]['album']['name'])
-                album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
+        #     response_sp = requests.get(url, headers=headers)
+        #     if response_sp.status_code == 200:
+        #         sp_json = response_sp.json()
+        #         return_data ={}
+        #         artists = []
+        #         song_name.append(sp_json['tracks']['items'][0]['name'])
+        #         album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+        #         album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
                 
-                for j in range(len(sp_json['tracks']['items'][0]['artists'])):
-                    artists.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
-                artist_name.append(artists)
+        #         for j in range(len(sp_json['tracks']['items'][0]['artists'])):
+        #             artists.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
+        #         artist_name.append(artists)
+        #     else:
+        #         print(f'{i} : {response_sp.status_code}')
 
-        print(len(responsed_data))
-        print(len(song_name))
-        print(song_name[0])
-        print(song_name[98])
+        # print(len(responsed_data))
+        # print(len(song_name))
+        # print(song_name[0])
+        # print(song_name[98])
         
         
         # print(artist_name)
