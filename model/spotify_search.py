@@ -49,10 +49,10 @@ class ArtistsORM(Base) :
         self.uri = artists.uri
         self.href = artists.href
         self.external_urls = artists.external_urls.spotify
-        self.images_url = artists.images[0].url
-        self.popularity = artists.popularity
-        self.followers_total = artists.followers.total
-        self.genres = artists.genres
+        # self.images_url = artists.images[0].url
+        # self.popularity = artists.popularity
+        # self.followers_total = artists.followers.total
+        # self.genres = artists.genres
 
 class Albums(BaseModel) :
     model_config = ConfigDict(from_attributes=True)

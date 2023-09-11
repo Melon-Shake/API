@@ -25,8 +25,12 @@ if __name__ == '__main__':
         responsed_data = response.json()
 
         parsed_data = Spotify.Search(**responsed_data)
-        for entity in parsed_data.tracks.items :
 
-            orm = Spotify.TracksORM(entity)
-            with session_scope() as session :
-                session.add(orm)
+        with session_scope() as session :
+            for entity in parsed_data.tracks.items :
+                tracks = Spotify.TracksORM(entity)
+                albums = Spotify.AlbumsORM(entity.album)
+                artists = [Spotify.ArtistsORM(e) for e in entity.artists]
+                session.add(tracks)
+                session.add(albums)
+                session.add_all(artists)
