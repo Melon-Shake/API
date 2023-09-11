@@ -25,10 +25,23 @@ if __name__ == '__main__':
     response = requests.post(_CHART_API_URL, headers=headers, data=data)
     if response.status_code == 200 :
         responsed_data = response.json().get('list')
-    
-        for x in responsed_data :
-            entity = BugsEntity(**x)
-            orm = BugsORM(entity)
 
-            with session_scope() as session :
-                session.add(orm)
+        entries = {}
+        for itme in responsed_data:
+            for index, item in enumerate(responsed_data):
+                track_title = item['track_title']
+                album_title = item['album']['title']
+                artists = item.get('artists')
+                artist_pre = []
+                for artist in artists:
+                    artist_nm = artist['artist_nm']
+                    artist_pre.append(artist_nm)
+                entries[index+1] = [track_title, artist_pre, album_title]
+        # {1: ['Smoke (Prod. Dynamicduo, Padi)', ['다이나믹 듀오', '이영지'], '스트릿 우먼 파이터2(SWF2) 계급미션'],}
+        # for x in responsed_data :
+        #     entity = BugsEntity(**x)
+        #     orm = BugsORM(entity)
+
+
+        #     with session_scope() as session :
+        #         session.add(orm)
