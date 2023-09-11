@@ -29,46 +29,45 @@ if __name__ == '__main__' :
         album_img = []
 
         entries = {}
-        for itme in responsed_data:
-            for index, item in enumerate(responsed_data):
-                # 제목 디코딩
-                pre_track_title = item['SONG_NAME']
-                track_title = urllib.parse.unquote(pre_track_title)
-                
-                # 아티스트 디코딩
-                pre_artists = item.get('ARTIST_NAME')
-                artists = urllib.parse.unquote(pre_artists)  # URL 디코딩
 
-                # 앨범제목
-                pre_album = item['ALBUM_NAME']
-                album = urllib.parse.unquote(pre_album)
-                entries[index+1] = [track_title, artists, album]
-        print(entries)
-                
-        # for i in range(len(responsed_data)):
+        for index, item in enumerate(responsed_data):
+            # 제목 디코딩
+            pre_track_title = item['SONG_NAME']
+            track_title = urllib.parse.unquote(pre_track_title)
+            
+            # 아티스트 디코딩
+            pre_artists = item.get('ARTIST_NAME')
+            artists = urllib.parse.unquote(pre_artists)  # URL 디코딩
 
-        #     q = responsed_data[i]['SONG_NAME'] +' '+ responsed_data[i]['ARTIST_NAME'] + ' ' + responsed_data[i]['ALBUM_NAME']
-        #     url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
-        #     headers = {
-        #         'Authorization': 'Bearer '+access_token
-        #     }
-        #     response_sp = requests.get(url, headers=headers)
-        #     if response_sp.status_code == 200:
-        #         sp_json = response_sp.json()
-        #         return_data ={}
-        #         artists = []
-        #         song_name.append(sp_json['tracks']['items'][0]['name'])
-        #         album_name.append(sp_json['tracks']['items'][0]['album']['name'])
-        #         album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
+            # 앨범제목
+            pre_album = item['ALBUM_NAME']
+            album = urllib.parse.unquote(pre_album)
+            entries[index] = [track_title, artists, album]
+        
+        for i in range(len(responsed_data)):
+            q = entries[i][0] + " "+  entries[i][1] # + " " +  entries[i][2]
+            print(q)
+            url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
+            headers = {
+                'Authorization': 'Bearer '+access_token
+            }
+            response_sp = requests.get(url, headers=headers)
+            if response_sp.status_code == 200:
+                sp_json = response_sp.json()
+                return_data ={}
+                artists_sp = []
+                song_name.append(sp_json['tracks']['items'][0]['name'])
+                album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+                album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
                 
-        #         for j in range(len(sp_json['tracks']['items'][0]['artists'])):
-        #             artists.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
-        #         artist_name.append(artists)
-        #     else:
-        #         print(f'{i} : {response_sp.status_code}')
+                for j in range(len(sp_json['tracks']['items'][0]['artists'])):
+                    artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
+                artist_name.append(artists_sp)
+            else:
+                print(f'{i} : {response_sp.status_code}')
 
-        # print(len(responsed_data))
-        # print(len(song_name))
+        print(len(responsed_data))
+        print(len(song_name))
         # print(song_name[0])
         # print(song_name[98])
         
