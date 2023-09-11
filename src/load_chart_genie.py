@@ -1,6 +1,6 @@
 import requests
 import sys
-import os
+import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
@@ -23,25 +23,35 @@ if __name__ == '__main__' :
     if response.status_code == 200 :
         responsed_data = response.json().get('DataSet').get('DATA')
 
-            # song_name.append(responsed_data[i]['SONG_NAME'])
-            # artist_name.append(responsed_data[i]['ARTIST_NAME'])
         song_name = []
         artist_name = []
         album_name = []
         album_img = []
-        from urllib import parse
-        q_77 = parse.unquote(responsed_data[77]['SONG_NAME'])
-        print(type(responsed_data[77]['SONG_NAME']))
-        print(responsed_data[77]['ARTIST_NAME'])
-        print(responsed_data[77]['ALBUM_NAME'])
-        
-        for i in range(len(responsed_data)):
 
-            q = responsed_data[i]['SONG_NAME'] +' '+ responsed_data[i]['ARTIST_NAME'] + ' ' + responsed_data[i]['ALBUM_NAME']
-            url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
-            headers = {
-                'Authorization': 'Bearer '+access_token
-            }
+        entries = {}
+        for itme in responsed_data:
+            for index, item in enumerate(responsed_data):
+                # 제목 디코딩
+                pre_track_title = item['SONG_NAME']
+                track_title = urllib.parse.unquote(pre_track_title)
+                
+                # 아티스트 디코딩
+                pre_artists = item.get('ARTIST_NAME')
+                artists = urllib.parse.unquote(pre_artists)  # URL 디코딩
+
+                # 앨범제목
+                pre_album = item['ALBUM_NAME']
+                album = urllib.parse.unquote(pre_album)
+                entries[index+1] = [track_title, artists, album]
+        print(entries)
+                
+        # for i in range(len(responsed_data)):
+
+        #     q = responsed_data[i]['SONG_NAME'] +' '+ responsed_data[i]['ARTIST_NAME'] + ' ' + responsed_data[i]['ALBUM_NAME']
+        #     url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
+        #     headers = {
+        #         'Authorization': 'Bearer '+access_token
+        #     }
         #     response_sp = requests.get(url, headers=headers)
         #     if response_sp.status_code == 200:
         #         sp_json = response_sp.json()
@@ -84,18 +94,3 @@ if __name__ == '__main__' :
                 # session.add(orm)
 # 
     # else : print(response.status_code)
-#---------------------------------------------------------------------------------------------------------------------------#
-#     import csv
-
-# # 주어진 리스트
-
-#     # CSV 파일 경로
-#     csv_file_path = 'song_list.csv'
-
-#     # CSV 파일로 리스트 저장
-#     with open(csv_file_path, 'w', newline='') as csv_file:
-#         csv_writer = csv.writer(csv_file)
-#         for item in song_name:
-#             csv_writer.writerow([item])
-        
-        

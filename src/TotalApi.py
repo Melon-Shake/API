@@ -25,6 +25,10 @@ from model.database import session_scope
 
 # import sys, numpy as np, pandas as pd, json, requests, re
 import requests
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
 
 app = FastAPI()
 
@@ -166,7 +170,7 @@ def get_user_data(data: LoginData):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     # INSERT 쿼리 실행
     user_query = "INSERT INTO \"user\"(password,email,name) values (%s, %s,%s) RETURNING id;"
-    user_values = (hashed_password,email,name)
+    user_values = (hashed_password.decode("utf-8"),email,name)
     cursor.execute(user_query, user_values)
     user_detail_query = "INSERT INTO user_properties(gender,age,mbti,favorite_tracks,favorite_artists,user_id) values (%s,%s,%s,%s,%s,%s)"
     try:
@@ -183,6 +187,31 @@ def get_user_data(data: LoginData):
         else:
             print("다른 예외 발생:", e)
             return "다른 예외 발생"
+class Login(BaseModel):
+    email:str
+    password:str
+
+@api.post("/login/")
+def login(login_data:Login):  
+    email = login_data.email
+    password = login_data.password
+    connection = psycopg2.connect(**db_params)
+    cursor = connection.cursor()
+
+    # 등록한 이메일인 경우 ID 가져오기
+    user_query = "SELECT password FROM \"user\" WHERE email = %s;"
+    user_values = (email,)
+    cursor.execute(user_query, user_values)
+    user_query_result = cursor.fetchone()
+
+    if user_query_result:
+        condition = bcrypt.checkpw(password.encode("utf-8"), user_query_result[0].encode("utf-8"))
+        cursor.close()
+        if condition:
+                # 패스워드가 일치하면 로그인 성공
+                return True
+        else:
+            return False
         
 class Keyword(BaseModel):
     searchInput: str
