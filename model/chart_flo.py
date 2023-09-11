@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 
 from model.database import Base
 from sqlalchemy.sql.schema import Column
-from sqlalchemy import Integer, String, Boolean, JSON, DateTime
+from sqlalchemy import Integer, String, Boolean, JSON, DateTime, ARRAY
 from sqlalchemy.sql import func
 
 import json
@@ -48,8 +48,8 @@ class ChartFloORM(Base) :
     id = Column(Integer, primary_key=True)
     track_id = Column(Integer, nullable=True)
     track_name = Column(String, nullable=True)
-    artist_ids = Column(Integer, nullable=True)
-    artist_names = Column(String, nullable=True)
+    artist_ids = Column(ARRAY(Integer), nullable=True)
+    artist_names = Column(ARRARY(String), nullable=True)
     album_id = Column(Integer, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
