@@ -1,3 +1,8 @@
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
+
 from model.database import session_scope
 from model.spotify_artists import SpotifyArtists, SpotifyArtistsORM
 from model.spotify_search import SpotifySearch, SpotifySearchArtists
@@ -23,7 +28,6 @@ if __name__ == '__main__':
         artists = parsed_data.artists.items
 
         for entity in artists :
-            # orm = SpotifyArtistsORM(entity.__dict__)
             orm = SpotifyArtistsORM(entity)
 
             with session_scope() as session :
