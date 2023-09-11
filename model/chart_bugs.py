@@ -1,7 +1,7 @@
 from model.database import Base
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.sql.schema import Column
-from sqlalchemy import Integer, String, Boolean
+from sqlalchemy import Integer, String, Boolean, ARRAY
 from typing import Dict, List, Union
 
 from model.database import Base
@@ -56,8 +56,12 @@ class BugsORM(Base) :
     album_image_path = Column(String, nullable=True)
     album_release_ymd = Column(String, nullable=True)
     album_release_local_ymd = Column(String, nullable=True)
-    artist_id = Column(Integer, nullable=True)
-    artist_name = Column(String, nullable=True) 
+    
+    artist_ids = Column(ARRAY(Integer), nullable=True)
+    artist_nms = Column(ARRAY(String), nullable=True)
+    # artist_id = Column(Integer, nullable=True)
+    # artist_name = Column(String, nullable=True) 
+    
     genres_name = Column(String, nullable=True) 
     likes_count = Column(Integer, nullable=True)
     rank = Column(Integer, nullable=True)
@@ -66,7 +70,7 @@ class BugsORM(Base) :
     points = Column(Float, nullable=True)
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
-    def __init__(self,entity) :
+    def __init__(self,entity:BugsEntity) :
         self.track_id = entity.track_id
         self.track_title = entity.track_title
         self.album_id = entity.album.album_id
@@ -74,8 +78,15 @@ class BugsORM(Base) :
         self.album_image_path = 'https://image.bugsm.co.kr/album/images/256'+entity.album.image.path
         self.album_release_ymd = entity.album.release_ymd
         self.album_release_local_ymd = entity.album.release_local_ymd
-        self.artist_id = entity.artists[0].artist_id
-        self.artist_name = entity.artists[0].artist_nm
+
+        self.artist_ids = list()
+        self.artist_nms = list()
+        for artist in entity.artists :
+            self.artist_ids.append(artist.artist_id)
+            self.artist_nms.append(artist.artist_nm)
+        # self.artist_id = entity.artists[0].artist_id
+        # self.artist_name = entity.artists[0].artist_nm
+
         self.genres_name = entity.artists[0].genres[0].svc_nm
         self.likes_count = entity.adhoc_attr.likes_count
         self.rank = entity.list_attr.rank
