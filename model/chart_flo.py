@@ -49,7 +49,7 @@ class ChartFloORM(Base) :
     track_id = Column(Integer, nullable=True)
     track_name = Column(String, nullable=True)
     artist_ids = Column(ARRAY(Integer), nullable=True)
-    artist_names = Column(ARRARY(String), nullable=True)
+    artist_names = Column(ARRAY(String), nullable=True)
     album_id = Column(Integer, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)

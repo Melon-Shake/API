@@ -43,6 +43,7 @@ if __name__ == '__main__' :
             album = urllib.parse.unquote(pre_album)
             entries[index] = [track_title, artists, album]
                 
+        # print(entries)
         for i in range(len(entries)):
             
             q = entries[i][0] + " " + entries[i][1]+ " " + entries[i][2]
@@ -61,9 +62,26 @@ if __name__ == '__main__' :
                 
                 for j in range(len(sp_json['tracks']['items'][0]['artists'])):
                     artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
-                artist_name.append(artists_sp)
-            else:
-                print(f'{i} : {response_sp.status_code}')
+                artist_name.append(', '.join(artists_sp))
+            elif response_sp.status_code == 400 :
+                q = entries[i][0] + " " + entries[i][1]
+                url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
+                headers = {
+                    'Authorization': 'Bearer '+access_token
+                }
+                response_sp = requests.get(url, headers=headers)
+                if response_sp.status_code == 200:
+                    sp_json = response_sp.json()
+                    artists_sp = []
+                    song_name.append(sp_json['tracks']['items'][0]['name'])
+                    album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+                    album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
+                    
+                    for j in range(len(sp_json['tracks']['items'][0]['artists'])):
+                        artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
+                    artist_name.append(', '.join(artists_sp))
+            # elseif response_sp.status_code == 400:
+            #     print(f'{i} : {response_sp.status_code}')
 
         print(len(responsed_data))
         print(len(song_name))
@@ -71,13 +89,12 @@ if __name__ == '__main__' :
         # print(f"곡 : {len(song_name)}   가수 : {len(artist_name)}    앨범 : {len(album_name)}")
         for i in range(len(responsed_data)):
             responsed_data[i]['SONG_NAME'] = song_name[i]
-            responsed_data[i]['ARTIST_NAME'] = artist_name[i]
+            responsed_data[i]['ARTIST_NAME'] = artist_name.pop()
             responsed_data[i]['ALBUM_NAME'] = album_name[i]
             responsed_data[i]['ALBUM_IMG_PATH'] = album_img[i]
         
         # print(responsed_data)
-        
-        # print(responsed_data)
+
         for e in responsed_data :
             entity = ChartGenie(**e)
             orm = ChartGenieORM(entity)
