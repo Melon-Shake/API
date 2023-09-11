@@ -1,0 +1,40 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python package
+
+on:
+  push:
+    branches: [ "main","v0.2.0/dev" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9"]
+
+    steps:
+    - name: Create Release
+      run: |
+        if [ $GITHUB_REF == 'refs/heads/main' ]; then
+            zip -r main-release.zip .
+        elif [ $GITHUB_REF == 'refs/heads/v0.2.0/dev' ]; then
+            zip -r v0.2.0-dev-release.zip .
+        fi
+    - name: Upload Release
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ github.ref }}-release
+        path: ${{ github.ref }}-release.zip
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: ${{ github.ref }}-release.zip 
+
