@@ -6,6 +6,7 @@ sys.path.append(root_path)
 from model.database import session_scope
 from model.spotify_artists import SpotifyArtists, SpotifyArtistsORM
 from model.spotify_albums import SpotifyAlbums, SpotifyAlbumsORM
+from model.spotify_tracks import SpotifyTracks, SpotifyTracksORM
 from model.spotify_search import SpotifySearch, SpotifySearchArtists
 
 from src.get_token import update_token, return_token
@@ -25,19 +26,23 @@ if __name__ == '__main__':
     
     if response.status_code == 200 :
         responsed_data = response.json()
-        # print(responsed_data.get('albums').get('items')[0])
 
         parsed_data = SpotifySearch(**responsed_data)
         artists = parsed_data.artists.items
         albums = parsed_data.albums.items
         tracks = parsed_data.tracks.items
 
-        # for entity in artists :
-        #     orm = SpotifyArtistsORM(entity)
-        #     with session_scope() as session :
-        #         session.add(orm)
+        for entity in artists :
+            orm = SpotifyArtistsORM(entity)
+            with session_scope() as session :
+                session.add(orm)
 
-        # for entity in albums :
-        #     orm = SpotifyAlbumsORM(entity)
-        #     with session_scope() as session :
-        #         session.add(orm)
+        for entity in albums :
+            orm = SpotifyAlbumsORM(entity)
+            with session_scope() as session :
+                session.add(orm)
+
+        for entity in tracks :
+            orm = SpotifyTracksORM(entity)
+            with session_scope() as session :
+                session.add(orm)
