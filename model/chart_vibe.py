@@ -5,7 +5,7 @@ from sqlalchemy import Integer, String, Boolean, Float
 from typing import Dict, List, Union
 
 from sqlalchemy.sql.schema import Column
-from sqlalchemy import Integer, String, Boolean, JSON, DateTime
+from sqlalchemy import Integer, String, Boolean, JSON, DateTime, ARRAY
 from sqlalchemy.sql import func
 
 class rankInfo(BaseModel):
@@ -28,8 +28,6 @@ class VibeEntity(BaseModel) :
     trackId: int
     trackTitle: str
     artists: List[ArtistInfo]
-    # artists: List[Dict[str,Union[str,int]]]
-    # artistList: List[Dict[str,Union[str,int]]]
     album: Albuminfo
     rank:rankInfo
 
@@ -42,8 +40,8 @@ class VibeORM(Base):
     id = Column(Integer, primary_key=True)
     track_id = Column(Integer, nullable=True)
     track_title = Column(String, nullable=True)
-    artist_id = Column(Integer, nullable=True)
-    artist_name = Column(String, nullable=True)
+    artist_ids = Column(ARRAY(Integer), nullable=True)
+    artist_names = Column(ARRAY(String), nullable=True)
     album_id = Column(Integer, nullable=True)
     album_title = Column(String, nullable=True)
     image_url = Column(String, nullable=True)
@@ -56,8 +54,11 @@ class VibeORM(Base):
     def __init__(self, entity) :
         self.track_id = entity.trackId
         self.track_title = entity.trackTitle
-        self.artist_id = entity.artists[0].artistId
-        self.artist_name = entity.artists[0].artistName
+        self.artist_ids = list()
+        self.artist_names = list()
+        for artist in entity.artists :
+            self.artist_ids.append(artist.artistId)
+            self.artist_names.append(artist.artistName)
         self.album_id = entity.album.albumId
         self.album_title = entity.album.albumTitle
         self.image_url = entity.album.imageUrl
