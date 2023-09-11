@@ -28,15 +28,16 @@ if __name__ == '__main__':
         # print(responsed_data.get('albums').get('items')[0])
 
         parsed_data = SpotifySearch(**responsed_data)
-
         artists = parsed_data.artists.items
-        for entity in artists :
-            orm = SpotifyArtistsORM(entity)
-            with session_scope() as session :
-                session.add(orm)
-
         albums = parsed_data.albums.items
-        for entity in albums :
-            orm = SpotifyAlbumsORM(entity)
-            with session_scope() as session :
-                session.add(orm)
+        tracks = parsed_data.tracks.items
+
+        # for entity in artists :
+        #     orm = SpotifyArtistsORM(entity)
+        #     with session_scope() as session :
+        #         session.add(orm)
+
+        # for entity in albums :
+        #     orm = SpotifyAlbumsORM(entity)
+        #     with session_scope() as session :
+        #         session.add(orm)

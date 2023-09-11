@@ -3,6 +3,16 @@ from typing import Dict, List, Union
 
 from model.spotify_artists import SpotifyArtists
 from model.spotify_albums import SpotifyAlbums
+from model.spotify_tracks import SpotifyTracks
+
+class SpotifySearchTracks(BaseModel) :
+    href: str
+    limit: int
+    next: Union[str, None]
+    offset: int
+    previous: Union[str, None]
+    total: int
+    items: List[SpotifyTracks]
 
 class SpotifySearchAlbums(BaseModel) :
     href: str
@@ -25,3 +35,4 @@ class SpotifySearchArtists(BaseModel) :
 class SpotifySearch(BaseModel) :
     artists: SpotifySearchArtists
     albums: SpotifySearchAlbums
+    tracks: SpotifySearchTracks
