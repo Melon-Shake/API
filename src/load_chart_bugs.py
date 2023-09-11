@@ -35,6 +35,7 @@ if __name__ == '__main__':
                     artist_nm = artist['artist_nm']
                     artist_pre.append(artist_nm)
                 entries[index+1] = [track_title, artist_pre]
+        print(entries)
         # for x in responsed_data :
         #     entity = BugsEntity(**x)
         #     orm = BugsORM(entity)
