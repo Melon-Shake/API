@@ -25,10 +25,12 @@ if __name__ == '__main__':
     response = requests.post(_CHART_API_URL, headers=headers, data=data)
     if response.status_code == 200 :
         responsed_data = response.json().get('list')
-    
-        for x in responsed_data :
-            entity = BugsEntity(**x)
-            orm = BugsORM(entity)
 
-            with session_scope() as session :
-                session.add(orm)
+        print(responsed_data[0].get('artists'))
+    
+        # for x in responsed_data :
+        #     entity = BugsEntity(**x)
+        #     orm = BugsORM(entity)
+
+        #     with session_scope() as session :
+        #         session.add(orm)
