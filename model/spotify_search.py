@@ -41,7 +41,7 @@ class ArtistsORM(Base) :
     images_url = Column(String, nullable=True)
     popularity = Column(Integer, nullable=True)
     followers_total = Column(Integer, nullable=True)
-    genres = Column(ARRAY(String))
+    genres = Column(String, nullable=True)
 
     def __init__(self,artists:Artists):
         self.id = artists.id
@@ -122,6 +122,8 @@ class TracksORM(Base) :
     popularity = Column(Integer, nullable=True)
     disc_number = Column(Integer, nullable=True)
     track_number = Column(Integer, nullable=True)
+    artists_ids = Column(ARRAY(String), nullable=True)
+    album_id = Column(String, nullable=True)
 
     def __init__(self, tracks:Tracks) :
         self.id = tracks.id
@@ -133,6 +135,10 @@ class TracksORM(Base) :
         self.popularity = tracks.popularity
         self.disc_number = tracks.disc_number
         self.track_number = tracks.track_number
+        self.artists_ids = list()
+        for artists in tracks.artists :
+            self.artists_ids.append(artists.id)
+        self.album_id = tracks.album.id
 
 class SearchTracks(BaseModel) :
     href: str

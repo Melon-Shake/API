@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS spotify_tracks (
 	popularity integer,
 	disc_number integer,
 	track_number integer,
+	artists_ids varchar(255) [],
+	album_id varchar(255),
 	created_datetime timestamp DEFAULT current_timestamp,
 	modified_datetime timestamp DEFAULT current_timestamp
 )
