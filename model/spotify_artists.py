@@ -1,18 +1,31 @@
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
+
 from pydantic import BaseModel, ConfigDict
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 from model.database import Base
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import String, Integer, ARRAY
 
+
+class Images(BaseModel):
+    url: str
+class Followers(BaseModel) :
+    total: Optional[int]
+class ExternalUrls(BaseModel):
+    spotify: str
+
 class SpotifyArtists(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
 
-    external_urls: Dict[str,str]
-    followers: Dict[str,Union[int,None]]
+    external_urls: ExternalUrls
+    followers: Followers
     genres: List[str]
     href: str
     id: str
-    images: List[Dict[str,Union[int,str]]]
+    images: List[Images]
     name: str
     popularity: int
     uri: str
@@ -35,8 +48,8 @@ class SpotifyArtistsORM(Base) :
         self.name = artists.name
         self.uri = artists.uri
         self.href = artists.href
-        self.external_urls = artists.external_urls.get('spotify')
-        self.images_url = artists.images[0].get('url')
+        self.external_urls = artists.external_urls.spotify
+        self.images_url = artists.images[0].url
         self.popularity = artists.popularity
-        self.followers_total = artists.followers.get('total')
+        self.followers_total = artists.followers.total
         self.genres = artists.genres

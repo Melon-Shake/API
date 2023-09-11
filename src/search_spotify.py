@@ -25,10 +25,12 @@ if __name__ == '__main__':
     if response.status_code == 200 :
         responsed_data = response.json()
         parsed_data = SpotifySearch(**responsed_data)
+
         artists = parsed_data.artists.items
+        print(artists[0])
 
-        for entity in artists :
-            orm = SpotifyArtistsORM(entity)
+        # for entity in artists :
+        #     orm = SpotifyArtistsORM(entity)
 
-            with session_scope() as session :
-                session.add(orm)
+        #     with session_scope() as session :
+        #         session.add(orm)
