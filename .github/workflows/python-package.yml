@@ -22,17 +22,17 @@ jobs:
         if [ $GITHUB_REF == 'refs/heads/main' ]; then
             zip -r main-release.zip .
         elif [ $GITHUB_REF == 'refs/heads/v0.2.0/dev' ]; then
-            zip -r v0.2.0-dev-release.zip .
+            zip -r v0.2.0-beta-release.zip .
         fi
     - name: Upload Release
-      uses: actions/upload-artifact@v0.2.0-dev
+      uses: actions/upload-artifact@v0.2.0-beta
       with:
         name: ${{ github.ref }}-release
         path: ${{ github.ref }}-release.zip
 
     - name: Create GitHub Release
       id: create_release
-      uses: actions/create-release@v0.2.0-dev
+      uses: actions/create-release@v0.2.0-beta
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
