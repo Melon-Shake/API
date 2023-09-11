@@ -182,7 +182,7 @@ class Login(BaseModel):
     email:str
     password:str
 
-@api.post("/login/")
+@app.post("/login/")
 def login(login_data:Login):  
     email = login_data.email
     password = login_data.password
@@ -272,9 +272,7 @@ def get_daily_search_ranking():
 
     search_query = """
 
-        SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
-
-        SELECT keyword, RANK() OVER (ORDER BY created_datetime DESC, COUNT(*) DESC) as search_rank
+          SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
         FROM search_log_keywords
         GROUP BY keyword
         ORDER BY search_rank;
