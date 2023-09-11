@@ -26,22 +26,9 @@ if __name__ == '__main__':
     if response.status_code == 200 :
         responsed_data = response.json().get('list')
 
-        # print(responsed_data[0].get('artists'))
-        entity = BugsEntity(**responsed_data[0])
-        orm = BugsORM(entity)
-        # print(orm.artist_ids)
-        # print(orm.artist_nms)
-        # with session_scope() as session :
-        #     session.add(orm)
-        with session_scope() as session :
-            orm = session.query(BugsORM).first()
-            x = orm.artist_ids
-            print(type(x))
-            print(x)
+        for x in responsed_data :
+            entity = BugsEntity(**x)
+            orm = BugsORM(entity)
 
-        # for x in responsed_data :
-        #     entity = BugsEntity(**x)
-        #     orm = BugsORM(entity)
-
-        #     with session_scope() as session :
-        #         session.add(orm)
+            with session_scope() as session :
+                session.add(orm)
