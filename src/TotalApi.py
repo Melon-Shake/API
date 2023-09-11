@@ -9,7 +9,7 @@ from datetime import datetime
 from config.db_info import db_params
 from lyric import lyric_search_and_input
 from sp_track import sp_and_track_input, get_sp_track_id
-from update_token import return_token
+from get_token import return_token, update_token
 # import sys, numpy as np, pandas as pd, json, requests, re
 import requests
 import sys
@@ -66,7 +66,6 @@ def update_token():
 # ssg search api
 @app.post("/search/track/")
 async def search_spotify(data:SearchKeyword):
-    #***************** access_token = requests.get('http://0.0.0.0:8000/token')*****************
     access_token = return_token()
     q = data.searchInput
     url = f'https://api.spotify.com/v1/search?q={q}&type=album%2Cartist%2Ctrack&market=kr'
@@ -74,7 +73,9 @@ async def search_spotify(data:SearchKeyword):
         'Authorization': 'Bearer '+access_token
     }
     response = requests.get(url, headers=headers)
-    if response.status_code == 200:
+    if response.status_code == 401 :
+        access_token = update_token('iamsophie')
+    elif response.status_code == 200:
         response_json = response.json()
         return_data ={}
         for i in range(len(response_json["tracks"]["items"])):
@@ -178,7 +179,7 @@ class Login(BaseModel):
     email:str
     password:str
 
-@api.post("/login/")
+@app.post("/login/")
 def login(login_data:Login):  
     email = login_data.email
     password = login_data.password
