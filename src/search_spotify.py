@@ -35,9 +35,22 @@ def load_spotify(data:Spotify.Search) :
             session.add(albums)
             session.add_all(artists)
 
+def format_search(data:Spotify.Search) :
+    tracks = [Spotify.TracksORM(track) for track in data.tracks.items]
+    albums = [Spotify.AlbumsORM(track.album) for track in data.tracks.items]
+    artists = [Spotify.ArtistsORM(artist) for track in data.tracks.items for artist in track.artists]
+
+    search = dict()
+    search['tracks'] = [{'이름':track.name, '이미지':None, '가수':None} for track in tracks]
+    search['albums'] = [{'이름':album.name, '이미지':album.images_url} for album in albums]
+    search['artists'] = [{'이름':artist.name, '이미지':None} for artist in artists]
+
+    return search
+
 if __name__ == '__main__':
     # update_token('iamsophie')
     access_token = return_token()
 
     search_result = search_spotify('아이유')
-    load_spotify(search_result)
+    # load_spotify(search_result)
+    search_format = format_search(search_result)
