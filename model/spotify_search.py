@@ -30,7 +30,6 @@ class Artists(BaseModel) :
 
 class ArtistsExt(Artists) :
     model_config = ConfigDict(from_attributes=True)
-
     images: List[Images]
     followers: Followers
     popularity: int
@@ -44,7 +43,6 @@ class ArtistsORM(Base) :
     href = Column(String, nullable=True)
     external_urls = Column(String, nullable=True)
     name = Column(String, nullable=True)
-    
     images_url = Column(String, nullable=True)
     followers_total = Column(Integer, nullable=True)
     popularity = Column(Integer, nullable=True)
@@ -56,7 +54,6 @@ class ArtistsORM(Base) :
         self.href = artists.href
         self.external_urls = artists.external_urls.spotify
         self.name = artists.name
-
         images = getattr(artists,'images',None)
         self.images_url = images[0].url if images and images[0].url else None
         followers = getattr(artists,'followers',None)
@@ -66,12 +63,11 @@ class ArtistsORM(Base) :
 
 class Albums(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
-
     id: str
-    name: str
     uri: str
     href: str
     external_urls: ExternalUrls
+    name: str
     images: List[Images]
     album_type: str
     total_tracks: int
@@ -79,14 +75,17 @@ class Albums(BaseModel) :
     release_date_precision: str
     artists: List[Artists]
 
+class AlbumsExt(Albums) :
+    model_config = ConfigDict(from_attributes=True)
+
 class AlbumsORM(Base) :
     __tablename__ = 'spotify_albums'
 
     id = Column(String, primary_key=True)
-    name = Column(String, nullable=True)
     uri = Column(String, nullable=True)
     href = Column(String, nullable=True)
     external_urls = Column(String, nullable=True)
+    name = Column(String, nullable=True)
     images_url = Column(String, nullable=True)
     album_type = Column(String, nullable=True)
     total_tracks = Column(Integer, nullable=True)
@@ -95,10 +94,10 @@ class AlbumsORM(Base) :
 
     def __init__(self, albums:Albums) :
         self.id = albums.id
-        self.name = albums.name
         self.uri = albums.uri
         self.href = albums.href
         self.external_urls = albums.external_urls.spotify
+        self.name = albums.name
         self.images_url = albums.images[0].url
         self.album_type = albums.album_type
         self.total_tracks = albums.total_tracks
@@ -107,68 +106,73 @@ class AlbumsORM(Base) :
 
 class Tracks(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
-
     id: str
-    name: str
     uri: str
     href: str
     external_urls: ExternalUrls
+    name: str
     popularity: int
+    duration_ms: int
     track_number: int
     disc_number: int
-    duration_ms: int
-    artists: List[Artists]
     album: Albums
+    artists: List[Artists]
+
+class TracksExt(Tracks) :
+    model_config = ConfigDict(from_attributes=True)
 
 class TracksORM(Base) :
     __tablename__ = 'spotify_tracks'
 
     id = Column(String, primary_key=True)
-    name = Column(String, nullable=True)
     uri = Column(String, nullable=True)
     href = Column(String, nullable=True)
     external_urls = Column(String, nullable=True)
-    duration_ms = Column(Integer, nullable=True)
+    name = Column(String, nullable=True)
     popularity = Column(Integer, nullable=True)
-    disc_number = Column(Integer, nullable=True)
+    duration_ms = Column(Integer, nullable=True)
     track_number = Column(Integer, nullable=True)
-    artists_ids = Column(ARRAY(String), nullable=True)
+    disc_number = Column(Integer, nullable=True)
     album_id = Column(String, nullable=True)
+    artists_ids = Column(ARRAY(String), nullable=True)
 
     def __init__(self, tracks:Tracks) :
         self.id = tracks.id
-        self.name = tracks.name
         self.uri = tracks.uri
         self.href = tracks.href
         self.external_urls = tracks.external_urls.spotify
-        self.duration_ms = tracks.duration_ms
+        self.name = tracks.name
         self.popularity = tracks.popularity
-        self.disc_number = tracks.disc_number
+        self.duration_ms = tracks.duration_ms
         self.track_number = tracks.track_number
+        self.disc_number = tracks.disc_number
+        self.album_id = tracks.album.id
         self.artists_ids = list()
         for artists in tracks.artists :
             self.artists_ids.append(artists.id)
-        self.album_id = tracks.album.id
 
-class SearchTracks(BaseModel) :
+class SearchTracks(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     href: str
     limit: int
     next: Union[str, None]
     offset: int
     previous: Union[str, None]
     total: int
-    items: List[Tracks]
+    items: List[TracksExt]
 
-class SearchAlbums(BaseModel) :
+class SearchAlbums(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     href: str
     limit: int
     next: Union[str, None]
     offset: int
     previous: Union[str, None]
     total: int
-    items: List[Albums]
+    items: List[AlbumsExt]
 
-class SearchArtists(BaseModel) :
+class SearchArtists(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     href: str
     limit: int
     next: Union[str, None]
@@ -177,7 +181,8 @@ class SearchArtists(BaseModel) :
     total: int
     items: List[ArtistsExt]
 
-class Search(BaseModel) :
+class Search(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     artists: SearchArtists
     albums: SearchAlbums
     tracks: SearchTracks
