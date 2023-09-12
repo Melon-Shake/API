@@ -34,23 +34,14 @@ if __name__ == '__main__':
 
         entries = {}
         for index, item in enumerate(responsed_data):
-            # 제목
-            pre_track_title = item['track_title']
-            track_title = urllib.parse.unquote(pre_track_title)
-            
-            # 앨범
-            pre_album_title = item['album']['title']
-            album_title = urllib.parse.unquote(pre_album_title)
-            
-            # 가수
+            track_title = item['track_title']
+            album_title = item['album']['title']
             artists = item.get('artists')
             artist_pre = []
             for artist in artists:
                 artist_nm = artist['artist_nm']
-                unq_artist = urllib.parse.quote(artist_nm)
-                artist_pre.append(unq_artist)
+                artist_pre.append(artist_nm)
             entries[index] = [track_title, artist_pre, album_title]
-            
         # {1: ['Smoke (Prod. Dynamicduo, Padi)', ['다이나믹 듀오', '이영지'], '스트릿 우먼 파이터2(SWF2) 계급미션'],}
         
         for i in range(len(responsed_data)):

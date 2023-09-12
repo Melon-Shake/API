@@ -1,5 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
 import requests, pandas as pd
 import lib.module as module
 from pydantic import BaseModel
@@ -19,16 +23,9 @@ from typing import Dict, List, Union
 from model.database import session_scope
 
 
-
-
-
-
 # import sys, numpy as np, pandas as pd, json, requests, re
 import requests
-import sys
-import os
-root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
-sys.path.append(root_path)
+
 
 app = FastAPI()
 
@@ -97,7 +94,6 @@ async def search_spotify(data:SearchKeyword):
             return_data["tracks"+str(i)]=[[response_json["tracks"]["items"][i]["name"]],
                             [response_json["tracks"]["items"][i]["album"]["name"]],
                             list_artist]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -119,7 +115,6 @@ async def search_spotify(data:SearchKeyword):
             return_data["artists"+str(i)]=[[response_json["artists"]["items"][i]["name"]],
                                            [response_json["artists"]["items"][i]["genres"]],
                                            [response_json["artists"]["items"][i]["images"][0]["url"]]]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -142,7 +137,6 @@ async def search_spotify(data:SearchKeyword):
                                           [response_json["albums"]["items"][i]["images"][0]['url']],
                                           [response_json["albums"]["items"][i]["artists"]["name"]],
                                           [response_json["albums"]["items"][i]["release_date"]]]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -170,7 +164,11 @@ def get_user_data(data: LoginData):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     # INSERT 쿼리 실행
     user_query = "INSERT INTO \"user\"(password,email,name) values (%s, %s,%s) RETURNING id;"
+
     user_values = (hashed_password.decode("utf-8"),email,name)
+
+    user_values = (hashed_password,email,name)
+
     cursor.execute(user_query, user_values)
     user_detail_query = "INSERT INTO user_properties(gender,age,mbti,favorite_tracks,favorite_artists,user_id) values (%s,%s,%s,%s,%s,%s)"
     try:
@@ -187,11 +185,12 @@ def get_user_data(data: LoginData):
         else:
             print("다른 예외 발생:", e)
             return "다른 예외 발생"
+
 class Login(BaseModel):
     email:str
     password:str
 
-@api.post("/login/")
+@app.post("/login/")
 def login(login_data:Login):  
     email = login_data.email
     password = login_data.password
@@ -208,10 +207,11 @@ def login(login_data:Login):
         condition = bcrypt.checkpw(password.encode("utf-8"), user_query_result[0].encode("utf-8"))
         cursor.close()
         if condition:
-                # 패스워드가 일치하면 로그인 성공
-                return True
+            # 패스워드가 일치하면 로그인 성공
+            return True
         else:
             return False
+
         
 class Keyword(BaseModel):
     searchInput: str
@@ -280,44 +280,38 @@ def get_daily_search_ranking():
     cursor = connection.cursor()
 
     search_query = """
-        SELECT keyword, RANK() OVER (ORDER BY created_datetime DESC, COUNT(*) DESC) as search_rank
+
+        SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
         FROM search_log_keywords
+        WHERE keyword IN (
+            SELECT DISTINCT item
+            FROM (
+                SELECT name_org as item FROM artist
+                UNION ALL
+                SELECT name_org as item FROM track
+                UNION ALL
+                SELECT name_org as item FROM album
+            ) AS items
+            WHERE item IS NOT NULL
+        )
         GROUP BY keyword
         ORDER BY search_rank;
     """
 
-    value_check_query = """
-        SELECT item
-        FROM (
-            SELECT name_org as item FROM artist
-            UNION ALL
-            SELECT name_org as item FROM track
-            UNION ALL
-            SELECT name_org as item FROM album
-        ) AS items
-        WHERE item IS NOT NULL
-        AND item = %s;
-    """
-
+    
     cursor.execute(search_query)
     search_ranking = cursor.fetchall()
 
     result = {}
-    prev_search_rank = None
-    rank = 0
+    rank = 1
     
     for _, (keyword, search_rank) in enumerate(search_ranking):
-        cursor.execute(value_check_query, (keyword,))
-        if cursor.fetchone():
-            if exists:
-                if search_rank != prev_search_rank:  # 동일한 순위가 아니면 순위 업데이트
-                    rank += 1
-            result[rank] = keyword
-            prev_search_rank = search_rank
+        result[rank] = keyword
+        rank += 1
             
-            if rank >= 20:  # 20위까지만 결과 저장
-                break
-    
+        if rank >= 20:  # 20위까지만 결과 저장
+            break
+
     connection.close()
     return result
 
