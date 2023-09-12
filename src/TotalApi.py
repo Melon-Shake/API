@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-import requests
 
 import lib.module as module
 from pydantic import BaseModel
