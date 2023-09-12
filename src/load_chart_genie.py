@@ -22,16 +22,6 @@ if __name__ == '__main__' :
                              }
                             )
 
-    def process_sp_json(sp_json):
-        for e in sp_json:
-            entity = ChartGenie(**e)
-            orm = ChartGenieORM(entity)
-            print(orm)
-            with session_scope() as session :
-                  session.add(orm)
-             
-        else : print(response.status_code)
-
     if response.status_code == 200 :
         responsed_data = response.json().get('DataSet').get('DATA')
         
@@ -71,7 +61,7 @@ if __name__ == '__main__' :
     for i in range(len(entries)):
         
         q = entries[i][0] + " " + entries[i][1]
-        print(q)
+
         url = f'https://api.spotify.com/v1/search?q={q}&type=track&maket=KR&limit=1'
         headers = {
             'Authorization': 'Bearer '+access_token
