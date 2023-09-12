@@ -1,0 +1,121 @@
+2023-09-12 12:09:52,010 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2023-09-12 12:09:52,011 INFO sqlalchemy.engine.Engine [raw sql] {}
+2023-09-12 12:09:52,093 INFO sqlalchemy.engine.Engine select current_schema()
+2023-09-12 12:09:52,094 INFO sqlalchemy.engine.Engine [raw sql] {}
+2023-09-12 12:09:52,179 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2023-09-12 12:09:52,193 INFO sqlalchemy.engine.Engine [raw sql] {}
+2023-09-12 12:09:52,278 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2023-09-12 12:09:52,286 INFO sqlalchemy.engine.Engine SELECT spotify_client."user" AS spotify_client_user, spotify_client.id AS spotify_client_id, spotify_client.secret AS spotify_client_secret, spotify_client.redirect_uri AS spotify_client_redirect_uri, spotify_client.refresh_token AS spotify_client_refresh_token 
+FROM spotify_client
+2023-09-12 12:09:52,287 INFO sqlalchemy.engine.Engine [generated in 0.00311s] {}
+2023-09-12 12:09:52,702 INFO sqlalchemy.engine.Engine COMMIT
+2023-09-12 12:09:52,745 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2023-09-12 12:09:52,755 INFO sqlalchemy.engine.Engine INSERT INTO spotify_token (value, is_expired) VALUES (%(value)s, %(is_expired)s) RETURNING spotify_token.id
+2023-09-12 12:09:52,756 INFO sqlalchemy.engine.Engine [generated in 0.00115s] {'value': 'BQDfRWksf5fQnsB9IzVkEjktuhlNhmDHcUH0joenoef5A4VCclrZNCkNKduOGfzURjUOGPJutQ7-1oCJAKl5S6kgSByvfwyzfo9dGVgptRm3w-hsLf8IkckkcdgxyAkf0A6HqVJTQ2WHmRcMbYdWCtD2DR0v6TWfqG68mI1exQY52DIJKyK7PZVlLR30RndycwnXZDsyVw', 'is_expired': False}
+2023-09-12 12:09:52,874 INFO sqlalchemy.engine.Engine COMMIT
+2023-09-12 12:09:52,919 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2023-09-12 12:09:52,923 INFO sqlalchemy.engine.Engine SELECT spotify_token.id AS spotify_token_id, spotify_token.value AS spotify_token_value, spotify_token.is_expired AS spotify_token_is_expired 
+FROM spotify_token ORDER BY spotify_token.id DESC 
+ LIMIT %(param_1)s
+2023-09-12 12:09:52,924 INFO sqlalchemy.engine.Engine [generated in 0.00091s] {'param_1': 1}
+2023-09-12 12:09:53,014 INFO sqlalchemy.engine.Engine COMMIT
+AKMU Love Lee Love Lee https://i.scdn.co/image/ab67616d0000b273a75d7535b8657385f8232449
+Dynamicduo Street Woman Fighter2 (SWF2) Class Mission Smoke (Prod. Dynamicduo, Padi) https://i.scdn.co/image/ab67616d0000b2734c0f17fbae890e66fe861b29
+NewJeans NewJeans 2nd EP 'Get Up' ETA https://i.scdn.co/image/ab67616d0000b2730744690248ef3ba7b776ea7b
+Jung Kook Seven (feat. Latto) Seven (feat. Latto) (Clean Ver.) https://i.scdn.co/image/ab67616d0000b273bf5cce5a0e1ed03a626bdd74
+AKMU PLAY Give Love https://i.scdn.co/image/ab67616d0000b27378551e802bd7b81d7af67dfb
+NewJeans NewJeans 'Super Shy' Super Shy https://i.scdn.co/image/ab67616d0000b2733d98a0ae7c78a3a9babaf8af
+Parc Jae Jung Alone Let’s Say Goodbye https://i.scdn.co/image/ab67616d0000b27352e570184e68335314f8cdce
+IVE I've IVE I AM https://i.scdn.co/image/ab67616d0000b2734156626a16155286856ea868
+JEON SOMI GAME PLAN Fast Forward https://i.scdn.co/image/ab67616d0000b2736adf6b9ff59d4b0a568a3896
+KIMMUSEUM Paint Laurent Queen https://i.scdn.co/image/ab67616d0000b27307623ed308cb6096be3559dd
+Lim Young Woong Young Lady And Gentleman (Original Television Soundtrack) Pt.2 Love Always Run Away https://i.scdn.co/image/ab67616d0000b273e56f69fd58795fbbcbc919f2
+NewJeans NewJeans 1st EP 'New Jeans' Hype Boy https://i.scdn.co/image/ab67616d0000b2739d28fd01859073a3ae6ea209
+Park Hyo Shin Wild Flower Wild Flower https://i.scdn.co/image/ab67616d0000b2737645cbd0f9fefff1771ea50c
+Lim Young Woong IM HERO Our Blues, Our Life https://i.scdn.co/image/ab67616d0000b2738f116e476da669a9a3e7dcaa
+Lee Sang-Eun 신비체험 비밀의 화원 https://i.scdn.co/image/ab67616d0000b2734a1a1b422577f7519a0fbbfa
+IVE After LIKE After LIKE https://i.scdn.co/image/ab67616d0000b2731abe22e6883e5a8b3f4726e2
+Lim Young Woong Mr. Trot WINNER SONG Trust in me https://i.scdn.co/image/ab67616d0000b273e76a3b26a23718f8772bb6fa
+Lim Young Woong Grain of Sand Grain of Sand https://i.scdn.co/image/ab67616d0000b273111a6e9b713b646443c5c222
+IVE Kitsch Kitsch https://i.scdn.co/image/ab67616d0000b273c4e7befb303f416dc0409d38
+aespa MY WORLD - The 3rd Mini Album Spicy https://i.scdn.co/image/ab67616d0000b27304878afb19613a94d37b29ce
+NewJeans Ditto Ditto https://i.scdn.co/image/ab67616d0000b273edf5b257be1d6593e81bb45f
+Lim Young Woong IM HERO If We Ever Meet Again https://i.scdn.co/image/ab67616d0000b2738f116e476da669a9a3e7dcaa
+Younha YOUNHA 6th Album Repackage 'END THEORY : Final Edition' Event Horizon https://i.scdn.co/image/ab67616d0000b2732918f236448bf544586e388a
+Lim Young Woong IM HERO Rainbow https://i.scdn.co/image/ab67616d0000b2738f116e476da669a9a3e7dcaa
+Paul Blanco Summer Summer (Feat. BE’O) https://i.scdn.co/image/ab67616d0000b2735a68d5809c1367b2a1f4b90b
+Lim Young Woong Polaroid London Boy https://i.scdn.co/image/ab67616d0000b2732d2009b6cad53ddacad11334
+Lim Young Woong Polaroid Polaroid https://i.scdn.co/image/ab67616d0000b2732d2009b6cad53ddacad11334
+HWASA I Love My Body I Love My Body https://i.scdn.co/image/ab67616d0000b273864f04cb6debbb9057b04b30
+Lim Young Woong IM HERO Father https://i.scdn.co/image/ab67616d0000b2738f116e476da669a9a3e7dcaa
+Lim Young Woong IM HERO A bientot https://i.scdn.co/image/ab67616d0000b2738f116e476da669a9a3e7dcaa
+Lim Young Woong IM HERO Lovely Touch https://i.scdn.co/image/ab67616d0000b2738f116e476da669a9a3e7dcaa
+Charlie Puth CHARLIE I Don’t Think That I Like Her https://i.scdn.co/image/ab67616d0000b27335d2e0ed94a934f2cc46fa49
+NewJeans NewJeans 1st EP 'New Jeans' Attention https://i.scdn.co/image/ab67616d0000b2739d28fd01859073a3ae6ea209
+Lim Young Woong IM HERO I Love You https://i.scdn.co/image/ab67616d0000b2738f116e476da669a9a3e7dcaa
+STAYC TEENFRESH ﻿Bubble (English Ver.) https://i.scdn.co/image/ab67616d0000b27305f3e920cfd3ae7fe9192149
+D.S 다른게 뭐야 후애,후회 https://i.scdn.co/image/ab67616d0000b273fd9ad74bfb59bbeba62d6be5
+IVE LOVE DIVE LOVE DIVE https://i.scdn.co/image/ab67616d0000b2739016f58cc49e6473e1207093
+Lim Young Woong IM HERO Nest https://i.scdn.co/image/ab67616d0000b2738f116e476da669a9a3e7dcaa
+DAY6 The Book of Us : Gravity 한 페이지가 될 수 있게 https://i.scdn.co/image/ab67616d0000b27380c0a2d0bf89e3707b6365c4
+Lim Young Woong IM HERO Love Letter https://i.scdn.co/image/ab67616d0000b2738f116e476da669a9a3e7dcaa
+Lim Young Woong IM HERO A Psalm of Life https://i.scdn.co/image/ab67616d0000b2738f116e476da669a9a3e7dcaa
+LE SSERAFIM UNFORGIVEN UNFORGIVEN (feat. Nile Rodgers) https://i.scdn.co/image/ab67616d0000b273d71fd77b89d08bc1bda219c7
+Lauv Steal The Show (From "Elemental") Steal The Show - From "Elemental" https://i.scdn.co/image/ab67616d0000b27322bbb2bd9c0d6bec5057d535
+KWON EUNBI Lethality Underwater https://i.scdn.co/image/ab67616d0000b273122797eb8734fd01d47d24ec
+Charlie Puth Nine Track Mind Dangerously https://i.scdn.co/image/ab67616d0000b273633a2d775747bccfbcb17a45
+Lyn Lovefiction Teddy Bear https://i.scdn.co/image/ab67616d0000b27306f56375a6f108349ebafe45
+NewJeans NewJeans 'OMG' OMG https://i.scdn.co/image/ab67616d0000b273d70036292d54f29e8b68ec01
+JISOO ME FLOWER https://i.scdn.co/image/ab67616d0000b2735a42123d217f8c248ec1a92d
+MeloMance Romantic 나를 사랑하는 그대에게 https://i.scdn.co/image/ab67616d0000b2738fcfa58ddd72252036a042e6
+ITZY KILL MY DOUBT CAKE https://i.scdn.co/image/ab67616d0000b2735e674180b1fe79181853f911
+NewJeans NewJeans 'Super Shy' New Jeans https://i.scdn.co/image/ab67616d0000b2733d98a0ae7c78a3a9babaf8af
+LE SSERAFIM ANTIFRAGILE ANTIFRAGILE https://i.scdn.co/image/ab67616d0000b273a991995542d50a691b9ae5be
+Roy Kim Let's Stay Well (My love X Roy Kim) Let's Stay Well (My love X Roy Kim) https://i.scdn.co/image/ab67616d0000b27379b43a400a5aeb83502a59c3
+HYUKOH 23 TOMBOY https://i.scdn.co/image/ab67616d0000b2736b0b72f94905f2321564a20f
+Paul Blanco Such a thing Such a thing https://i.scdn.co/image/ab67616d0000b27380d7765e0ce6c7847fe7ba70
+Sung Si Kyung My Love From the Star 별에서 온 그대 (Original Television Soundtrack), Pt. 7 Every moment of you 너의 모든 순간 https://i.scdn.co/image/ab67616d0000b2733fdb4250dac291b4c53879cd
+Kim Yeon Woo <나는 가수다 2> 10월 A조 경연 / 1집 중독된 사랑 (원곡가수 조장혁) https://i.scdn.co/image/ab67616d0000b273881e24731459960d2cfd382f
+JANNABI LEGEND for lovers who hesitate https://i.scdn.co/image/ab67616d0000b273f694adfa02990eaca79fec1b
+김환 잘 지내볼게 잘 지내볼게 https://i.scdn.co/image/ab67616d0000b2738e4c5c9795fef0bd5129e604
+SEVENTEEN SEVENTEEN 4th Album 'Face the Sun' HOT https://i.scdn.co/image/ab67616d0000b273decd839dd4fef3faf64c5fd5
+Charlie Puth CHARLIE That's Hilarious https://i.scdn.co/image/ab67616d0000b273a3b39c1651a617bb09800fd8
+The Kid LAROI F*CK LOVE 3+: OVER YOU WRONG (feat. Lil Mosey) https://i.scdn.co/image/ab67616d0000b273b4d59e6fa7e5e7cbc57ac33a
+WSG WANNBE (Gaya-G) WSG WANNABE 1st Album At That Moment https://i.scdn.co/image/ab67616d0000b273804748a57bf784af6ec1fc7d
+BTS Dynamite (NightTime Version) Dynamite https://i.scdn.co/image/ab67616d0000b273ca8a9f328a1971cc6352b963
+Christopher When I Get Old When I Get Old https://i.scdn.co/image/ab67616d0000b2730258c2353d456519e467584b
+SEVENTEEN SEVENTEEN 10th Mini Album 'FML' Super https://i.scdn.co/image/ab67616d0000b27380e31ba0c05187e6310ef264
+AKMU SAILING How can I love the heartbreak, you're the one I love https://i.scdn.co/image/ab67616d0000b273d41cdd1f3e033a0ea1642112
+Alan Walker The Drum The Drum https://i.scdn.co/image/ab67616d0000b273bafcc8454289261db2fe7b03
+Onestar Because I Don't Love You Because I Don't Love You https://i.scdn.co/image/ab67616d0000b2739a1e802f4a3a02a57587c75c
+10cm 5.3 (Gradation) Gradation https://i.scdn.co/image/ab67616d0000b273f38e3060974a65fe8eb626cc
+IVE ELEVEN ELEVEN https://i.scdn.co/image/ab67616d0000b273da343b21617aac0c57e332bb
+KyoungSeo Dear my X Dear my X https://i.scdn.co/image/ab67616d0000b2739659451f3c10481af6a4587e
+Jung Kook Dreamers [Music from the FIFA World Cup Qatar 2022 Official Soundtrack] Dreamers [Music from the FIFA World Cup Qatar 2022 Official Soundtrack] https://i.scdn.co/image/ab67616d0000b273ef57183066d6cac0cabb85c6
+DAY6 Every DAY6 February 예뻤어 https://i.scdn.co/image/ab67616d0000b273b6d756ed33cd43ec46ffe6db
+BLACKPINK BORN PINK Shut Down https://i.scdn.co/image/ab67616d0000b273580ac3ad7dfc81e509171120
+An Nyeong haeyo (2022) haeyo (2022) https://i.scdn.co/image/ab67616d0000b273ba213b9b97eb23df53f86124
+김환 이별이 오네요 이별이 오네요 https://i.scdn.co/image/ab67616d0000b273f06047a41238786e77ed3e95
+Anne-Marie Speak Your Mind (Deluxe) 2002 https://i.scdn.co/image/ab67616d0000b27338aae75dc37fb42457866ffd
+Tei Monologue Monologue https://i.scdn.co/image/ab67616d0000b27311c5910876d0e8caf24158e2
+KIM HOJOONG Three siblings are brave OST Part. 1 meet you among them https://i.scdn.co/image/ab67616d0000b27377150fab481cbe32ebb48de1
+Lee Mujin Ordinary Confession Ordinary Confession https://i.scdn.co/image/ab67616d0000b2737833c4c10979d7c3cfb67f09
+ZICO Street Man Fighter Original Vol.3 (Mission by Rank) New thing (Prod. ZICO) (Feat. Homies) https://i.scdn.co/image/ab67616d0000b2735c2efa8ce12c99a92b914e20
+Huh Gak With you With you https://i.scdn.co/image/ab67616d0000b273d0d379eee69cf9d53c8f7b83
+BLACKPINK BORN PINK Pink Venom https://i.scdn.co/image/ab67616d0000b273580ac3ad7dfc81e509171120
+MIYEON MY Drive https://i.scdn.co/image/ab67616d0000b2739f253ee40c24e4742299ab16
+Tophyun Only you Only you https://i.scdn.co/image/ab67616d0000b273bd46b738624ab0d210eea37d
+KyoungSeo ONGOING 120BPM https://i.scdn.co/image/ab67616d0000b2733642b0a29bdb5dbec99bb000
+TAEYANG VIBE (feat. Jimin of BTS) VIBE (feat. Jimin of BTS) https://i.scdn.co/image/ab67616d0000b273278d6cf14513bd97cb580fe7
+IU IU 5th Album 'LILAC' Epilogue https://i.scdn.co/image/ab67616d0000b2734ed058b71650a6ca2c04adff
+Justin Bieber Justice Off My Face https://i.scdn.co/image/ab67616d0000b273e6f407c7f3a0ec98845e4431
+Peder Elias Love & Loneliness Loving You Girl (feat. Hkeem) https://i.scdn.co/image/ab67616d0000b27354db9960d0dccbaf6e6020fd
+BTS You Never Walk Alone 봄날 https://i.scdn.co/image/ab67616d0000b273e23a7fd165b24c517a66a69f
+miss A Colors 다른 남자 말고 너 https://i.scdn.co/image/ab67616d0000b2733fe6d16d8150e3f571955800
+FIFTY FIFTY The Beginning: Cupid Cupid - Twin Ver. https://i.scdn.co/image/ab67616d0000b27337c0b3670236c067c8e8bbcb
+Sung Si Kyung HeeJae (Original Motion Picture Soundtrack) HeeJae https://i.scdn.co/image/ab67616d0000b2730d1a65e0bae0ac7ebd50f3f7
+BTS Proof Butter https://i.scdn.co/image/ab67616d0000b27317db30ce3f081d6818a8ad49
+OH MY GIRL Golden Hourglass Celebrate https://i.scdn.co/image/ab67616d0000b27323157874955c192e36700ffe
+NewJeans NewJeans 2nd EP 'Get Up' Cool With You https://i.scdn.co/image/ab67616d0000b2730744690248ef3ba7b776ea7b
+Paul Kim Should We Kiss First? (Original Television Soundtrack), Pt. 3 Every day, Every Moment https://i.scdn.co/image/ab67616d0000b27390a98780fb70dde769f9e61a
+Juho without me without me https://i.scdn.co/image/ab67616d0000b2735f66001c5e789306e14e8782

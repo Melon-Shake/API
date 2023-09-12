@@ -5,7 +5,7 @@ root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
 from update_token import return_token
-from model.chart_genie import ChartGenie, ChartGenieORM
+from model.chart_bugs import BugsEntity, BugsORM
 from model.database import session_scope
 
 access_token = return_token()
@@ -34,14 +34,23 @@ if __name__ == '__main__':
 
         entries = {}
         for index, item in enumerate(responsed_data):
-            track_title = item['track_title']
-            album_title = item['album']['title']
+            # 제목
+            pre_track_title = item['track_title']
+            track_title = urllib.parse.unquote(pre_track_title)
+            
+            # 앨범
+            pre_album_title = item['album']['title']
+            album_title = urllib.parse.unquote(pre_album_title)
+            
+            # 가수
             artists = item.get('artists')
             artist_pre = []
             for artist in artists:
                 artist_nm = artist['artist_nm']
-                artist_pre.append(artist_nm)
+                unq_artist = urllib.parse.quote(artist_nm)
+                artist_pre.append(unq_artist)
             entries[index] = [track_title, artist_pre, album_title]
+            
         # {1: ['Smoke (Prod. Dynamicduo, Padi)', ['다이나믹 듀오', '이영지'], '스트릿 우먼 파이터2(SWF2) 계급미션'],}
         
         for i in range(len(responsed_data)):
@@ -57,10 +66,11 @@ if __name__ == '__main__':
                 sp_json = response_sp.json()
                 return_data ={}
                 artists_sp = []
+                # print(sp_json['tracks']['items'][0]['name'])
                 song_name.append(sp_json['tracks']['items'][0]['name'])
                 album_name.append(sp_json['tracks']['items'][0]['album']['name'])
                 album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
-                # 
+
                 for j in range(len(sp_json['tracks']['items'][0]['artists'])):
                     artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
                 artist_name.append(artists_sp)
