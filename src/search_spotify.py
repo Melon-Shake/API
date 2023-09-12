@@ -56,16 +56,6 @@ def search_spotify(input:str) :
         )
         return search_result
 
-def load_spotify(search_result:Spotify.SearchResult) :
-    tracks = [Spotify.TracksORM(track) for track in search_result.tracks]
-    albums = [Spotify.AlbumsORM(album) for album in search_result.albums]
-    artists = [Spotify.ArtistsORM(artist) for artist in search_result.artists]
-
-    with session_scope() as session :
-        session.add_all(tracks)
-        session.add_all(albums)
-        session.add_all(artists)
-
 def convert_timestamp(millis:int) :
     seconds = millis // 1000
     minutes, seconds = divmod(seconds, 60)
@@ -103,12 +93,22 @@ def format_search(search_result:Spotify.SearchResult) :
     )
     return search_output
 
+def load_spotify(search_result:Spotify.SearchResult) :
+    tracks = [Spotify.TracksORM(track) for track in search_result.tracks]
+    albums = [Spotify.AlbumsORM(album) for album in search_result.albums]
+    artists = [Spotify.ArtistsORM(artist) for artist in search_result.artists]
+
+    with session_scope() as session :
+        session.add_all(tracks)
+        session.add_all(albums)
+        session.add_all(artists)
+
 if __name__ == '__main__':
     update_token('iamsophie')
     access_token = return_token()
 
     search_result = search_spotify('아이유')
-    load_spotify(search_result)
     search_output = format_search(search_result)
     import json
     print(json.dumps(search_output,indent=2))
+    load_spotify(search_result)
