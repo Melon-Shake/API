@@ -41,16 +41,6 @@ class MelonChartRequestException(Exception):
 class MelonChartParseException(Exception):
     pass
 
-class LoginData(BaseModel):
-    email : str
-    password : str
-    gender : str
-    birthdate: str
-    mbti : str
-    favorite_tracks : str
-    favorite_artists : str
-    name : str
-
 class SearchKeyword(BaseModel):
     searchInput : str
     
