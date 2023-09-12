@@ -33,7 +33,7 @@ def search_spotify(input:str) :
     response = requests.get('https://api.spotify.com/v1/search?'
                             +'q={keyword}'.format(keyword=input)
                             +'&type=artist%2Calbum%2Ctrack'
-                            +'&limit=50'
+                            +'&limit=3'
                             +'&offset=0'
                       ,headers={
                           'Authorization': 'Bearer '+ access_token
@@ -54,7 +54,6 @@ def search_spotify(input:str) :
             , albums = deduplicate(albums_data)
             , artists = deduplicate_by_filter(artists_data,artists_filter)
         )
-
         return search_result
 
 def load_spotify(search_result) :
@@ -67,24 +66,49 @@ def load_spotify(search_result) :
         session.add_all(albums)
         session.add_all(artists)
 
-def convert_timestamp(timestamp:str) :
-    minutes = timestamp // 60
-    seconds = timestamp % 60
-    return f'{minutes}:{seconds}'
+def convert_timestamp(millis) :
+    seconds = millis // 1000
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    duration = [hours, f'{minutes:02}', f'{seconds:02}'][hours == 0 :]
+    return ':'.join(map(str, duration))
+    
+def format_search(search_result) :
+    tracks = search_result.get('tracks')
+    albums = search_result.get('albums')
+    artists = search_result.get('artists')
 
-def format_search(data:Spotify.Search) :
-    search_output = dict()
-    # search_output['tracks'] = [{'name':track.name, 'img':None, 'artist':None, 'duration':None} for track in tracks]
-    # search_output['albums'] = [{'name':album.name, 'img':album.images_url, 'artist':None, 'release_year':None} for album in albums]
-    # search_output['artists'] = [{'name':artist.name, 'img':None} for artist in artists]
+    tracks_output = [dict(
+                        name=track.name
+                        ,img=track.album.images[0].url
+                        ,artist=', '.join([artist.name for artist in track.artists])
+                        ,duration=convert_timestamp(int(track.duration_ms))
+                    ) for track in tracks]
 
+    albums_output = [dict(
+                        name=album.name
+                        ,img=album.images[0].url
+                        ,artist=', '.join([artist.name for artist in album.artists])
+                        ,release_year=album.release_date
+                    ) for album in albums]
+    artists_output = [dict(
+                        name=artist.name
+                        ,img=artist.images[0].url
+                    ) for artist in artists]
+
+    search_output = dict(
+        tracks=tracks_output
+        ,albums=albums_output
+        ,artists=artists_output
+    )
     return search_output
 
 if __name__ == '__main__':
-    # update_token('iamsophie')
+    update_token('iamsophie')
     access_token = return_token()
 
     search_result = search_spotify('아이유')
     load_spotify(search_result)
-    # search_output = format_search(search_result)
-    # print(search_output)
+    search_output = format_search(search_result)
+    import json
+    print(json.dumps(search_output,indent=2))
