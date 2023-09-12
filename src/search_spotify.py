@@ -54,3 +54,13 @@ if __name__ == '__main__':
     search_result = search_spotify('아이유')
     # load_spotify(search_result)
     # search_format = format_search(search_result)
+
+    x = search_result.tracks.items[0].artists[0]
+    x_ = Spotify.ArtistsORM(x)
+    print(x_.images_url)
+    y = search_result.artists.items[0]
+    y_ = Spotify.ArtistsORM(y)
+    print(y_.images_url)
+
+    search_result.tracks.items[0].album
+    search_result.albums.items

@@ -9,50 +9,60 @@ from pydantic import BaseModel, ConfigDict
 from typing import Dict, List, Union, Optional
 
 class Images(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     url: str
 
 class ExternalUrls(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     spotify: str
 
 class Followers(BaseModel) :
+    model_config = ConfigDict(from_attributes=True)
     total: Optional[int]
 
 class Artists(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
-
-    external_urls: ExternalUrls
-    # followers: Followers
-    # genres: List[str]
-    href: str
     id: str
-    # images: List[Images]
-    name: str
-    # popularity: int
     uri: str
+    href: str
+    external_urls: ExternalUrls
+    name: str
+
+class ArtistsExt(Artists) :
+    model_config = ConfigDict(from_attributes=True)
+
+    images: List[Images]
+    followers: Followers
+    popularity: int
+    genres: List[str]
 
 class ArtistsORM(Base) :
     __tablename__ = 'spotify_artists'
 
     id = Column(String, primary_key=True)
-    name = Column(String, nullable=True)
     uri = Column(String, nullable=True)
     href = Column(String, nullable=True)
     external_urls = Column(String, nullable=True)
+    name = Column(String, nullable=True)
+    
     images_url = Column(String, nullable=True)
-    popularity = Column(Integer, nullable=True)
     followers_total = Column(Integer, nullable=True)
+    popularity = Column(Integer, nullable=True)
     genres = Column(String, nullable=True)
 
     def __init__(self,artists:Artists):
         self.id = artists.id
-        self.name = artists.name
         self.uri = artists.uri
         self.href = artists.href
         self.external_urls = artists.external_urls.spotify
-        # self.images_url = artists.images[0].url
-        # self.popularity = artists.popularity
-        # self.followers_total = artists.followers.total
-        # self.genres = artists.genres
+        self.name = artists.name
+
+        images = getattr(artists,'images',None)
+        self.images_url = images[0].url if images and images[0].url else None
+        followers = getattr(artists,'followers',None)
+        self.followers_total = getattr(followers,'total',None)
+        self.popularity = getattr(artists,'popularity',None)
+        self.genres = getattr(artists,'genres',None)
 
 class Albums(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
@@ -165,9 +175,9 @@ class SearchArtists(BaseModel) :
     offset: int
     previous: Union[str, None]
     total: int
-    items: List[Artists]
+    items: List[ArtistsExt]
 
 class Search(BaseModel) :
-    # artists: SearchArtists
-    # albums: SearchAlbums
+    artists: SearchArtists
+    albums: SearchAlbums
     tracks: SearchTracks
