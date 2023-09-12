@@ -1,5 +1,5 @@
 import requests
-
+import urllib.parse
 import sys
 import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
@@ -29,10 +29,22 @@ if __name__ == '__main__':
 
     if response.status_code == 200 :
         responsed_data = response.json().get('response').get('result').get('chart').get('items').get('tracks')
+        
+        song_name = []
+        artist_name = []
+        album_name = []
+        album_img = []
 
         entries = {}
         for index, item in enumerate(responsed_data):
-            track_title = item['trackTitle']
+            
+            # 제목 디코딩
+            pre_track_title = item['trackTitle']
+            track_title = urllib.parse.unquote(pre_track_title)
+            cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
+            
+            
+            
             album_title = item['album']['albumTitle']
             artists = item.get('artists')
             artist_pre = []

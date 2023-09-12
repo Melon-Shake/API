@@ -62,8 +62,8 @@ if __name__ == '__main__':
             entries[index] = [cleaned_track, artist_pre, cleaned_album]
             
         for i in range(len(responsed_data)):
-            artists = ' '.join(entries[i][1])
-            q = entries[i][0] + " " + artists
+            var_artists = ' '.join(entries[i][1])
+            q = entries[i][0] + " " + var_artists
 
             url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
             headers = {
@@ -77,12 +77,12 @@ if __name__ == '__main__':
                 song_name.append(sp_json['tracks']['items'][0]['name'])
                 album_name.append(sp_json['tracks']['items'][0]['album']['name'])
                 album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
-                # 
+                
                 for j in range(len(sp_json['tracks']['items'][0]['artists'])):
                     artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
                 artist_name.append(', '.join(artists_sp))
             elif response_sp.status_code != 200 :
-                q = entries[i][0] + " " + artists + " " + entries[i][2]
+                q = entries[i][0] + " " + var_artists + " " + entries[i][2]
                 url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=KR&limit=1'
                 headers = {
                     'Authorization': 'Bearer '+access_token
@@ -100,15 +100,13 @@ if __name__ == '__main__':
                         artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
                     artist_name.append(', '.join(artists_sp))
                     
-                responsed_data[i]['name'] = song_name[i]
-                responsed_data[i]['artistList'][i]['name'] = artist_name.pop()
-                responsed_data[i]['album']['title'] = album_name[i]
-                responsed_data[i]['album']['imgList'][0]['url'] = album_img[i]
+            responsed_data[i]['name'] = song_name[i]
+            responsed_data[i]['artistList'][0]['name'] = artist_name.pop()
+            responsed_data[i]['album']['title'] = album_name[i]
+            responsed_data[i]['album']['imgList'][0]['url'] = album_img[i]
                     
-            else: print(f'{i} : {response_sp.status_code}')
         for e in responsed_data :
             entity = ChartFlo(**e)
             orm = ChartFloORM(i,entity)
-            
             with session_scope() as session :
                 session.add(orm)
