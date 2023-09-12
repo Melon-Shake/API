@@ -41,7 +41,7 @@ class MelonORM(Base):
   cur_rank = Column(Integer, nullable=True)
   past_rank = Column(Integer, nullable=True)
   issue_date = Column(String, nullable=True)
-artist_ids = Column(ARRAY(Integer), nullable=True)
+  artist_ids = Column(ARRAY(Integer), nullable=True)
   artist_names = Column(ARRAY(String), nullable=True)
   genre_name = Column(String, nullable=True)
   points = Column(Float, nullable=True)
