@@ -37,17 +37,17 @@ with session_scope() as session:
                 ) for genieOrm in genieOrms]
 
     # 바이브 top100 차트
-    entrie_vibe = [ TotalChart(
-                    track_name=VibeOrm.track_title
-                    ,artist_name=VibeOrm.artist_name
-                    ,album_name=VibeOrm.album_title
-                    ,points=VibeOrm.points
-                ) for VibeOrm in VibeOrms]
+    # entrie_vibe = [ TotalChart(
+    #                 track_name=VibeOrm.track_title
+    #                 ,artist_name=VibeOrm.artist_name
+    #                 ,album_name=VibeOrm.album_title
+    #                 ,points=VibeOrm.points
+    #             ) for VibeOrm in VibeOrms]
 
     # flo top100 차트
     entrie_flo = [ TotalChart(
                     track_name=floOrm.track_name,
-                    artist_name=floOrm.artist_name,
+                    artist_name=floOrm.artist_names,
                     album_name=floOrm.album_name,
                     points=floOrm.points
                     ) for floOrm in floOrms 
@@ -56,7 +56,7 @@ with session_scope() as session:
     # 벅스 top100 차트
     entrie_bugs = [ TotalChart(
                         track_name=bugsOrm.track_title
-                        ,artist_name=bugsOrm.artist_name
+                        ,artist_name=bugsOrm.artist_nms
                         ,album_name=bugsOrm.album_title
                         ,points=bugsOrm.points
                     ) for bugsOrm in bugsOrms]
@@ -64,7 +64,7 @@ with session_scope() as session:
     # 멜론 top100 차트
     entrie_melon = [ TotalChart(
                     track_name=melonOrm.song_name
-                    ,artist_name=melonOrm.artist_name
+                    ,artist_name=melonOrm.artist_names
                     ,album_name=melonOrm.album_name
                     ,points=melonOrm.points
                 ) for melonOrm in melonOrms]
@@ -74,16 +74,16 @@ with session_scope() as session:
     integrated.extend(entrie_bugs)
     integrated.extend(entrie_flo)
     integrated.extend(entrie_genie)
-    integrated.extend(entrie_vibe)
+    # integrated.extend(entrie_vibe)
     integrated.extend(entrie_melon)
     
     # 종합차트 합산 및 정렬
     merged_df = pd.DataFrame([vars(chart) for chart in integrated])     #dataframe 형식으로 변환
     merged_df = merged_df.apply(lambda x: x.str.replace(r'\s+', '', regex=True) if x.dtype == "object" else x)  #dataframe의 공백제거
-    merged_df['track_name'] = merged_df['track_name'].str.replace("’", "'")     # 특수문자 ’ 변경
+    # merged_df['track_name'] = merged_df['track_name'].str.replace("’", "'")     # 특수문자 ’ 변경
     # merged_df['track_name'] = merged_df['track_name'].str.replace("'", "")
-    merged_df['track_name'] = merged_df['track_name'].str.lower()       #노래제목 영어일때 전체 소문자로변경
-    merged_df['artist_name'] = merged_df['artist_name'].str.lower()     #가수이름 영어일때 전체 소문자로 변경   
+    # merged_df['track_name'] = merged_df['track_name'].str.lower()       #노래제목 영어일때 전체 소문자로변경
+    # merged_df['artist_name'] = merged_df['artist_name'].str.lower()     #가수이름 영어일때 전체 소문자로 변경   
     result_df = merged_df.groupby(['track_name', 'artist_name', 'album_name'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름이 같은경우 점수합산
     # result_df = merged_df.groupby(['track_name', 'artist_name'])['points'].sum().reset_index()
     result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순으로 정렬

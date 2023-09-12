@@ -1,11 +1,9 @@
 import re
 import requests
 import sys
-
 import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
-
 from update_token import return_token
 from model.chart_genie import ChartGenie, ChartGenieORM
 from model.database import session_scope
@@ -98,10 +96,6 @@ if __name__ == '__main__' :
         responsed_data[i]['ALBUM_IMG_PATH'] = album_img[i]
         # elseif response_sp.status_code == 400:
         #     print(f'{i} : {response_sp.status_code}')
-
-    print(len(responsed_data))
-    print(len(song_name))
-
         
         # print(responsed_data)
 

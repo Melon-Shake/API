@@ -58,7 +58,6 @@ if __name__ == '__main__':
     
   for i in range(len(entries)):
     q = entries[i][0] + " " + entries[i][1]
-    # print(q)
     url = f'https://api.spotify.com/v1/search?q={q}&type=track&maket=KR&limit=1'
     headers = {
         'Authorization': 'Bearer '+access_token
