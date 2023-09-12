@@ -41,9 +41,9 @@ def format_search(data:Spotify.Search) :
     artists = [Spotify.ArtistsORM(artist) for track in data.tracks.items for artist in track.artists]
 
     search = dict()
-    search['tracks'] = [{'이름':track.name, '이미지':None, '가수':None} for track in tracks]
-    search['albums'] = [{'이름':album.name, '이미지':album.images_url} for album in albums]
-    search['artists'] = [{'이름':artist.name, '이미지':None} for artist in artists]
+    # search['tracks'] = [{'name':track.name, 'img':None, 'artist':None, 'duration':None} for track in tracks]
+    # search['albums'] = [{'name':album.name, 'img':album.images_url, 'artist':None, 'release_year':None} for album in albums]
+    # search['artists'] = [{'name':artist.name, 'img':None} for artist in artists]
 
     return search
 
@@ -53,4 +53,4 @@ if __name__ == '__main__':
 
     search_result = search_spotify('아이유')
     # load_spotify(search_result)
-    search_format = format_search(search_result)
+    # search_format = format_search(search_result)
