@@ -272,45 +272,33 @@ def get_daily_search_ranking():
 
     search_query = """
 
-
-          SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
+        SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
         FROM search_log_keywords
+        WHERE keyword IN (
+            SELECT DISTINCT item
+            FROM (
+                SELECT name_org as item FROM artist
+                UNION ALL
+                SELECT name_org as item FROM track
+                UNION ALL
+                SELECT name_org as item FROM album
+            ) AS items
+            WHERE item IS NOT NULL
+        )
         GROUP BY keyword
         ORDER BY search_rank;
-
-
-
-
     """
 
-    value_check_query = """
-        SELECT item
-        FROM (
-            SELECT name_org as item FROM artist
-            UNION ALL
-            SELECT name_org as item FROM track
-            UNION ALL
-            SELECT name_org as item FROM album
-        ) AS items
-        WHERE item IS NOT NULL
-        AND item = %s;
-    """
-
+    
     cursor.execute(search_query)
     search_ranking = cursor.fetchall()
 
     result = {}
-    prev_search_rank = None
     rank = 1
     
     for _, (keyword, search_rank) in enumerate(search_ranking):
-        cursor.execute(value_check_query, (keyword,))
-        if cursor.fetchone():
-            if search_rank != prev_search_rank:  # 동일한 순위가 아니면 순위 업데이트
-                rank += 1
-            
         result[rank] = keyword
-        prev_search_rank = search_rank
+        rank += 1
             
         if rank >= 20:  # 20위까지만 결과 저장
             break
