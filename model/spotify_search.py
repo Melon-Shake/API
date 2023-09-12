@@ -69,7 +69,7 @@ class Tracks(BaseModel) :
 class TracksExt(Tracks) :
     model_config = ConfigDict(from_attributes=True)
 
-class SearchTracks(BaseModel):
+class SearchArtists(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     href: str
     limit: int
@@ -77,7 +77,7 @@ class SearchTracks(BaseModel):
     offset: int
     previous: Union[str, None]
     total: int
-    items: List[TracksExt]
+    items: List[ArtistsExt]
 
 class SearchAlbums(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -89,7 +89,7 @@ class SearchAlbums(BaseModel):
     total: int
     items: List[AlbumsExt]
 
-class SearchArtists(BaseModel):
+class SearchTracks(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     href: str
     limit: int
@@ -97,7 +97,7 @@ class SearchArtists(BaseModel):
     offset: int
     previous: Union[str, None]
     total: int
-    items: List[ArtistsExt]
+    items: List[TracksExt]
 
 class Search(BaseModel):
     model_config = ConfigDict(from_attributes=True)
