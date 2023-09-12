@@ -49,34 +49,34 @@ def search_spotify(input:str) :
         artists_filter = [artist for track in tracks_data for artist in track.artists]
         artists_data = parsed_data.artists.items
 
-        search_result = dict(
+        search_result = Spotify.SearchResult(
             tracks = deduplicate(tracks_data)
             , albums = deduplicate(albums_data)
             , artists = deduplicate_by_filter(artists_data,artists_filter)
         )
         return search_result
 
-def load_spotify(search_result) :
-    tracks = [Spotify.TracksORM(track) for track in search_result.get('tracks')]
-    albums = [Spotify.AlbumsORM(album) for album in search_result.get('albums')]
-    artists = [Spotify.ArtistsORM(artist) for artist in search_result.get('artists')]
+def load_spotify(search_result:Spotify.SearchResult) :
+    tracks = [Spotify.TracksORM(track) for track in search_result.tracks]
+    albums = [Spotify.AlbumsORM(album) for album in search_result.albums]
+    artists = [Spotify.ArtistsORM(artist) for artist in search_result.artists]
 
     with session_scope() as session :
         session.add_all(tracks)
         session.add_all(albums)
         session.add_all(artists)
 
-def convert_timestamp(millis) :
+def convert_timestamp(millis:int) :
     seconds = millis // 1000
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     duration = [hours, f'{minutes:02}', f'{seconds:02}'][hours == 0 :]
     return ':'.join(map(str, duration))
     
-def format_search(search_result) :
-    tracks = search_result.get('tracks')
-    albums = search_result.get('albums')
-    artists = search_result.get('artists')
+def format_search(search_result:Spotify.SearchResult) :
+    tracks = search_result.tracks
+    albums = search_result.albums
+    artists = search_result.artists
 
     tracks_output = [dict(
                         name=track.name

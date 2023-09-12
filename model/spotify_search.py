@@ -186,3 +186,9 @@ class Search(BaseModel):
     artists: SearchArtists
     albums: SearchAlbums
     tracks: SearchTracks
+
+class SearchResult(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    artists: List[ArtistsExt]
+    albums: List[AlbumsExt]
+    tracks: List[TracksExt]
