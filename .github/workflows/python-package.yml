@@ -5,20 +5,28 @@ name: Python package
 
 on:
   push:
+<<<<<<< HEAD
     branches: [ "main","test-release" ]
+=======
+    branches: [ "main","v0.2.0/dev" ]
+>>>>>>> v0.2.0/dev
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+<<<<<<< HEAD
     permissions:
         contents: write
         packages: write
+=======
+>>>>>>> v0.2.0/dev
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.9"]
 
+<<<<<<< HEAD
   
     steps:
       - uses: actions/checkout@v3
@@ -39,4 +47,27 @@ jobs:
           prerelease: true
 
             
+=======
+    steps:
+    - name: Create Release
+      run: |
+        if [ $GITHUB_REF == 'refs/heads/main' ]; then
+            zip -r main-release.zip .
+        elif [ $GITHUB_REF == 'refs/heads/v0.2.0/dev' ]; then
+            zip -r v0.2.0-beta-release.zip .
+        fi
+    - name: Upload Release
+      uses: actions/upload-artifact@v0.2.0-beta
+      with:
+        name: ${{ github.ref }}-release
+        path: ${{ github.ref }}-release.zip
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v0.2.0-beta
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: ${{ github.ref }}-release.zip 
+>>>>>>> v0.2.0/dev
 
