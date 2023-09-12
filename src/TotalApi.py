@@ -1,6 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-import requests
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
+import requests, pandas as pd
 import lib.module as module
 from pydantic import BaseModel
 import bcrypt
@@ -10,12 +14,18 @@ from config.db_info import db_params
 from lyric import lyric_search_and_input
 from sp_track import sp_and_track_input, get_sp_track_id
 from update_token import return_token
+from model.chart_genie import ChartGenieORM
+from model.chart_flo import ChartFloORM
+from model.chart_vibe import  VibeORM
+from model.chart_bugs import  BugsORM
+from model.chart_melon import MelonORM
+from typing import Dict, List, Union
+from model.database import session_scope
+
+
 # import sys, numpy as np, pandas as pd, json, requests, re
 import requests
-import sys
-import os
-root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
-sys.path.append(root_path)
+
 
 app = FastAPI()
 
@@ -157,7 +167,11 @@ def get_user_data(data: LoginData):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     # INSERT 쿼리 실행
     user_query = "INSERT INTO \"user\"(password,email,name) values (%s, %s,%s) RETURNING id;"
+
     user_values = (hashed_password.decode("utf-8"),email,name)
+
+    user_values = (hashed_password,email,name)
+
     cursor.execute(user_query, user_values)
     user_detail_query = "INSERT INTO user_properties(gender,age,mbti,favorite_tracks,favorite_artists,user_id) values (%s,%s,%s,%s,%s,%s)"
     try:
@@ -174,11 +188,12 @@ def get_user_data(data: LoginData):
         else:
             print("다른 예외 발생:", e)
             return "다른 예외 발생"
+
 class Login(BaseModel):
     email:str
     password:str
 
-@api.post("/login/")
+@app.post("/login/")
 def login(login_data:Login):  
     email = login_data.email
     password = login_data.password
@@ -199,6 +214,7 @@ def login(login_data:Login):
                 return True
         else:
             return False
+
         
 class Keyword(BaseModel):
     searchInput: str
@@ -267,44 +283,39 @@ def get_daily_search_ranking():
     cursor = connection.cursor()
 
     search_query = """
-        SELECT keyword, RANK() OVER (ORDER BY created_datetime DESC, COUNT(*) DESC) as search_rank
+
+        SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
+
         FROM search_log_keywords
+        WHERE keyword IN (
+            SELECT DISTINCT item
+            FROM (
+                SELECT name_org as item FROM artist
+                UNION ALL
+                SELECT name_org as item FROM track
+                UNION ALL
+                SELECT name_org as item FROM album
+            ) AS items
+            WHERE item IS NOT NULL
+        )
         GROUP BY keyword
         ORDER BY search_rank;
+
     """
 
-    value_check_query = """
-        SELECT item
-        FROM (
-            SELECT name_org as item FROM artist
-            UNION ALL
-            SELECT name_org as item FROM track
-            UNION ALL
-            SELECT name_org as item FROM album
-        ) AS items
-        WHERE item IS NOT NULL
-        AND item = %s;
-    """
-
+    
     cursor.execute(search_query)
     search_ranking = cursor.fetchall()
 
     result = {}
-    prev_search_rank = None
-    rank = 0
+    rank = 1
     
     for _, (keyword, search_rank) in enumerate(search_ranking):
-        cursor.execute(value_check_query, (keyword,))
-        if cursor.fetchone():
-            if exists:
-                if search_rank != prev_search_rank:  # 동일한 순위가 아니면 순위 업데이트
-                    rank += 1
-            result[rank] = keyword
-            prev_search_rank = search_rank
+        result[rank] = keyword
+        rank += 1
             
-            if rank >= 20:  # 20위까지만 결과 저장
-                break
-    
+        if rank >= 20:  # 20위까지만 결과 저장
+            break
     connection.close()
     return result
 
@@ -339,6 +350,79 @@ def get_melonChat():
         entries[str(item+1)]= [song_name, artist, image, pastrank, isNew]
 
     return entries
+
+# chart api
+@app.post("/chart/integrated_chart/")
+def get_integrated_chart():
+    class TotalChart(BaseModel) :
+        track_name : str
+        artist_name : str
+        album_name : str
+        points : Union[int, float]
+        
+    with session_scope() as session:
+        genieOrms = session.query(ChartGenieORM).all()
+        VibeOrms = session.query(VibeORM).all()
+        floOrms = session.query(ChartFloORM).all()
+        bugsOrms = session.query(BugsORM).all()
+        melonOrms = session.query(MelonORM).all()
+
+    entrie_genie = [ TotalChart(
+                    track_name=genieOrm.song_name
+                    ,artist_name=genieOrm.artist_name
+                    ,album_name=genieOrm.album_name
+                    ,points=genieOrm.points
+                ) for genieOrm in genieOrms]
+    
+    entrie_vibe = [ TotalChart(
+                    track_name=VibeOrm.track_title
+                    ,artist_name=VibeOrm.artist_name
+                    ,album_name=VibeOrm.album_title
+                    ,points=VibeOrm.points
+                ) for VibeOrm in VibeOrms]
+
+    entrie_flo = [ TotalChart(
+                    track_name=floOrm.track_name,
+                    artist_name=floOrm.artist_name,
+                    album_name=floOrm.album_name,
+                    points=floOrm.points
+                    ) for floOrm in floOrms 
+                  ]
+
+    entrie_bugs = [ TotalChart(
+                        track_name=bugsOrm.track_title
+                        ,artist_name=bugsOrm.artist_name
+                        ,album_name=bugsOrm.album_title
+                        ,points=bugsOrm.points
+                    ) for bugsOrm in bugsOrms]
+    
+    entrie_melon = [ TotalChart(
+                    track_name=melonOrm.song_name
+                    ,artist_name=melonOrm.artist_name
+                    ,album_name=melonOrm.album_name
+                    ,points=melonOrm.points
+                ) for melonOrm in melonOrms]
+    
+    integrated = []
+    integrated.extend(entrie_bugs)
+    integrated.extend(entrie_flo)
+    integrated.extend(entrie_genie)
+    integrated.extend(entrie_vibe)
+    integrated.extend(entrie_melon)
+    
+    merged_df = pd.DataFrame([vars(chart) for chart in integrated])
+    merged_df = merged_df.apply(lambda x: x.str.replace(r'\s+', '', regex=True) if x.dtype == "object" else x)
+    merged_df['track_name'] = merged_df['track_name'].str.replace("’", "'")
+    # merged_df['track_name'] = merged_df['track_name'].str.replace("'", "")
+    merged_df['track_name'] = merged_df['track_name'].str.lower()
+    merged_df['artist_name'] = merged_df['artist_name'].str.lower()
+    result_df = merged_df.groupby(['track_name', 'artist_name', 'album_name'])['points'].sum().reset_index()
+    result_df = merged_df.groupby(['track_name', 'artist_name'])['points'].sum().reset_index()
+    result_df = result_df.sort_values(by='points', ascending=False).reset_index()
+    
+    df = result_df.drop('index', axis=1)
+    json_string = df.to_json(orient='records', lines=True, default_handler=str, force_ascii=False)
+    return(json_string)
 
 # Lucete api
 @app.post("/lyric_input/")

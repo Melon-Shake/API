@@ -26,6 +26,8 @@ if __name__ == '__main__' :
     table_name = mapper.persist_selectable.name
     column_names = [column.key for column in mapper.columns]
 
+
     print("Table Name:", table_name)
+
 
     print("Column Names:", column_names)

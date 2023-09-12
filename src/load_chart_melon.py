@@ -17,11 +17,23 @@ if __name__ == '__main__':
   response = requests.get(_CHART_API_URL,headers=headers)
   
   if response.status_code == 200 :
-    response_data = response.json()
-    song_list = response_data['response']['SONGLIST']
-    for item in song_list:
-      entity = ChartMelon(**item)
-      orm = MelonORM(entity)
+    response = response.json()
+    responsed_data = response['response']['SONGLIST']
+    
+    entries = {}
+    for itme in responsed_data:
+        for index, item in enumerate(responsed_data):
+            track_title = item['SONGNAME']
+            album_title = item['ALBUMNAME']
+            artists = item.get('ARTISTLIST')
+            artist_pre = []
+            for artist in artists:
+                artist_nm = artist['ARTISTNAME']
+                artist_pre.append(artist_nm)
+            entries[index+1] = [track_title, artist_pre, album_title]
+    # for item in song_list:
+    #   entity = ChartMelon(**item)
+    #   orm = MelonORM(entity)
 
-      with session_scope() as session :
-        session.add(orm)
+    #   with session_scope() as session :
+    #     session.add(orm)
