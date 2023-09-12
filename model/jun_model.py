@@ -11,11 +11,6 @@ class LoginData(BaseModel):
     favorite_artists : str
     name : str
 
-
-class Login(BaseModel):
-    email:str
-    password:str
-
 class Keyword(BaseModel):
     searchInput: str
     email: str  # 사용자 이메일
