@@ -34,11 +34,18 @@ if __name__ == '__main__':
             # 제목 디코딩
             pre_track_title = item['name']
             track_title = urllib.parse.unquote(pre_track_title)
-            cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
             
             # 예외 처리
-            if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
-                cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
+            if track_title == '이브, 프시케 그리고 푸른 수염의 아내':
+                track_title = 'Eve, Psyche & The Bluebeard’s wife'
+                
+            if track_title == '건물 사이에 피어난 장미 (Rose Blossom)':
+                track_title = 'Rose Blossom'
+                
+            if track_title == '해요 (2022)':
+                track_title = 'haeyo 2022'
+            
+            cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
             
             # 아티스트 디코딩
             pre_artist = item.get('artistList')
@@ -47,20 +54,20 @@ if __name__ == '__main__':
             for artist in pre_artist:
                 artist_nm = artist['name']
                 artists = urllib.parse.unquote(artist_nm)
-                cleaned_artist = re.sub(r'\([^)]*\)', '', artists)
                 
-                if artist_nm == '#안녕':
-                    artists = urllib.parse.quote(artist_nm)
-
-                artist_pre.append(artists)
-            
+                if artists == '#안녕':
+                    artists_excep = urllib.parse.quote(artists)
+                    artist_pre.append(artists_excep)
+                else :
+                    cleaned_artist = re.sub(r'\([^)]*\)', '', artists)
+                    artist_pre.append(cleaned_artist)
+                    
             # 앨범 제목
             pre_album = item['album']['title']
             album = urllib.parse.unquote(pre_album)
             cleaned_album = re.sub(r'\([^)]*\)', '', album)
             
             entries[index] = [cleaned_track, artist_pre, cleaned_album]
-            
         for i in range(len(responsed_data)):
             var_artists = ' '.join(entries[i][1])
             q = entries[i][0] + " " + var_artists
@@ -108,5 +115,6 @@ if __name__ == '__main__':
         for e in responsed_data :
             entity = ChartFlo(**e)
             orm = ChartFloORM(i,entity)
+            
             with session_scope() as session :
                 session.add(orm)

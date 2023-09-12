@@ -1,12 +1,12 @@
-import requests
-import urllib.parse
-import sys
-import os
+import re, requests, sys, os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
+from update_token import return_token
 from model.chart_vibe import VibeEntity, VibeORM
 from model.database import session_scope
+
+access_token = return_token()
 
 if __name__ == '__main__':
 
@@ -43,14 +43,31 @@ if __name__ == '__main__':
             track_title = urllib.parse.unquote(pre_track_title)
             cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
             
-            
-            
-            album_title = item['album']['albumTitle']
-            artists = item.get('artists')
+            # 예외 처리
+            if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
+                cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
+                
+            # 아티스트 디코딩
+            pre_artist = item.get('artists')
             artist_pre = []
-            for artist in artists:
+            
+            for artist in pre_artist:
                 artist_nm = artist['artistName']
-                artist_pre.append(artist_nm)
+                artists = urllib.parse.unquote(artist_nm)
+                cleaned_artist = re.sub(r'\([^)]*\)', '', artists)
+                artist_pre.append(cleaned_artist)
+                
+                if artist_nm == '#안녕':
+                    artists = urllib.parse.quote(artist_nm)
+                    
+                artist_pre.append(artists)
+            
+            # 앨범 제목
+            pre_album = item['album']['title']
+            album = urllib.parse.unquote(pre_album)
+            cleaned_album = re.sub(r'\([^)]*\)', '', album)
+
+            artist_pre.append(artist_nm)
             entries[index] = [track_title, artist_pre, album_title]
         # for x in responsed_data :
         #     entity = VibeEntity(**x)
