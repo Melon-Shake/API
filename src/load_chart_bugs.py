@@ -48,7 +48,6 @@ if __name__ == '__main__':
                 
             if cleaned_track == '건물 사이에 피어난 장미 (Rose Blossom)':
                 cleaned_track = 'Rose Blossom'
-    
                 
             # 아티스트 디코딩
             pre_artists = item.get('artists')
