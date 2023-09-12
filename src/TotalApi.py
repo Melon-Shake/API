@@ -150,33 +150,23 @@ async def search_spotify(data:SearchKeyword):
 # junsung login api
 @app.post("/get_user_data/")
 def get_user_data(data: LoginData):
-   connection = psycopg2.connect(**db_params)
-   user_data(data, connection)
+   user_data(data, db_params)
 
-
-@app.post("/login/")
-def login(login_data:Login):  
-    connection = psycopg2.connect(**db_params)
-    authenticate_user(login_data, connection)
     
 @app.post("/get_keyword_data/")
-def get_keyword_data(data: Keyword):
-    connection = psycopg2.connect(**db_params)
-    save_keyword_data(data, connection)
+def get_keyword_data(data: Keyword): 
+    save_keyword_data(data, db_params)
 
 
 @app.post("/get_use_data/")
 def get_use_data(data: search_track):
-
-    connection = psycopg2.connect(**db_params)
-    pick_data(data,connection)
+    pick_data(data,db_params)
     
     
 
 @app.post("/daily_search_ranking/")
 def get_daily_search_ranking():
-    connection = psycopg2.connect(**db_params)
-    search_ranking_result = daily_search_ranking(connection)
+    search_ranking_result = daily_search_ranking()
     return search_ranking_result
 
 # bkson chart api

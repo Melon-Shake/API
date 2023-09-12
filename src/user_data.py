@@ -2,6 +2,8 @@ from model.jun_model import LoginData
 from config.db_info import db_params
 import psycopg2
 from datetime import datetime
+import bcrypt
+
 
 def user_data(data: LoginData,db_params):
     email = data.email
@@ -22,8 +24,6 @@ def user_data(data: LoginData,db_params):
     user_query = "INSERT INTO \"user\"(password,email,name) values (%s, %s,%s) RETURNING id;"
 
     user_values = (hashed_password.decode("utf-8"),email,name)
-
-    user_values = (hashed_password,email,name)
 
     cursor.execute(user_query, user_values)
     user_detail_query = "INSERT INTO user_properties(gender,age,mbti,favorite_tracks,favorite_artists,user_id) values (%s,%s,%s,%s,%s,%s)"
