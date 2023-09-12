@@ -1,5 +1,7 @@
+import re
 import requests
 import sys
+
 import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
@@ -33,15 +35,24 @@ if __name__ == '__main__' :
             # 제목 디코딩
             pre_track_title = item['SONG_NAME']
             track_title = urllib.parse.unquote(pre_track_title)
-            
+            cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
+            # 예외 처리
+            if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
+                cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
+           
             # 아티스트 디코딩
             pre_artists = item.get('ARTIST_NAME')
-            artists = urllib.parse.quote(pre_artists)  # URL 디코딩
-
+            artists = urllib.parse.unquote(pre_artists)  # URL 디코딩
+            cleaned_artist = re.sub(r'\([^)]*\)', '', artists)
+            #예외 처리
+            if cleaned_artist == '#안녕':
+                cleaned_artist = urllib.parse.quote(pre_artists)
             # 앨범제목
             pre_album = item['ALBUM_NAME']
             album = urllib.parse.unquote(pre_album)
-            entries[index] = [track_title, artists, album]
+            cleaned_album = re.sub(r'\([^)]*\)', '', album)
+            
+            entries[index] = [cleaned_track, cleaned_artist, cleaned_album]
         # print(responsed_data)
 
     for i in range(len(entries)):
@@ -102,3 +113,14 @@ if __name__ == '__main__' :
             session.add(orm)
 
     else : print(response.status_code)
+    
+    
+
+# 원래 문자열
+# original_string = "Smoke (Prod. by Dynamicduo & Padi) 심(心)"
+
+# # 정규 표현식을 사용하여 괄호와 괄호 안의 내용을 제거
+# cleaned_string = re.sub(r'\([^)]*\)', '', original_string)
+
+# # 결과 출력
+# print(cleaned_string)
