@@ -10,23 +10,6 @@ from src.get_token import update_token, return_token
 
 import requests
 
-def search_spotify(input:str) :
-    access_token = return_token()
-    response = requests.get('https://api.spotify.com/v1/search?'
-                            +'q={keyword}'.format(keyword=input)
-                            +'&type=artist%2Calbum%2Ctrack'
-                            +'&limit=50'
-                            +'&offset=0'
-                      ,headers={
-                          'Authorization': 'Bearer '+ access_token
-                      }
-                      )
-    
-    if response.status_code == 200 :
-        responsed_data = response.json()
-        parsed_data = Spotify.Search(**responsed_data)
-        return parsed_data
-    
 def deduplicate(models) :
     ids_uniq = set(model.id for model in models)
     uniq = list()
@@ -45,20 +28,44 @@ def deduplicate_by_filter(models,models_filter) :
             ids_uniq.remove(model.id)
     return uniq
 
-def load_spotify(data:Spotify.Search) :
-    tracks = data.tracks.items
-    albums = [track.album for track in tracks]
-    artists_filter = [artist for track in tracks for artist in track.artists]
-    artists = data.artists.items
+def search_spotify(input:str) :
+    access_token = return_token()
+    response = requests.get('https://api.spotify.com/v1/search?'
+                            +'q={keyword}'.format(keyword=input)
+                            +'&type=artist%2Calbum%2Ctrack'
+                            +'&limit=50'
+                            +'&offset=0'
+                      ,headers={
+                          'Authorization': 'Bearer '+ access_token
+                      }
+                      )
+    
+    if response.status_code == 200 :
+        responsed_data = response.json()
+        parsed_data = Spotify.Search(**responsed_data)
 
-    tracks_orm = [Spotify.TracksORM(track) for track in deduplicate(tracks)]
-    albums_orm = [Spotify.AlbumsORM(album) for album in deduplicate(albums)]
-    artists_orm = [Spotify.ArtistsORM(artist) for artist in deduplicate_by_filter(artists,artists_filter)]
+        tracks_data = parsed_data.tracks.items
+        albums_data = [track.album for track in tracks_data]
+        artists_filter = [artist for track in tracks_data for artist in track.artists]
+        artists_data = parsed_data.artists.items
+
+        search_result = dict(
+            tracks = deduplicate(tracks_data)
+            , albums = deduplicate(albums_data)
+            , artists = deduplicate_by_filter(artists_data,artists_filter)
+        )
+
+        return search_result
+
+def load_spotify(search_result) :
+    tracks = [Spotify.TracksORM(track) for track in search_result.get('tracks')]
+    albums = [Spotify.AlbumsORM(album) for album in search_result.get('albums')]
+    artists = [Spotify.ArtistsORM(artist) for artist in search_result.get('artists')]
 
     with session_scope() as session :
-        session.add_all(tracks_orm)
-        session.add_all(albums_orm)
-        session.add_all(artists_orm)
+        session.add_all(tracks)
+        session.add_all(albums)
+        session.add_all(artists)
 
 def convert_timestamp(timestamp:str) :
     minutes = timestamp // 60
@@ -71,21 +78,10 @@ def format_search(data:Spotify.Search) :
     # search_output['albums'] = [{'name':album.name, 'img':album.images_url, 'artist':None, 'release_year':None} for album in albums]
     # search_output['artists'] = [{'name':artist.name, 'img':None} for artist in artists]
 
-    # for track in data.tracks.items :
-        
-    #     track.name
-    #     track.album.images[0].url
-    #     ', '.join([artist.name for artist in track.artists])
-    #     convert_timestamp(track.duration_ms)
-
-    #     track.album.name
-    #     track.album.images[0].url
-    #     ', '.join([artist.name for artist in track.album.artists])
-
     return search_output
 
 if __name__ == '__main__':
-    update_token('iamsophie')
+    # update_token('iamsophie')
     access_token = return_token()
 
     search_result = search_spotify('아이유')
