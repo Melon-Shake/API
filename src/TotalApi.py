@@ -1,5 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
 import requests, pandas as pd
 import lib.module as module
 from pydantic import BaseModel
@@ -19,16 +23,9 @@ from typing import Dict, List, Union
 from model.database import session_scope
 
 
-
-
-
-
 # import sys, numpy as np, pandas as pd, json, requests, re
 import requests
-import sys
-import os
-root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
-sys.path.append(root_path)
+
 
 app = FastAPI()
 
@@ -170,7 +167,11 @@ def get_user_data(data: LoginData):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     # INSERT 쿼리 실행
     user_query = "INSERT INTO \"user\"(password,email,name) values (%s, %s,%s) RETURNING id;"
+
     user_values = (hashed_password.decode("utf-8"),email,name)
+
+    user_values = (hashed_password,email,name)
+
     cursor.execute(user_query, user_values)
     user_detail_query = "INSERT INTO user_properties(gender,age,mbti,favorite_tracks,favorite_artists,user_id) values (%s,%s,%s,%s,%s,%s)"
     try:
@@ -187,11 +188,12 @@ def get_user_data(data: LoginData):
         else:
             print("다른 예외 발생:", e)
             return "다른 예외 발생"
+
 class Login(BaseModel):
     email:str
     password:str
 
-@api.post("/login/")
+@app.post("/login/")
 def login(login_data:Login):  
     email = login_data.email
     password = login_data.password
@@ -212,6 +214,7 @@ def login(login_data:Login):
                 return True
         else:
             return False
+
         
 class Keyword(BaseModel):
     searchInput: str
@@ -280,10 +283,13 @@ def get_daily_search_ranking():
     cursor = connection.cursor()
 
     search_query = """
-        SELECT keyword, RANK() OVER (ORDER BY created_datetime DESC, COUNT(*) DESC) as search_rank
+    
+        SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
+
         FROM search_log_keywords
         GROUP BY keyword
         ORDER BY search_rank;
+
     """
 
     value_check_query = """
@@ -309,14 +315,20 @@ def get_daily_search_ranking():
     for _, (keyword, search_rank) in enumerate(search_ranking):
         cursor.execute(value_check_query, (keyword,))
         if cursor.fetchone():
-            if exists:
-                if search_rank != prev_search_rank:  # 동일한 순위가 아니면 순위 업데이트
-                    rank += 1
+            if search_rank != prev_search_rank:  # 동일한 순위가 아니면 순위 업데이트
+                rank += 1
+        result[rank] = keyword
+        prev_search_rank = search_rank
+            
+        if rank >= 20:  # 20위까지만 결과 저장
+            break
+
             result[rank] = keyword
             prev_search_rank = search_rank
             
-            if rank >= 20:  # 20위까지만 결과 저장
+            if rank >= 10:  # 10위까지만 결과 저장
                 break
+
     
     connection.close()
     return result
