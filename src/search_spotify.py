@@ -16,7 +16,7 @@ def search_spotify(input:str) :
                             +'q={keyword}'.format(keyword=input)
                             +'&type=artist%2Calbum%2Ctrack'
                             +'&limit=50'
-                            # +'&offset=3'
+                            +'&offset=0'
                       ,headers={
                           'Authorization': 'Bearer '+ access_token
                       }
@@ -36,14 +36,24 @@ def deduplicate(models) :
             ids_uniq.remove(model.id)
     return uniq
 
+def deduplicate_by_filter(models,models_filter) :
+    ids_uniq = set(model.id for model in models_filter)
+    uniq = list()
+    for model in models :
+        if model.id in ids_uniq :
+            uniq.append(model)
+            ids_uniq.remove(model.id)
+    return uniq
+
 def load_spotify(data:Spotify.Search) :
     tracks = data.tracks.items
     albums = [track.album for track in tracks]
-    artists = [artist for track in tracks for artist in track.artists]
+    artists_filter = [artist for track in tracks for artist in track.artists]
+    artists = data.artists.items
 
     tracks_orm = [Spotify.TracksORM(track) for track in deduplicate(tracks)]
     albums_orm = [Spotify.AlbumsORM(album) for album in deduplicate(albums)]
-    artists_orm = [Spotify.ArtistsORM(artist) for artist in deduplicate(artists)]
+    artists_orm = [Spotify.ArtistsORM(artist) for artist in deduplicate_by_filter(artists,artists_filter)]
 
     with session_scope() as session :
         session.add_all(tracks_orm)
