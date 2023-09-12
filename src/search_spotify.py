@@ -15,6 +15,8 @@ def search_spotify(input:str) :
     response = requests.get('https://api.spotify.com/v1/search?'
                             +'q={keyword}'.format(keyword=input)
                             +'&type=artist%2Calbum%2Ctrack'
+                            +'&limit=50'
+                            # +'&offset=3'
                       ,headers={
                           'Authorization': 'Bearer '+ access_token
                       }
@@ -26,26 +28,30 @@ def search_spotify(input:str) :
         return parsed_data
 
 def load_spotify(data:Spotify.Search) :
+    unique_tracks = set(str(track) for track in data.tracks.items)
+    unique_albums = set(str(track.album) for track in data.tracks.items)
+    unique_artists = set(str(artist) for track in data.tracks.items for artist in track.artists)
+
+    tracks = [Spotify.TracksORM(track) for track in unique_tracks]
+    albums = [Spotify.AlbumsORM(album) for album in unique_albums]
+    artists = [Spotify.ArtistsORM(artist) for artist in unique_artists]
+
     with session_scope() as session :
-        for entity in data.tracks.items :
-            tracks = Spotify.TracksORM(entity)
-            albums = Spotify.AlbumsORM(entity.album)
-            artists = [Spotify.ArtistsORM(e) for e in entity.artists]
-            session.add(tracks)
-            session.add(albums)
-            session.add_all(artists)
+        session.add_all(tracks)
+        session.add_all(albums)
+        session.add_all(artists)
 
 def format_search(data:Spotify.Search) :
     tracks = [Spotify.TracksORM(track) for track in data.tracks.items]
     albums = [Spotify.AlbumsORM(track.album) for track in data.tracks.items]
     artists = [Spotify.ArtistsORM(artist) for track in data.tracks.items for artist in track.artists]
 
-    search = dict()
-    # search['tracks'] = [{'name':track.name, 'img':None, 'artist':None, 'duration':None} for track in tracks]
-    # search['albums'] = [{'name':album.name, 'img':album.images_url, 'artist':None, 'release_year':None} for album in albums]
-    # search['artists'] = [{'name':artist.name, 'img':None} for artist in artists]
+    search_output = dict()
+    search_output['tracks'] = [{'name':track.name, 'img':None, 'artist':None, 'duration':None} for track in tracks]
+    search_output['albums'] = [{'name':album.name, 'img':album.images_url, 'artist':None, 'release_year':None} for album in albums]
+    search_output['artists'] = [{'name':artist.name, 'img':None} for artist in artists]
 
-    return search
+    return search_output
 
 if __name__ == '__main__':
     # update_token('iamsophie')
@@ -53,11 +59,5 @@ if __name__ == '__main__':
 
     search_result = search_spotify('아이유')
     # load_spotify(search_result)
-    # search_format = format_search(search_result)
-
-    x = search_result.tracks.items[0].album.name
-    y = search_result.albums.items[0].name
-    z = search_result.albums.items[0].id
-    print(x)
-    print(y)
-    print(z)
+    search_output = format_search(search_result)
+    print(search_output.get('tracks')[0])
