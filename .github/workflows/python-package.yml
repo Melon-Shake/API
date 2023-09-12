@@ -5,11 +5,8 @@ name: Python package
 
 on:
   push:
-<<<<<<< HEAD
     branches: [ "main","test-release" ]
-=======
-    branches: [ "main","v0.2.0/dev" ]
->>>>>>> v0.2.0/dev
+
 
 jobs:
   build:
