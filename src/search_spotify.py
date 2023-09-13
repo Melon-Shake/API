@@ -117,9 +117,9 @@ if __name__ == '__main__':
     print(json.dumps(search_output,indent=2))
 
     # # 3 - load db : spotify_tracks, spotify_albums, spotify_artists
-    # load_spotify(search_result)
+    load_spotify(search_result)
 
-    # 4 - load db : lyrics
+    # 4 - load db : lyrics_temp
     from src.lyric import lyric_search_and_input, GENIUS_API_KEY
     for track in search_result.tracks :
         lyric_search_and_input(
