@@ -115,7 +115,7 @@ if __name__ == '__main__':
     import json
     print(json.dumps(search_output,indent=2))
 
-    # # 3 - load db : spotify_tracks, spotify_albums, spotify_artists
+    # 3 - load db : spotify_tracks, spotify_albums, spotify_artists
     load_spotify(search_result)
 
     # 4 - load db : lyrics_temp
@@ -129,4 +129,8 @@ if __name__ == '__main__':
         )
     
     # 5 - load db : spotify_audio_features
-    
+    from src.get_audio_features import load_audio_features
+    for track in search_result.tracks :
+        load_audio_features(
+            id=track.id
+        )

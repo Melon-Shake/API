@@ -9,6 +9,9 @@ import model.audio_features as Audio
 import requests
 
 def get_audio_features(id:str) :
+    from get_token import return_token
+    access_token = return_token()
+    
     response = requests.get('https://api.spotify.com/v1/audio-features/'
                             +f'{id}'
                         ,headers={
