@@ -80,7 +80,7 @@ if __name__ == '__main__':
         for i in range(len(responsed_data)):
             artists = ' '.join(entries[i][1])
             q = entries[i][0] + " " + artists + " " + entries[i][2]
-            print(q)
+
             url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
             headers = {
                 'Authorization': 'Bearer '+access_token
