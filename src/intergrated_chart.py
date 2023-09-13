@@ -1,4 +1,5 @@
 import requests
+import string
 from pydantic import BaseModel, ConfigDict
 from typing import Dict, List, Union
 import sys, os
@@ -17,7 +18,7 @@ from model.database import session_scope
 
 class TotalChart(BaseModel) :
     track_name : str
-    artist_name : str
+    artist_name : List[str]
     album_name : str
     points : Union[int, float]
 
@@ -28,10 +29,16 @@ with session_scope() as session:
     bugsOrms = session.query(BugsORM).all()
     melonOrms = session.query(MelonORM).all()
     
+    entrie_bugs = [ TotalChart(
+                        track_name=bugsOrm.track_title
+                        ,artist_name=bugsOrm.artist_nms
+                        ,album_name=bugsOrm.album_title
+                        ,points=bugsOrm.points
+                    ) for bugsOrm in bugsOrms]
     # 지니 top100 차트
     entrie_genie = [ TotalChart(
                     track_name=genieOrm.song_name
-                    ,artist_name=genieOrm.artist_name
+                    ,artist_name=genieOrm.artist_name.split(',')
                     ,album_name=genieOrm.album_name
                     ,points=genieOrm.points
                 ) for genieOrm in genieOrms]
@@ -39,7 +46,7 @@ with session_scope() as session:
     # 바이브 top100 차트
     entrie_vibe = [ TotalChart(
                     track_name=VibeOrm.track_title
-                    ,artist_name=VibeOrm.artist_name
+                    ,artist_name=VibeOrm.artist_names
                     ,album_name=VibeOrm.album_title
                     ,points=VibeOrm.points
                 ) for VibeOrm in VibeOrms]
@@ -47,24 +54,18 @@ with session_scope() as session:
     # flo top100 차트
     entrie_flo = [ TotalChart(
                     track_name=floOrm.track_name,
-                    artist_name=floOrm.artist_name,
+                    artist_name=floOrm.artist_names,
                     album_name=floOrm.album_name,
                     points=floOrm.points
                     ) for floOrm in floOrms 
                   ]
         
     # 벅스 top100 차트
-    entrie_bugs = [ TotalChart(
-                        track_name=bugsOrm.track_title
-                        ,artist_name=bugsOrm.artist_name
-                        ,album_name=bugsOrm.album_title
-                        ,points=bugsOrm.points
-                    ) for bugsOrm in bugsOrms]
     
     # 멜론 top100 차트
     entrie_melon = [ TotalChart(
                     track_name=melonOrm.song_name
-                    ,artist_name=melonOrm.artist_name
+                    ,artist_name=melonOrm.artist_names
                     ,album_name=melonOrm.album_name
                     ,points=melonOrm.points
                 ) for melonOrm in melonOrms]
@@ -79,22 +80,26 @@ with session_scope() as session:
     
     # 종합차트 합산 및 정렬
     merged_df = pd.DataFrame([vars(chart) for chart in integrated])     #dataframe 형식으로 변환
+    merged_df['artist_name'] = merged_df['artist_name'].apply(lambda x: ', '.join(x))
+    result_df = merged_df.groupby(['track_name', 'album_name']).agg({'artist_name': 'first', 'points': 'sum'}).reset_index()
+    
+
     merged_df = merged_df.apply(lambda x: x.str.replace(r'\s+', '', regex=True) if x.dtype == "object" else x)  #dataframe의 공백제거
-    merged_df['track_name'] = merged_df['track_name'].str.replace("’", "'")     # 특수문자 ’ 변경
+    # merged_df['track_name'] = merged_df['track_name'].str.replace("’", "'")     # 특수문자 ’ 변경
     # merged_df['track_name'] = merged_df['track_name'].str.replace("'", "")
-    merged_df['track_name'] = merged_df['track_name'].str.lower()       #노래제목 영어일때 전체 소문자로변경
-    merged_df['artist_name'] = merged_df['artist_name'].str.lower()     #가수이름 영어일때 전체 소문자로 변경   
+    # merged_df['track_name'] = merged_df['track_name'].str.lower()       #노래제목 영어일때 전체 소문자로변경
+    # merged_df['artist_name'] = merged_df['artist_name'].str.lower()     #가수이름 영어일때 전체 소문자로 변경   
     result_df = merged_df.groupby(['track_name', 'artist_name', 'album_name'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름이 같은경우 점수합산
     # result_df = merged_df.groupby(['track_name', 'artist_name'])['points'].sum().reset_index()
     result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순으로 정렬
+    # print(result_df)
     
     df = result_df.drop('index', axis=1)
-    print(df)
-    
-    
-    # json_string = df.to_json(orient='records', lines=True, default_handler=str, force_ascii=False)
+    # print(df)
+
+    json_string = df.to_json(orient='records', lines=True, default_handler=str, force_ascii=False)
     # print(json_string)
-    # result_df.to_csv('data1.csv', index=False)
+    result_df.to_csv('data1.csv', index=False)
     
     
     
