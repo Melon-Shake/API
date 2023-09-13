@@ -2,7 +2,7 @@ from model.database import Base
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import Integer, String, Boolean, Float
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import Integer, String, Boolean, JSON, DateTime, ARRAY
@@ -20,7 +20,7 @@ class Albuminfo(BaseModel):
 
 class ArtistInfo(BaseModel):
     artistId: int
-    artistName: str
+    artistName: Optional[str]
 
 class VibeEntity(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
@@ -32,7 +32,7 @@ class VibeEntity(BaseModel) :
     rank:rankInfo
 
 class Vibe_Load(BaseModel) :
-    vibe: List[VibeEntity]
+    tracks: List[VibeEntity]
 
 class VibeORM(Base):
     __tablename__ = 'chart_vibe'
