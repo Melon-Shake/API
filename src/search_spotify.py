@@ -128,3 +128,6 @@ if __name__ == '__main__':
             ,artist=', '.join([artist.name for artist in track.artists])
             ,GENIUS_API_KEY=GENIUS_API_KEY
         )
+    
+    # 5 - load db : spotify_audio_features
+    
