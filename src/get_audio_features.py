@@ -25,6 +25,8 @@ if __name__ == '__main__' :
         
         parsed_data = Audio.SpotifyAudioFeatures(**responsed_data)
         orm = Audio.SpotifyAudioFeaturesORM(parsed_data)
-        print(orm.id)
+        
+        with session_scope() as session :
+            session.add(orm)
 
     else : print(response.status_code)
