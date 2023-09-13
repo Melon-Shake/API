@@ -296,6 +296,7 @@ def get_daily_search_ranking():
         )
         GROUP BY keyword
         ORDER BY search_rank;
+
     """
 
     
@@ -311,7 +312,6 @@ def get_daily_search_ranking():
             
         if rank >= 20:  # 20위까지만 결과 저장
             break
-
     connection.close()
     return result
 
