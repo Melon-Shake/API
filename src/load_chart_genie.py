@@ -38,6 +38,10 @@ if __name__ == '__main__' :
             # 예외 처리
             if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
                 cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
+            elif cleaned_track == 'Seven  - Clean Ver.':
+                cleaned_track ='Seven (feat. Latto) (Clean Ver.)'
+            elif cleaned_track == '사람 Pt.2 ':
+                cleaned_track = 'People Pt.2 (feat. IU)'
            
             # 아티스트 디코딩
             pre_artists = item.get('ARTIST_NAME')
@@ -57,7 +61,7 @@ if __name__ == '__main__' :
     for i in range(len(entries)):
         
         q = entries[i][0] + " " + entries[i][1]
-        print(q)
+        # print(q)
         url = f'https://api.spotify.com/v1/search?q={q}&type=track&maket=KR&limit=1'
         headers = {
             'Authorization': 'Bearer '+access_token

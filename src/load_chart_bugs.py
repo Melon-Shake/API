@@ -41,17 +41,14 @@ if __name__ == '__main__':
             pre_track_title = item['track_title']
             track_title = urllib.parse.unquote(pre_track_title)
             cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
-            
-            # 예외 처리
+
             if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
                 cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
-                
-            if cleaned_track == '건물 사이에 피어난 장미 (Rose Blossom)':
-                cleaned_track = 'Rose Blossom'
-                
-            if cleaned_track == '해요 (2022)':
-                cleaned_track = 'haeyo 2022'
-                
+            elif cleaned_track == 'Seven  - Clean Ver.':
+                cleaned_track ='Seven (feat. Latto) (Clean Ver.)'
+            elif cleaned_track == '사람 Pt.2 ':
+                cleaned_track = 'People Pt.2 (feat. IU)'
+
             
             # 아티스트 디코딩
             pre_artists = item.get('artists')
@@ -59,14 +56,11 @@ if __name__ == '__main__':
             
             for artist in pre_artists:
                 artist_nm = artist['artist_nm']
-                artists = urllib.parse.unquote(artist_nm)
-                
-                if artists == '#안녕':
-                    artists_excep = urllib.parse.quote(artist_nm)
-                    artist_pre.append(artists_excep)
-                else:
-                    cleaned_artist = re.sub(r'\([^)]*\)', '', artists)
-                    artist_pre.append(cleaned_artist)
+                parse_artist = urllib.parse.unquote(artist_nm)
+                cleaned_artist = re.sub(r'\([^)]*\)', '', parse_artist)
+                if cleaned_artist == '#안녕':
+                    parse_artist = urllib.parse.quote(artist_nm)
+                artist_pre.append(parse_artist)
             
             # 앨범제목    
             pre_album = item['album']['title']
