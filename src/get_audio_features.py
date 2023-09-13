@@ -24,6 +24,7 @@ if __name__ == '__main__' :
         responsed_data = response.json()
         
         parsed_data = Audio.SpotifyAudioFeatures(**responsed_data)
-        print(parsed_data.acousticness)
+        orm = Audio.SpotifyAudioFeaturesORM(parsed_data)
+        print(orm.id)
 
     else : print(response.status_code)
