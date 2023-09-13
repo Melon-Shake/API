@@ -82,7 +82,6 @@ async def search_spotify(data:SearchKeyword):
             return_data["tracks"+str(i)]=[[response_json["tracks"]["items"][i]["name"]],
                             [response_json["tracks"]["items"][i]["album"]["name"]],
                             list_artist]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -104,7 +103,6 @@ async def search_spotify(data:SearchKeyword):
             return_data["artists"+str(i)]=[[response_json["artists"]["items"][i]["name"]],
                                            [response_json["artists"]["items"][i]["genres"]],
                                            [response_json["artists"]["items"][i]["images"][0]["url"]]]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -127,7 +125,6 @@ async def search_spotify(data:SearchKeyword):
                                           [response_json["albums"]["items"][i]["images"][0]['url']],
                                           [response_json["albums"]["items"][i]["artists"]["name"]],
                                           [response_json["albums"]["items"][i]["release_date"]]]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -140,7 +137,6 @@ async def search_spotify(data:SearchKeyword):
 @app.post("/get_user_data/")
 def get_user_data(data: LoginData):
    user_data(data, db_params)
-
     
 @app.post("/get_keyword_data/")
 def get_keyword_data(data: Keyword): 
