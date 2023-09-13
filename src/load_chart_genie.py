@@ -41,6 +41,12 @@ if __name__ == '__main__' :
             # 예외 처리
             if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
                 cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
+                
+            if track_title == '건물 사이에 피어난 장미 (Rose Blossom)':
+                track_title = 'Rose Blossom'
+                
+            if track_title == '해요 (2022)':
+                track_title = 'haeyo 2022'
            
             # 아티스트 디코딩
             pre_artists = item.get('ARTIST_NAME')
