@@ -94,7 +94,6 @@ async def search_spotify(data:SearchKeyword):
             return_data["tracks"+str(i)]=[[response_json["tracks"]["items"][i]["name"]],
                             [response_json["tracks"]["items"][i]["album"]["name"]],
                             list_artist]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -116,7 +115,6 @@ async def search_spotify(data:SearchKeyword):
             return_data["artists"+str(i)]=[[response_json["artists"]["items"][i]["name"]],
                                            [response_json["artists"]["items"][i]["genres"]],
                                            [response_json["artists"]["items"][i]["images"][0]["url"]]]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -139,7 +137,6 @@ async def search_spotify(data:SearchKeyword):
                                           [response_json["albums"]["items"][i]["images"][0]['url']],
                                           [response_json["albums"]["items"][i]["artists"]["name"]],
                                           [response_json["albums"]["items"][i]["release_date"]]]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -210,8 +207,8 @@ def login(login_data:Login):
         condition = bcrypt.checkpw(password.encode("utf-8"), user_query_result[0].encode("utf-8"))
         cursor.close()
         if condition:
-                # 패스워드가 일치하면 로그인 성공
-                return True
+            # 패스워드가 일치하면 로그인 성공
+            return True
         else:
             return False
 
@@ -285,7 +282,6 @@ def get_daily_search_ranking():
     search_query = """
 
         SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
-
         FROM search_log_keywords
         WHERE keyword IN (
             SELECT DISTINCT item
@@ -316,6 +312,7 @@ def get_daily_search_ranking():
             
         if rank >= 20:  # 20위까지만 결과 저장
             break
+
     connection.close()
     return result
 
