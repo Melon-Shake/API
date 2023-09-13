@@ -34,11 +34,18 @@ if __name__ == '__main__':
             # 제목 디코딩
             pre_track_title = item['name']
             track_title = urllib.parse.unquote(pre_track_title)
-            cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
             
             # 예외 처리
-            if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
-                cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
+            if track_title == '이브, 프시케 그리고 푸른 수염의 아내':
+                track_title = 'Eve, Psyche & The Bluebeard’s wife'
+                
+            if track_title == '건물 사이에 피어난 장미 (Rose Blossom)':
+                track_title = 'Rose Blossom'
+                
+            if track_title == '해요 (2022)':
+                track_title = 'haeyo 2022'
+            
+            cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
             
             # 아티스트 디코딩
             pre_artist = item.get('artistList')
@@ -47,23 +54,23 @@ if __name__ == '__main__':
             for artist in pre_artist:
                 artist_nm = artist['name']
                 artists = urllib.parse.unquote(artist_nm)
-                cleaned_artist = re.sub(r'\([^)]*\)', '', artists)
                 
-                if artist_nm == '#안녕':
-                    artists = urllib.parse.quote(artist_nm)
-
-                artist_pre.append(artists)
-            
+                if artists == '#안녕':
+                    artists_excep = urllib.parse.quote(artists)
+                    artist_pre.append(artists_excep)
+                else :
+                    cleaned_artist = re.sub(r'\([^)]*\)', '', artists)
+                    artist_pre.append(cleaned_artist)
+                    
             # 앨범 제목
             pre_album = item['album']['title']
             album = urllib.parse.unquote(pre_album)
             cleaned_album = re.sub(r'\([^)]*\)', '', album)
             
             entries[index] = [cleaned_track, artist_pre, cleaned_album]
-            
         for i in range(len(responsed_data)):
-            artists = ' '.join(entries[i][1])
-            q = entries[i][0] + " " + artists
+            var_artists = ' '.join(entries[i][1])
+            q = entries[i][0] + " " + var_artists
 
             url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
             headers = {
@@ -77,12 +84,12 @@ if __name__ == '__main__':
                 song_name.append(sp_json['tracks']['items'][0]['name'])
                 album_name.append(sp_json['tracks']['items'][0]['album']['name'])
                 album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
-                # 
+                
                 for j in range(len(sp_json['tracks']['items'][0]['artists'])):
                     artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
                 artist_name.append(', '.join(artists_sp))
             elif response_sp.status_code != 200 :
-                q = entries[i][0] + " " + artists + " " + entries[i][2]
+                q = entries[i][0] + " " + var_artists + " " + entries[i][2]
                 url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=KR&limit=1'
                 headers = {
                     'Authorization': 'Bearer '+access_token
@@ -100,12 +107,11 @@ if __name__ == '__main__':
                         artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
                     artist_name.append(', '.join(artists_sp))
                     
-                responsed_data[i]['name'] = song_name[i]
-                responsed_data[i]['artistList'][i]['name'] = artist_name.pop()
-                responsed_data[i]['album']['title'] = album_name[i]
-                responsed_data[i]['album']['imgList'][0]['url'] = album_img[i]
+            responsed_data[i]['name'] = song_name[i]
+            responsed_data[i]['artistList'][0]['name'] = artist_name.pop()
+            responsed_data[i]['album']['title'] = album_name[i]
+            responsed_data[i]['album']['imgList'][0]['url'] = album_img[i]
                     
-            else: print(f'{i} : {response_sp.status_code}')
         for e in responsed_data :
             entity = ChartFlo(**e)
             orm = ChartFloORM(i,entity)
