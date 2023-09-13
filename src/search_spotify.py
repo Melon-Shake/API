@@ -27,7 +27,6 @@ def deduplicate_by_filter(models,models_filter) :
     return uniq
 
 def search_spotify(input:str) :
-    access_token = return_token()
     response = requests.get('https://api.spotify.com/v1/search?'
                             +'q={keyword}'.format(keyword=input)
                             +'&type=artist%2Calbum%2Ctrack'
