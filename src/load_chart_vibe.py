@@ -98,7 +98,7 @@ def func2(vibe:VibeEntity):
             try :
                 artist.artistName = track.artists[i].name
             except IndexError as e :
-                vibe.artists = [VibeEntity(trackId=None,trackTitle=x.name) for x in track.artists]
+                vibe.artists = [ArtistInfo(artistId=None,artistName=x.name) for x in track.artists]
 
         # for i, artist in enumerate(vibe.artists) :
         #     try :
@@ -111,10 +111,12 @@ def func2(vibe:VibeEntity):
 if __name__ == '__main__':
 
         vibes_before = func1()  
-        vibes_after = [VibeORM(func2(vibe_before)) for vibe_before in vibes_before]
+        print(vibes_before[51])
+        # vibes_after = [VibeORM(func2(vibe_before)) for vibe_before in vibes_before]
 
-        with session_scope() as session :
-            session.add_all(vibes_after)
+
+        # with session_scope() as session :
+        #     session.add_all(vibes_after)
             
         # for index, item in enumerate(responsed_data):
         #     artist_names = []

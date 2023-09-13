@@ -19,7 +19,7 @@ class Albuminfo(BaseModel):
     albumGenres: str
 
 class ArtistInfo(BaseModel):
-    artistId: int
+    artistId: Optional[int]
     artistName: Optional[str]
 
 class VibeEntity(BaseModel) :
