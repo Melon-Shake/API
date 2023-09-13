@@ -296,6 +296,7 @@ def get_daily_search_ranking():
         )
         GROUP BY keyword
         ORDER BY search_rank;
+
     """
 
     

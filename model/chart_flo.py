@@ -59,7 +59,6 @@ class ChartFloORM(Base) :
         for artist in entity.artistList :
             self.artist_ids.append(artist.id)
             self.artist_names.append(artist.name)
-        
         self.album_id = entity.album.id
         self.album_name = entity.album.title
         self.img_url = entity.album.imgList[0].url
