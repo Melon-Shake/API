@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS spotify_audio_features (
-	track_id varchar(255),
+	id varchar(255),
 	acousticness NUMERIC(10,5),
 	danceability NUMERIC(10,5),
 	energy NUMERIC(10,5),
