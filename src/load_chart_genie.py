@@ -1,12 +1,16 @@
+import re
 import requests
-
 import sys
+
 import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
-from model.chart_genie import ChartGenie, ChartGenieORM
+from update_token import return_token
+from model.chart_genie import ChartGenie , ChartGenieORM
 from model.database import session_scope
+
+access_token = return_token()
 
 if __name__ == '__main__' :
     response = requests.post('https://app.genie.co.kr/chart/j_RealTimeRankSongList.json'
@@ -20,27 +24,92 @@ if __name__ == '__main__' :
 
     if response.status_code == 200 :
         responsed_data = response.json().get('DataSet').get('DATA')
+        
+        song_name = []
+        artist_name = []
+        album_name = []
+        album_img = []
 
         entries = {}
-        for itme in responsed_data:
-            for index, item in enumerate(responsed_data):
-                # 제목 디코딩
-                pre_track_title = item['SONG_NAME']
-                track_title = urllib.parse.unquote(pre_track_title)
+        for index, item in enumerate(responsed_data):
+            
+            # 제목 디코딩
+            pre_track_title = item['SONG_NAME']
+            track_title = urllib.parse.unquote(pre_track_title)
+            cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
+            
+            # 예외 처리
+            if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
+                cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
                 
-                # 아티스트 디코딩
-                pre_artists = item.get('ARTIST_NAME')
-                artists = urllib.parse.unquote(pre_artists)  # URL 디코딩
+            if track_title == '건물 사이에 피어난 장미 (Rose Blossom)':
+                track_title = 'Rose Blossom'
+                
+            if track_title == '해요 (2022)':
+                track_title = 'haeyo 2022'
+           
+            # 아티스트 디코딩
+            pre_artists = item.get('ARTIST_NAME')
+            artists = urllib.parse.unquote(pre_artists) 
+            cleaned_artist = re.sub(r'\([^)]*\)', '', artists)
+            
+            #예외 처리
+            if cleaned_artist == '#안녕':
+                cleaned_artist = urllib.parse.quote(pre_artists)
+                
+            # 앨범제목
+            pre_album = item['ALBUM_NAME']
+            album = urllib.parse.unquote(pre_album)
+            cleaned_album = re.sub(r'\([^)]*\)', '', album)
+            
+            entries[index] = [cleaned_track, cleaned_artist, cleaned_album]
 
-                # 앨범제목
-                pre_album = item['ALBUM_NAME']
-                album = urllib.parse.unquote(pre_album)
-                entries[index+1] = [track_title, artists, album]
-    #     for e in responsed_data :
-    #         entity = ChartGenie(**e)
-    #         orm = ChartGenieORM(entity)
+    for i in range(len(entries)):
+        
+        q = entries[i][0] + " " + entries[i][1]
 
-    #         with session_scope() as session :
-    #             session.add(orm)
+        url = f'https://api.spotify.com/v1/search?q={q}&type=track&maket=KR&limit=1'
+        headers = {
+            'Authorization': 'Bearer '+access_token
+        }
+        response_sp = requests.get(url, headers=headers)
+        if response_sp.status_code == 200:
+            sp_json = response_sp.json()
+            artists_sp = []
+            song_name.append(sp_json['tracks']['items'][0]['name'])
+            album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+            album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
+            
+            for j in range(len(sp_json['tracks']['items'][0]['artists'])):
+                artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
+            artist_name.append(', '.join(artists_sp))
+        elif response_sp.status_code != 200 :
+            q = entries[i][0] + " " + entries[i][1]+ " " + entries[i][2]
+            url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=KR&limit=1'
+            headers = {
+                'Authorization': 'Bearer '+access_token
+            }
+            response_sp = requests.get(url, headers=headers)
+            if response_sp.status_code == 200:
+                sp_json = response_sp.json()
+                artists_sp = []
+                song_name.append(sp_json['tracks']['items'][0]['name'])
+                album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+                album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
+                
+                for j in range(len(sp_json['tracks']['items'][0]['artists'])):
+                    artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
+                artist_name.append(', '.join(artists_sp))
+        responsed_data[i]['SONG_NAME'] = song_name[i]
+        responsed_data[i]['ARTIST_NAME'] = artist_name.pop()
+        responsed_data[i]['ALBUM_NAME'] = album_name[i]
+        responsed_data[i]['ALBUM_IMG_PATH'] = album_img[i]
 
-    # else : print(response.status_code)
+    for e in responsed_data :
+        entity = ChartGenie(**e)
+        orm = ChartGenieORM(entity)
+
+        with session_scope() as session :
+            session.add(orm)
+
+    else : print(response.status_code)
