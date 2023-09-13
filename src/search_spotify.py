@@ -6,8 +6,6 @@ sys.path.append(root_path)
 from model.database import session_scope
 import model.spotify_search as Spotify
 
-from src.get_token import update_token, return_token
-
 import requests
 
 def deduplicate(models) :
@@ -104,11 +102,29 @@ def load_spotify(search_result:Spotify.SearchResult) :
         session.add_all(artists)
 
 if __name__ == '__main__':
+
+    # 0 - get spotify token
+    from src.get_token import update_token, return_token
     update_token('iamsophie')
     access_token = return_token()
 
+    # 1 - spotify api search
     search_result = search_spotify('아이유')
+    
+    # 2 - for search result page
     search_output = format_search(search_result)
     import json
     print(json.dumps(search_output,indent=2))
+
+    # # 3 - load db : spotify_tracks, spotify_albums, spotify_artists
     load_spotify(search_result)
+
+    # 4 - load db : lyrics_temp
+    from src.lyric import lyric_search_and_input, GENIUS_API_KEY
+    for track in search_result.tracks :
+        lyric_search_and_input(
+            track_id=track.id
+            ,track=track.name
+            ,artist=', '.join([artist.name for artist in track.artists])
+            ,GENIUS_API_KEY=GENIUS_API_KEY
+        )
