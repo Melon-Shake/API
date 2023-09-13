@@ -119,14 +119,14 @@ if __name__ == '__main__':
     load_spotify(search_result)
 
     # 4 - load db : lyrics_temp
-    from src.lyric import lyric_search_and_input, GENIUS_API_KEY
-    for track in search_result.tracks :
-        lyric_search_and_input(
-            track_id=track.id
-            ,track=track.name
-            ,artist=', '.join([artist.name for artist in track.artists])
-            ,GENIUS_API_KEY=GENIUS_API_KEY
-        )
+    # from src.lyric import lyric_search_and_input, GENIUS_API_KEY
+    # for track in search_result.tracks :
+    #     lyric_search_and_input(
+    #         track_id=track.id
+    #         ,track=track.name
+    #         ,artist=', '.join([artist.name for artist in track.artists])
+    #         ,GENIUS_API_KEY=GENIUS_API_KEY
+    #     )
     
     # 5 - load db : spotify_audio_features
     from src.get_audio_features import load_audio_features
