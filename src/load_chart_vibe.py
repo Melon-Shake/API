@@ -13,7 +13,7 @@ access_token = return_token()
 
 def clean_name(name:str) :
     decoded_name = urllib.parse.unquote(name)
-    normalized_name = re.sub(r'\([^)]*\)', '', decoded_name)
+    normalized_name = re.sub(r'\([^)]*\)', '', decoded_name).strip()
     return normalized_name
 
 def clean_track(name:str) :
@@ -24,6 +24,8 @@ def clean_track(name:str) :
         return 'Seven (feat. Latto) (Clean Ver.)'
     elif name == '사람 Pt.2 ':
         return 'People Pt.2 (feat. IU)'
+    elif name == '그대만 있다면 )':
+        return '그대만 있다면'
     else : return name
 
 def clean_album(name:str) :
@@ -37,6 +39,8 @@ def clean_artists(artists:list[ArtistInfo]) :
             original.artistName = '미연'
         elif original.artistName == '#안녕':
             original.artistName = urllib.parse.quote(original.artistName)
+        # elif original.artistName == '헤이즈 , 정승환':
+        #     original.artistName = '헤이즈'
     return artists
 
 def func1() :
@@ -76,7 +80,7 @@ def func2(vibe:VibeEntity):
 
     import model.spotify_search as Spotify
     q = vibe.trackTitle+' '+', '.join([artist.artistName for artist in vibe.artists])
-
+    print(q)
     url = f'https://api.spotify.com/v1/search?q={q}&type=track&maket=KR&limit=1'
     headers = {
         'Authorization': 'Bearer '+access_token
