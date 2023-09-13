@@ -93,11 +93,18 @@ def func2(vibe:VibeEntity):
         vibe.trackTitle = track.name
         vibe.album.albumTitle = track.album.name
         vibe.album.imageUrl = track.album.images[0].url
+
         for i, artist in enumerate(vibe.artists) :
             try :
                 artist.artistName = track.artists[i].name
             except IndexError as e :
-                artist.artistName = None
+                vibe.artists = [VibeEntity(trackId=None,trackTitle=x.name) for x in track.artists]
+
+        # for i, artist in enumerate(vibe.artists) :
+        #     try :
+        #         artist.artistName = track.artists[i].name
+        #     except IndexError as e :
+        #         artist.artistName = None
         
         return vibe
 
