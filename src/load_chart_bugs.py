@@ -40,18 +40,16 @@ if __name__ == '__main__':
             # 제목 디코딩
             pre_track_title = item['track_title']
             track_title = urllib.parse.unquote(pre_track_title)
-            
-            # 예외 처리
-            if track_title == '이브, 프시케 그리고 푸른 수염의 아내':
-                track_title = 'Eve, Psyche & The Bluebeard’s wife'
-                
-            if track_title == '건물 사이에 피어난 장미 (Rose Blossom)':
-                track_title = 'Rose Blossom'
-                
-            if track_title == '해요 (2022)':
-                track_title = 'haeyo 2022'
-                
             cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
+            
+            # 예외 처리ㅔ
+            if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
+                cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
+            elif cleaned_track == 'Seven  - Clean Ver.':
+                cleaned_track ='Seven (feat. Latto) (Clean Ver.)'
+            elif cleaned_track == '사람 Pt.2 ':
+                cleaned_track = 'People Pt.2 (feat. IU)'
+                
             
             # 아티스트 디코딩
             pre_artists = item.get('artists')
@@ -79,7 +77,7 @@ if __name__ == '__main__':
         
         for i in range(len(responsed_data)):
             artists = ' '.join(entries[i][1])
-            q = entries[i][0] + " " + artists + " " + entries[i][2]
+            q = entries[i][0] + " " + artists
 
             url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
             headers = {
@@ -114,10 +112,10 @@ if __name__ == '__main__':
                         artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
                     artist_name.append(', '.join(artists_sp))
 
-                responsed_data[i]['track_title'] = song_name[i]
-                responsed_data[i]['artists'][0]['artist_nm'] = artist_name.pop()
-                responsed_data[i]['album']['title'] = album_name[i]
-                responsed_data[i]['album']['image']['path'] = album_img[i]
+            responsed_data[i]['track_title'] = song_name[i]
+            responsed_data[i]['artists'][0]['artist_nm'] = artist_name.pop()
+            responsed_data[i]['album']['title'] = album_name[i]
+            responsed_data[i]['album']['image']['path'] = album_img[i]
 
         
         for x in responsed_data :

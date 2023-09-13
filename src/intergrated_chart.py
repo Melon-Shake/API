@@ -29,6 +29,12 @@ with session_scope() as session:
     bugsOrms = session.query(BugsORM).all()
     melonOrms = session.query(MelonORM).all()
     
+    entrie_bugs = [ TotalChart(
+                        track_name=bugsOrm.track_title
+                        ,artist_name=bugsOrm.artist_nms
+                        ,album_name=bugsOrm.album_title
+                        ,points=bugsOrm.points
+                    ) for bugsOrm in bugsOrms]
     # 지니 top100 차트
     entrie_genie = [ TotalChart(
                     track_name=genieOrm.song_name
@@ -55,12 +61,6 @@ with session_scope() as session:
                   ]
         
     # 벅스 top100 차트
-    entrie_bugs = [ TotalChart(
-                        track_name=bugsOrm.track_title
-                        ,artist_name=bugsOrm.artist_nms
-                        ,album_name=bugsOrm.album_title
-                        ,points=bugsOrm.points
-                    ) for bugsOrm in bugsOrms]
     
     # 멜론 top100 차트
     entrie_melon = [ TotalChart(
@@ -84,7 +84,7 @@ with session_scope() as session:
     result_df = merged_df.groupby(['track_name', 'album_name']).agg({'artist_name': 'first', 'points': 'sum'}).reset_index()
     
 
-    # merged_df = merged_df.apply(lambda x: x.str.replace(r'\s+', '', regex=True) if x.dtype == "object" else x)  #dataframe의 공백제거
+    merged_df = merged_df.apply(lambda x: x.str.replace(r'\s+', '', regex=True) if x.dtype == "object" else x)  #dataframe의 공백제거
     # merged_df['track_name'] = merged_df['track_name'].str.replace("’", "'")     # 특수문자 ’ 변경
     # merged_df['track_name'] = merged_df['track_name'].str.replace("'", "")
     # merged_df['track_name'] = merged_df['track_name'].str.lower()       #노래제목 영어일때 전체 소문자로변경
@@ -92,15 +92,14 @@ with session_scope() as session:
     result_df = merged_df.groupby(['track_name', 'artist_name', 'album_name'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름이 같은경우 점수합산
     # result_df = merged_df.groupby(['track_name', 'artist_name'])['points'].sum().reset_index()
     result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순으로 정렬
-    print(result_df)
     # print(result_df)
-    # df = result_df.drop('index', axis=1)
+    
+    df = result_df.drop('index', axis=1)
     # print(df)
-    
-    
-    # json_string = df.to_json(orient='records', lines=True, default_handler=str, force_ascii=False)
+
+    json_string = df.to_json(orient='records', lines=True, default_handler=str, force_ascii=False)
     # print(json_string)
-    # result_df.to_csv('data1.csv', index=False)
+    result_df.to_csv('data1.csv', index=False)
     
     
     

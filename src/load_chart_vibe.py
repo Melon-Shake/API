@@ -45,6 +45,8 @@ if __name__ == '__main__':
                 cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
             elif cleaned_track == 'Seven  - Clean Ver.':
                 cleaned_track ='Seven (feat. Latto) (Clean Ver.)'
+            elif cleaned_track == '사람 Pt.2 ':
+                cleaned_track = 'People Pt.2 (feat. IU)'
             
             pre_album = item['album']['albumTitle']
             parse_album = urllib.parse.unquote(pre_album)
@@ -65,7 +67,7 @@ if __name__ == '__main__':
                 # artist_ids.append(artist_id)
             
             q = cleaned_track + " " + ', '.join(artist_names)
-            print(q)
+            # print(q)
             url = f'https://api.spotify.com/v1/search?q={q}&type=track&maket=KR&limit=1'
             headers = {
                 'Authorization': 'Bearer '+access_token
@@ -78,9 +80,11 @@ if __name__ == '__main__':
                 item['album']['albumTitle'] = sp_json['tracks']['items'][0]['album']['name']
                 item['album']['imageUrl'] = sp_json['tracks']['items'][0]['album']['images'][0]['url']
                 for j in range(len(sp_json['tracks']['items'][0]['artists'])):
-                    artists_sp_nm.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
-                item['artists'][0]['artistName'] = ', '.join(artists_sp_nm)
+                    item['artists'][0]['artistName'] = sp_json['tracks']['items'][0]['artists'][j]['name']
+                    # item['artists'][j]['artistName'] = ', '.join(artists_sp_nm)
+                # print(item['artists'][0]['artistName'])
             entity = VibeEntity(**item)
+            # print([e.artistName for e in entity.artists if e.artistName == ])
             orm = VibeORM(entity)
 
             with session_scope() as session :
