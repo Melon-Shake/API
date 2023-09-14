@@ -7,6 +7,7 @@ from model.database import session_scope
 import model.spotify_search as Spotify
 
 import requests
+import json
 
 def deduplicate(models) :
     ids_uniq = set(model.id for model in models)
@@ -26,12 +27,12 @@ def deduplicate_by_filter(models,models_filter) :
             ids_uniq.remove(model.id)
     return uniq
 
-def search_spotify(input:str) :
+def search_spotify(keywords:str,limit:int=3,offset:int=0) :
     response = requests.get('https://api.spotify.com/v1/search?'
-                            +'q={keyword}'.format(keyword=input)
+                            +'q={q}'.format(q=keywords)
                             +'&type=artist%2Calbum%2Ctrack'
-                            +'&limit=3'
-                            +'&offset=0'
+                            +'&limit={limit}'.format(limit=limit)
+                            +'&offset={offset}'.format(offset=offset)
                       ,headers={
                           'Authorization': 'Bearer '+ access_token
                       }
@@ -68,26 +69,31 @@ def format_search(search_result:Spotify.SearchResult) :
     tracks_output = [dict(
                         name=track.name
                         ,img=track.album.images[0].url
-                        ,artist=', '.join([artist.name for artist in track.artists])
+                        ,artists=', '.join([artist.name for artist in track.artists])
                         ,duration=convert_timestamp(int(track.duration_ms))
                     ) for track in tracks]
-
     albums_output = [dict(
                         name=album.name
                         ,img=album.images[0].url
-                        ,artist=', '.join([artist.name for artist in album.artists])
+                        ,artists=', '.join([artist.name for artist in album.artists])
                         ,release_year=album.release_date
                     ) for album in albums]
     artists_output = [dict(
                         name=artist.name
                         ,img=artist.images[0].url
                     ) for artist in artists]
-
+    
     search_output = dict(
         tracks=tracks_output
         ,albums=albums_output
         ,artists=artists_output
     )
+    print(f'################### 검색결과 ################### \n'
+          + f'# tracks:{len(tracks_output)}\n'
+          + f'# albums:{len(tracks_output)}\n'
+          + f'# artists:{len(tracks_output)}\n')
+    print(json.dumps(search_output,indent=2))
+
     return search_output
 
 def load_spotify(search_result:Spotify.SearchResult) :
@@ -104,7 +110,7 @@ if __name__ == '__main__':
 
     # 0 - get spotify token
     from src.get_token import update_token, return_token
-    update_token('iamsophie')
+    # update_token('iamsophie')
     access_token = return_token()
 
     # 1 - spotify api search
@@ -112,13 +118,11 @@ if __name__ == '__main__':
     
     # 2 - for search result page
     search_output = format_search(search_result)
-    import json
-    print(json.dumps(search_output,indent=2))
 
-    # 3 - load db : spotify_tracks, spotify_albums, spotify_artists
-    load_spotify(search_result)
+    # # 3 - load db : spotify_tracks, spotify_albums, spotify_artists
+    # load_spotify(search_result)
 
-    # 4 - load db : lyrics_temp
+    # # 4 - load db : lyrics_temp
     # from src.lyric import lyric_search_and_input, GENIUS_API_KEY
     # for track in search_result.tracks :
     #     lyric_search_and_input(
@@ -128,9 +132,9 @@ if __name__ == '__main__':
     #         ,GENIUS_API_KEY=GENIUS_API_KEY
     #     )
     
-    # 5 - load db : spotify_audio_features
-    from src.get_audio_features import load_audio_features
-    for track in search_result.tracks :
-        load_audio_features(
-            id=track.id
-        )
+    # # 5 - load db : spotify_audio_features
+    # from src.get_audio_features import load_audio_features
+    # for track in search_result.tracks :
+    #     load_audio_features(
+    #         id=track.id
+    #     )
