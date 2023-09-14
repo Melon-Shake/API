@@ -97,24 +97,12 @@ with session_scope() as session:
     result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순으로 정렬
     # print(result_df)
     
-    df = result_df.drop('index', axis=1)
+    df = result_df.drop('index', axis=1)    #index 컬럼 제거
 
-    df.to_sql('total_chart', engine, if_exists='replace', index=True)
+    df.to_sql('total_chart', engine, if_exists='replace', index=True)   #데이터프레임을 데이터베이스 'total_chart'로 생성
 
-
-    # json_string = df.to_json(orient='records', lines=True, default_handler=str, force_ascii=False)
-    # # print(json_string)
-    # result_df.to_csv('data1.csv', index=True)
     
     
-    
-    # print(result_df[result_df['artist_name']=='성시경'])
-    # search_terms = ['아이유','아이유(IU)','IU','iu']
-    # print(result_df[result_df['artist_name'].str.contains('|'.join(search_terms), case=False, regex=True)])
-    # merged_df= pd.DataFrame(integrated, columns=['노래','가수','앨범','점수'])
-    # merged_df['점수'] = merged_df['점수'].str.extract('(\d+\.\d+)').astype(float)
-    # result_df = merged_df.groupby(['가수', '노래', '앨범'])['점수'].sum().reset_index()
-    # integrated_chart= integrated.append(entrie_genie, entrie_vibe, entrie_flo, entrie_bugs)
     
     # # '가수', '노래', '앨범' 컬럼을 기준으로 그룹화하여 점수를 합산
     # result_df = merged_df.groupby(['가수', '노래', '앨범'])['점수'].sum().reset_index()
