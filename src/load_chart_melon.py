@@ -33,32 +33,40 @@ if __name__ == '__main__':
     entries = {}
     for index, item in enumerate(responsed_data):
         pre_track_title = item['SONGNAME']
-        parse_track = urllib.parse.unquote(pre_track_title)
-        cleaned_track = re.sub(r'\([^)]*\)', '', parse_track)
-        if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
-                cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
-        elif cleaned_track == 'Seven  - Clean Ver.':
-                cleaned_track ='Seven (feat. Latto) (Clean Ver.)'
-        elif cleaned_track == '사람 Pt.2 ':
-                cleaned_track = 'People Pt.2 (feat. IU)'
+        # pre_track_title = urllib.parse.unquote(pre_track_title)
+        pre_track_title = pre_track_title.replace("-", "")
+        pre_track_title = pre_track_title.replace("Prod. by", "Prod.")
+
+        if pre_track_title == '이브, 프시케 그리고 푸른 수염의 아내':
+                pre_track_title = 'Eve, Psyche & The Bluebeard’s wife'
+        elif pre_track_title == '파이팅 해야지 (Feat. 이영지)':
+            pre_track_title ='Fighting'
+        elif pre_track_title == '손오공':
+            pre_track_title ='Super'
+        elif pre_track_title == '사람 Pt.2 ':
+            pre_track_title = 'People Pt.2 (feat. IU)'
+        elif pre_track_title == '사람 Pt.2 (feat. 아이유)':
+            pre_track_title = 'People Pt.2 (feat. IU)'
+        elif pre_track_title == 'STAY (Explicit Ver.)':
+            pre_track_title = 'STAY'
         
-        pre_album_title = item['ALBUMNAME']
-        parse_album = urllib.parse.unquote(pre_album_title)
-        cleaned_album = re.sub(r'\([^)]*\)', '', parse_album)
-        
-        artists = item.get('ARTISTLIST')
-        artist_pre = []
-        for artist in artists:
+        #
+        pre_artists = item.get('ARTISTLIST')
+        artists = []
+        for artist in pre_artists:
             artist_nm = artist['ARTISTNAME']
             parse_artist = urllib.parse.unquote(artist_nm)
-            cleaned_artist = re.sub(r'\([^)]*\)', '', parse_artist)
-            if cleaned_artist == '#안녕':
-              cleaned_artist = urllib.parse.quote(parse_artist)
-            artist_pre.append(artist_nm)
+            if parse_artist == '#안녕':
+              parse_artist = urllib.parse.quote(parse_artist)
+            artists.append(parse_artist)
+        artists = ','.join(artists)
             
-        entries[index] = [cleaned_track, cleaned_artist, cleaned_album]
+        pre_album_title = item['ALBUMNAME']
+        pre_album_title = urllib.parse.unquote(pre_album_title)
+
+            
+        entries[index] = [pre_track_title, artists, pre_album_title]
     # print(entries)
-    # print(len(entries))
     
   for i in range(len(entries)):
     q = entries[i][0] + " " + entries[i][1]
@@ -78,32 +86,39 @@ if __name__ == '__main__':
         for j in range(len(sp_json['tracks']['items'][0]['artists'])):
           artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
         artist_name.append(artists_sp)
-    elif response_sp.status_code != 200 :
-        q = entries[i][0] + " " + entries[i][1]+ " " + entries[i][2]
-        url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=KR&limit=1'
-        headers = {
-            'Authorization': 'Bearer '+access_token
-        }
-        response_sp = requests.get(url, headers=headers)
-        if response_sp.status_code == 200:
-            sp_json = response_sp.json()
-            artists_sp = []
-            song_name.append(sp_json['tracks']['items'][0]['name'])
-            album_name.append(sp_json['tracks']['items'][0]['album']['name'])
-            album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
+    # elif response_sp.status_code != 200 :
+    #     q = entries[i][0] + " " + entries[i][1]+ " " + entries[i][2]
+    #     url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=KR&limit=1'
+    #     headers = {
+    #         'Authorization': 'Bearer '+access_token
+    #     }
+    #     response_sp = requests.get(url, headers=headers)
+    #     if response_sp.status_code == 200:
+    #         sp_json = response_sp.json()
+    #         artists_sp = []
+    #         song_name.append(sp_json['tracks']['items'][0]['name'])
+    #         album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+    #         album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
             
-            for j in range(len(sp_json['tracks']['items'][0]['artists'])):
-                artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
-            artist_name.append(artists_sp)
-    responsed_data[i]['SONGNAME'] = song_name[i]
-    responsed_data[i]['ARTISTLIST'] = [ dict(ARTISTID=x.get('ARTISTID'),ARTISTNAME=artists_sp[i]) for i, x in enumerate(responsed_data[i]['ARTISTLIST'])]
-    responsed_data[i]['ALBUMNAME'] = album_name[i]
-    responsed_data[i]['ALBUMIMG'] = album_img[i]
-  # print(responsed_data)
-    
-  for item in responsed_data:
+    #         for j in range(len(sp_json['tracks']['items'][0]['artists'])):
+    #             artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
+            # artist_name.append(artists_sp)
+    # responsed_data[i]['SONGNAME'] = song_name[i]
+    # responsed_data[i]['ARTISTLIST'] = [ dict(ARTISTID=x.get('ARTISTID'),ARTISTNAME=artists_sp[i]) for i, x in enumerate(responsed_data[i]['ARTISTLIST'])]
+    # responsed_data[i]['ALBUMNAME'] = album_name[i]
+    # responsed_data[i]['ALBUMIMG'] = album_img[i]
+  # print(song_name[0])
+  # print(album_img[0])
+  # print(album_name[0])
+  # print(artist_name[0])
+  
+  for idx, item in enumerate(responsed_data):
     entity = ChartMelon(**item)
     orm = MelonORM(entity)
+    orm.song_name = song_name[idx]
+    orm.artist_names = artist_name[idx]
+    orm.album_name = album_name[idx]
+    orm.album_img = album_img[idx]
 
     with session_scope() as session :
       session.add(orm)
