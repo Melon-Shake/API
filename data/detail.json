@@ -1,0 +1,61 @@
+{
+    "name" : "People Pt.2 (feat. IU)",
+    "duration" : "03:52",
+    "img_url" : "",
+    "lyric" : "",
+    "audio_features" : {
+        "romantic" : 0,
+        "adventurous" : 0,
+        "depresed" : 0,
+        "powerful" : 0,
+        "popularity" : 0
+    },
+    "artists" : [
+        {
+            "name":"",
+            "img_url":""
+        },
+        {
+            "name":"",
+            "img_url":""
+        }
+    ],
+    "album" : {
+        "name" : "",
+        "img_url" : "",
+        "release_year" : "",
+        "audio_features" : {
+            "romantic" : 0,
+            "adventurous" : 0,
+            "depresed" : 0,
+            "powerful" : 0,
+            "popularity" : 0
+        },
+        "tracks" : [
+            {
+                "name" : "",
+                "duration" : "",
+                "img_url" : "",
+                "audio_features" : {
+                    "romantic" : 0,
+                    "adventurous" : 0,
+                    "depresed" : 0,
+                    "powerful" : 0,
+                    "popularity" : 0
+                }
+            },
+            {
+                "name" : "",
+                "duration" : "",
+                "img_url" : "",
+                "audio_features" : {
+                    "romantic" : 0,
+                    "adventurous" : 0,
+                    "depresed" : 0,
+                    "powerful" : 0,
+                    "popularity" : 0
+                }
+            }
+        ]
+    }
+}
