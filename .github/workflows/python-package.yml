@@ -5,36 +5,38 @@ name: Python package
 
 on:
   push:
-    branches: [ "main","v0.2.0/dev" ]
+    branches: [ "main","test-release" ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+        contents: write
+        packages: write
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.9"]
 
+  
     steps:
-    - name: Create Release
-      run: |
-        if [ $GITHUB_REF == 'refs/heads/main' ]; then
-            zip -r main-release.zip .
-        elif [ $GITHUB_REF == 'refs/heads/v0.2.0/dev' ]; then
-            zip -r v0.2.0-beta-release.zip .
-        fi
-    - name: Upload Release
-      uses: actions/upload-artifact@v0.2.0-beta
-      with:
-        name: ${{ github.ref }}-release
-        path: ${{ github.ref }}-release.zip
+      - uses: actions/checkout@v3
+      - name: id
+        id : tag
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B $GITHUB_SHA)
+          echo "release_tag=${COMMIT_MESSAGE}" >> $GITHUB_OUTPUT
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          release_name: ${{ steps.tag.outputs.release_tag }}
+          draft: false
+          prerelease: true
 
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v0.2.0-beta
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        files: ${{ github.ref }}-release.zip 
+            
 
