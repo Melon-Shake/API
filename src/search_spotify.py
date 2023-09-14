@@ -8,6 +8,7 @@ import model.spotify_search as Spotify
 
 import requests
 import json
+from urllib.parse import urlparse, parse_qs
 
 def deduplicate(models) :
     ids_uniq = set(model.id for model in models)
@@ -27,7 +28,28 @@ def deduplicate_by_filter(models,models_filter) :
             ids_uniq.remove(model.id)
     return uniq
 
-def search_spotify(keywords:str,limit:int=3,offset:int=0) :
+def parse_search_type(url:str) :
+    parsed_url = urlparse(url)
+    query_params = parse_qs(parsed_url.query)
+    type_params = query_params.get('type')
+    return type_params[0]
+
+def search_by_href(href:str) :
+    from src.get_token import update_token, return_token
+    # update_token('iamsophie')
+    access_token = return_token()
+    search_type = parse_search_type(href)
+    response = requests.get(href,headers={'Authorization': 'Bearer '+ access_token})
+    if response.status_code == 200 :
+        responsed_data = response.json()
+        if search_type == 'artist' :
+            parsed_data = Spotify.SearchArtists(**responsed_data.get('artists'))
+            return parsed_data.items[0]
+
+def search_spotify_by_keywords(keywords:str,limit:int=3,offset:int=0) :
+    from src.get_token import update_token, return_token
+    # update_token('iamsophie')
+    access_token = return_token()
     response = requests.get('https://api.spotify.com/v1/search?'
                             +'q={q}'.format(q=keywords)
                             +'&type=artist%2Calbum%2Ctrack'
@@ -44,13 +66,15 @@ def search_spotify(keywords:str,limit:int=3,offset:int=0) :
 
         tracks_data = parsed_data.tracks.items
         albums_data = [track.album for track in tracks_data]
-        artists_filter = [artist for track in tracks_data for artist in track.artists]
-        artists_data = parsed_data.artists.items
-
+        # artists_filter = [artist for track in tracks_data for artist in track.artists]
+        # artists_data = parsed_data.artists.items
+        artists_data = [artist for track in tracks_data for artist in track.artists]
+        
         search_result = Spotify.SearchResult(
             tracks = deduplicate(tracks_data)
             , albums = deduplicate(albums_data)
-            , artists = deduplicate_by_filter(artists_data,artists_filter)
+            # , artists = deduplicate_by_filter(artists_data,artists_filter)
+            , artists = deduplicate(artists_data)
         )
         return search_result
 
@@ -80,7 +104,9 @@ def format_search(search_result:Spotify.SearchResult) :
                     ) for album in albums]
     artists_output = [dict(
                         name=artist.name
-                        ,img=artist.images[0].url
+                        ,img=artist.images[0].url 
+                        # ,img=artist.images[0].url if artist.images else None
+                        # , img = artist.images[0].url if hasattr(artist, 'images') else None
                     ) for artist in artists]
     
     search_output = dict(
@@ -112,12 +138,12 @@ if __name__ == '__main__':
     from src.get_token import update_token, return_token
     # update_token('iamsophie')
     access_token = return_token()
-
+    
     # 1 - spotify api search
-    search_result = search_spotify('아이유')
+    search_result = search_spotify_by_keywords('아이유')
     
     # 2 - for search result page
-    search_output = format_search(search_result)
+    # search_output = format_search(search_result)
 
     # # 3 - load db : spotify_tracks, spotify_albums, spotify_artists
     # load_spotify(search_result)

@@ -59,7 +59,6 @@ class Tracks(BaseModel) :
     href: str
     external_urls: ExternalUrls
     name: str
-    popularity: int
     duration_ms: int
     track_number: int
     disc_number: int
@@ -68,6 +67,7 @@ class Tracks(BaseModel) :
 
 class TracksExt(Tracks) :
     model_config = ConfigDict(from_attributes=True)
+    popularity: int
 
 class SearchArtists(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -107,9 +107,9 @@ class Search(BaseModel):
 
 class SearchResult(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    artists: List[ArtistsExt]
-    albums: List[AlbumsExt]
-    tracks: List[TracksExt]
+    artists: List[Union[Artists,ArtistsExt]]
+    albums: List[Union[Albums,AlbumsExt]]
+    tracks: List[Union[Tracks,TracksExt]]
 
 class ArtistsORM(Base) :
     __tablename__ = 'spotify_artists'
@@ -184,7 +184,6 @@ class TracksORM(Base) :
         self.href = tracks.href
         self.external_urls = tracks.external_urls.spotify
         self.name = tracks.name
-        self.popularity = tracks.popularity
         self.duration_ms = tracks.duration_ms
         self.track_number = tracks.track_number
         self.disc_number = tracks.disc_number
@@ -192,3 +191,4 @@ class TracksORM(Base) :
         self.artists_ids = list()
         for artists in tracks.artists :
             self.artists_ids.append(artists.id)
+        self.popularity = getattr(tracks,'popularity',None)
