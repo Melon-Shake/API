@@ -27,18 +27,11 @@ class Artist(BaseModel) :
     id: int
     name: str
 
-class RepresentationArtist(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    name:str
-
 class ChartFlo(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     name: str
-    representationArtist: RepresentationArtist
     artistList: List[Artist]
     album: Album
 
@@ -49,7 +42,7 @@ class ChartFloORM(Base) :
     track_id = Column(Integer, nullable=True)
     track_name = Column(String, nullable=True)
     artist_ids = Column(ARRAY(Integer), nullable=True)
-    artist_names = Column(ARRARY(String), nullable=True)
+    artist_names = Column(ARRAY(String), nullable=True)
     album_id = Column(Integer, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
@@ -63,12 +56,9 @@ class ChartFloORM(Base) :
         self.track_name = entity.name
         self.artist_ids = list()
         self.artist_names = list()
-        self.artist_ids.append(entity.representationArtist.id)
-        self.artist_names.append(entity.representationArtist.name)
         for artist in entity.artistList :
             self.artist_ids.append(artist.id)
-            self.artist_names.append(entity.name)
-        
+            self.artist_names.append(artist.name)
         self.album_id = entity.album.id
         self.album_name = entity.album.title
         self.img_url = entity.album.imgList[0].url

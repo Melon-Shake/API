@@ -1,10 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
-import sys
-import os
-root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
-sys.path.append(root_path)
-import requests, pandas as pd
+from fastapi.responses import JSONRespond
 import lib.module as module
 from pydantic import BaseModel
 import bcrypt
@@ -23,10 +18,13 @@ from model.chart_bugs import  BugsORM
 from model.chart_melon import MelonORM
 from typing import Dict, List, Union
 from model.database import session_scope
-
-
-# import sys, numpy as np, pandas as pd, json, requests, re
 import requests
+from model.jun_model import *
+from get_keyword import save_keyword_data
+from user_data import user_data
+from user_search_track import pick_data
+from daily_search_ranking import daily_search_ranking
+# import sys, numpy as np, pandas as pd, json, requests, re
 
 
 
@@ -45,16 +43,6 @@ class MelonChartRequestException(Exception):
 
 class MelonChartParseException(Exception):
     pass
-
-class LoginData(BaseModel):
-    email : str
-    password : str
-    gender : str
-    birthdate: str
-    mbti : str
-    favorite_tracks : str
-    favorite_artists : str
-    name : str
 
 class SearchKeyword(BaseModel):
     searchInput : str
@@ -97,7 +85,6 @@ async def search_spotify(data:SearchKeyword):
             return_data["tracks"+str(i)]=[[response_json["tracks"]["items"][i]["name"]],
                             [response_json["tracks"]["items"][i]["album"]["name"]],
                             list_artist]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -119,7 +106,6 @@ async def search_spotify(data:SearchKeyword):
             return_data["artists"+str(i)]=[[response_json["artists"]["items"][i]["name"]],
                                            [response_json["artists"]["items"][i]["genres"]],
                                            [response_json["artists"]["items"][i]["images"][0]["url"]]]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -142,7 +128,6 @@ async def search_spotify(data:SearchKeyword):
                                           [response_json["albums"]["items"][i]["images"][0]['url']],
                                           [response_json["albums"]["items"][i]["artists"]["name"]],
                                           [response_json["albums"]["items"][i]["release_date"]]]
-        print(return_data)
         return return_data
     else:
         return {"error": "Spotify API request failed"}
@@ -154,173 +139,23 @@ async def search_spotify(data:SearchKeyword):
 # junsung login api
 @app.post("/get_user_data/")
 def get_user_data(data: LoginData):
-    email = data.email
-    password = data.password
-    gender = data.gender
-    birthdate = datetime.strptime(data.birthdate, "%Y-%m-%d")
-    today = datetime.today()
-    age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
-    mbti = data.mbti
-    favorite_tracks = data.favorite_tracks
-    favorite_artists = data.favorite_artists
-    name = data.name
-    connection = psycopg2.connect(**db_params)
-    cursor = connection.cursor()
-    # 패스워드 해싱
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    # INSERT 쿼리 실행
-    user_query = "INSERT INTO \"user\"(password,email,name) values (%s, %s,%s) RETURNING id;"
-
-    user_values = (hashed_password.decode("utf-8"),email,name)
-
-    user_values = (hashed_password,email,name)
-
-    cursor.execute(user_query, user_values)
-    user_detail_query = "INSERT INTO user_properties(gender,age,mbti,favorite_tracks,favorite_artists,user_id) values (%s,%s,%s,%s,%s,%s)"
-    try:
-        user_query_id = cursor.fetchone()[0]
-        user_detail_values= (gender,age,mbti,favorite_tracks,favorite_artists,user_query_id)
-        cursor.execute(user_detail_query,user_detail_values)
-        connection.commit()
-        cursor.close()
-        connection.close()
-    except (psycopg2.IntegrityError, psycopg2.Error) as e:
-        if "duplicate key value violates unique constraint" in str(e):
-            print("이미 등록된 Email 입니다.")
-            return "이미 등록된 Email 입니다."
-        else:
-            print("다른 예외 발생:", e)
-            return "다른 예외 발생"
-
-class Login(BaseModel):
-    email:str
-    password:str
-
-@app.post("/login/")
-def login(login_data:Login):  
-    email = login_data.email
-    password = login_data.password
-    connection = psycopg2.connect(**db_params)
-    cursor = connection.cursor()
-
-    # 등록한 이메일인 경우 ID 가져오기
-    user_query = "SELECT password FROM \"user\" WHERE email = %s;"
-    user_values = (email,)
-    cursor.execute(user_query, user_values)
-    user_query_result = cursor.fetchone()
-
-    if user_query_result:
-        condition = bcrypt.checkpw(password.encode("utf-8"), user_query_result[0].encode("utf-8"))
-        cursor.close()
-        if condition:
-                # 패스워드가 일치하면 로그인 성공
-                return True
-        else:
-            return False
-
-        
-class Keyword(BaseModel):
-    searchInput: str
-    email: str  # 사용자 이메일
+   user_data(data, db_params)
     
 @app.post("/get_keyword_data/")
-def get_keyword_data(data: Keyword):
-    keyword = data.searchInput
-    email = data.email  # 사용자 이메일
-    connection = psycopg2.connect(**db_params)
-    cursor = connection.cursor()
-    # 등록한 이메일인 경우 ID 가져오기
-    user_query = "SELECT id FROM \"user\" WHERE email = %s;"
-    user_values = (email,)
-    cursor.execute(user_query, user_values)
-    user_query_result = cursor.fetchone()
-    if user_query_result:
-        user_id = user_query_result[0]
-    else:
-        user_id = None
-    search_query = "INSERT INTO search_log_keywords(keyword,user_id) values (%s,%s);"
-    user_values = (keyword, user_id)
-    cursor.execute(search_query, user_values)
-    connection.commit()
-    cursor.close()
-    connection.close()
+def get_keyword_data(data: Keyword): 
+    save_keyword_data(data, db_params)
 
-class search_track(BaseModel):
-   email : str
-   track_title : str
-   
+
 @app.post("/get_use_data/")
 def get_use_data(data: search_track):
-    email = data.email
-    track_title = data.track_title
-
-    connection = psycopg2.connect(**db_params)
-    cursor = connection.cursor()
+    pick_data(data,db_params)
     
-    user_query = "SELECT id FROM \"user\" WHERE email = %s;"
-    user_values = (email,)
-    cursor.execute(user_query, user_values)
-    user_query_result = cursor.fetchone()
-    if user_query_result:
-        user_id = user_query_result[0]
-    else:
-        user_id = None
-
-    track_search = "SELECT id from track where name_org = %s"
-    track_value = (track_title,)
-    cursor.execute(track_search, track_value)
-    track_query_result = cursor.fetchone()
-    if user_query_result:
-        track_id = track_query_result[0]
-
-    search_query = "INSERT INTO search_log_tracks(track_id,user_id) values (%s,%s);"
-    user_values = (track_id, user_id)
-    cursor.execute(search_query, user_values)
-    connection.commit()
-    cursor.close()
-    connection.close()
+    
 
 @app.post("/daily_search_ranking/")
 def get_daily_search_ranking():
-    connection = psycopg2.connect(**db_params)
-    cursor = connection.cursor()
-
-    search_query = """
-
-        SELECT keyword, RANK() OVER (ORDER BY MAX(created_datetime) DESC, COUNT(*) DESC) AS search_rank
-
-        FROM search_log_keywords
-        WHERE keyword IN (
-            SELECT DISTINCT item
-            FROM (
-                SELECT name_org as item FROM artist
-                UNION ALL
-                SELECT name_org as item FROM track
-                UNION ALL
-                SELECT name_org as item FROM album
-            ) AS items
-            WHERE item IS NOT NULL
-        )
-        GROUP BY keyword
-        ORDER BY search_rank;
-
-    """
-
-    
-    cursor.execute(search_query)
-    search_ranking = cursor.fetchall()
-
-    result = {}
-    rank = 1
-    
-    for _, (keyword, search_rank) in enumerate(search_ranking):
-        result[rank] = keyword
-        rank += 1
-            
-        if rank >= 20:  # 20위까지만 결과 저장
-            break
-    connection.close()
-    return result
+    search_ranking_result = daily_search_ranking()
+    return search_ranking_result
 
 # bkson chart api
 @app.post("/chart/melon_chart/")
@@ -453,4 +288,3 @@ def sp_track_input(item: sp_data):
         return result
     else:
         raise HTTPException(status_code=404, detail="Track not found or error in processing.")
-
