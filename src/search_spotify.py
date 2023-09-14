@@ -48,7 +48,7 @@ def search_by_href(href:str) :
 
 def search_spotify_by_keywords(keywords:str,limit:int=3,offset:int=0) :
     from src.get_token import update_token, return_token
-    # update_token('iamsophie')
+    update_token('iamsophie')
     access_token = return_token()
     response = requests.get('https://api.spotify.com/v1/search?'
                             +'q={q}'.format(q=keywords)
@@ -66,15 +66,15 @@ def search_spotify_by_keywords(keywords:str,limit:int=3,offset:int=0) :
 
         tracks_data = parsed_data.tracks.items
         albums_data = [track.album for track in tracks_data]
-        # artists_filter = [artist for track in tracks_data for artist in track.artists]
-        # artists_data = parsed_data.artists.items
-        artists_data = [artist for track in tracks_data for artist in track.artists]
+        artists_filter = [artist for track in tracks_data for artist in track.artists]
+        artists_data = parsed_data.artists.items
+        # artists_data = [artist for track in tracks_data for artist in track.artists]
         
         search_result = Spotify.SearchResult(
             tracks = deduplicate(tracks_data)
             , albums = deduplicate(albums_data)
-            # , artists = deduplicate_by_filter(artists_data,artists_filter)
-            , artists = deduplicate(artists_data)
+            , artists = deduplicate_by_filter(artists_data,artists_filter)
+            # , artists = deduplicate(artists_data)
         )
         return search_result
 
@@ -166,4 +166,6 @@ if __name__ == '__main__':
         )
 
     # 6 - load db : audio_features
-    
+    from src.track_analyze import audio_features_update
+    for track in search_result.tracks :
+        audio_features_update()
