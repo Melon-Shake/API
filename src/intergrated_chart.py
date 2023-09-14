@@ -21,6 +21,7 @@ class TotalChart(BaseModel) :
     artist_name : List[str]
     album_name : str
     points : Union[int, float]
+    img_url : str
 
 with session_scope() as session:
     genieOrms = session.query(ChartGenieORM).all()

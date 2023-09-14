@@ -13,19 +13,20 @@ access_token = return_token()
 
 def clean_name(name:str) :
     decoded_name = urllib.parse.unquote(name)
-    normalized_name = re.sub(r'\([^)]*\)', '', decoded_name).strip()
+    # normalized_name = re.sub(r'\([^)]*\)', '', decoded_name).strip()
+    normalized_name = decoded_name.replace("-", "")
     return normalized_name
 
 def clean_track(name:str) :
     name = clean_name(name)
     if name == '이브, 프시케 그리고 푸른 수염의 아내':
         return 'Eve, Psyche & The Bluebeard’s wife'
-    elif name == 'Seven  - Clean Ver.':
-        return 'Seven (feat. Latto) (Clean Ver.)'
     elif name == '사람 Pt.2 ':
         return 'People Pt.2 (feat. IU)'
-    elif name == '그대만 있다면 )':
-        return '그대만 있다면'
+    elif name == '파이팅 해야지 (Feat. 이영지)':
+        return 'Fighting'
+    elif name == '손오공':
+        return 'Super'
     else : return name
 
 def clean_album(name:str) :
@@ -35,10 +36,10 @@ def clean_album(name:str) :
 def clean_artists(artists:list[ArtistInfo]) :
     for original in artists :
         original.artistName = clean_name(original.artistName)
-        if original.artistName == '미연아이들)':
-            original.artistName = '미연'
-        elif original.artistName == '#안녕':
+        if original.artistName == '#안녕':
             original.artistName = urllib.parse.quote(original.artistName)
+        # if original.artistName == '미연아이들)':
+        #     original.artistName = '미연'
         # elif original.artistName == '헤이즈 , 정승환':
         #     original.artistName = '헤이즈'
     return artists
