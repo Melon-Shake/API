@@ -1,5 +1,10 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONRespond
+from fastapi.responses import JSONResponse
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
+import requests, pandas as pd
 import lib.module as module
 from pydantic import BaseModel
 import bcrypt
