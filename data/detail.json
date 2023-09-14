@@ -1,23 +1,19 @@
 {
-    "name" : "People Pt.2 (feat. IU)",
+    "name" : "Secret Garden",
     "duration" : "03:52",
-    "img_url" : "",
+    "img_url" : "https://i.scdn.co/image/ab67616d0000b273dbd063ae065db06970b022d7",
     "lyric" : "",
     "audio_features" : {
-        "romantic" : 0,
-        "adventurous" : 0,
-        "depresed" : 0,
-        "powerful" : 0,
-        "popularity" : 0
+        "romantic" : 0.82500,
+        "adventurous" : 0.48200,
+        "depresed" : 0.38700,
+        "powerful" : 0.04720,
+        "popularity" : 0.25800
     },
     "artists" : [
         {
-            "name":"",
-            "img_url":""
-        },
-        {
-            "name":"",
-            "img_url":""
+            "name":"IU",
+            "img_url":"https://i.scdn.co/image/ab6761610000e5eb006ff3c0136a71bfb9928d34"
         }
     ],
     "album" : {
@@ -25,35 +21,23 @@
         "img_url" : "",
         "release_year" : "",
         "audio_features" : {
-            "romantic" : 0,
-            "adventurous" : 0,
-            "depresed" : 0,
-            "powerful" : 0,
-            "popularity" : 0
+            "romantic" : 0.82500,
+            "adventurous" : 0.48200,
+            "depresed" : 0.38700,
+            "powerful" : 0.04720,
+            "popularity" : 0.25800
         },
         "tracks" : [
             {
-                "name" : "",
-                "duration" : "",
-                "img_url" : "",
+                "name" : "Secret Garden",
+                "duration" : "03:52",
+                "img_url" : "https://i.scdn.co/image/ab67616d0000b273dbd063ae065db06970b022d7",
                 "audio_features" : {
-                    "romantic" : 0,
-                    "adventurous" : 0,
-                    "depresed" : 0,
-                    "powerful" : 0,
-                    "popularity" : 0
-                }
-            },
-            {
-                "name" : "",
-                "duration" : "",
-                "img_url" : "",
-                "audio_features" : {
-                    "romantic" : 0,
-                    "adventurous" : 0,
-                    "depresed" : 0,
-                    "powerful" : 0,
-                    "popularity" : 0
+                    "romantic" : 0.82500,
+                    "adventurous" : 0.48200,
+                    "depresed" : 0.38700,
+                    "powerful" : 0.04720,
+                    "popularity" : 0.25800
                 }
             }
         ]
