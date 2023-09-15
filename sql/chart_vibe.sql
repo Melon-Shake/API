@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS chart_vibe (
 	id serial,
   track_name varchar(255),
-  artist_names varchar(255) [],
+  artist_names varchar(255),
   album_name varchar(255),
   img_url varchar(255),
   release_date varchar(255),
