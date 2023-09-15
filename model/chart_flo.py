@@ -39,11 +39,11 @@ class ChartFloORM(Base) :
     __tablename__ = 'chart_flo'
 
     id = Column(Integer, primary_key=True)
-    track_id = Column(Integer, nullable=True)
+    # track_id = Column(Integer, nullable=True)
     track_name = Column(String, nullable=True)
-    artist_ids = Column(ARRAY(Integer), nullable=True)
+    # artist_ids = Column(ARRAY(Integer), nullable=True)
     artist_names = Column(ARRAY(String), nullable=True)
-    album_id = Column(Integer, nullable=True)
+    # album_id = Column(Integer, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
     release_ymd = Column(String, nullable=True)
@@ -52,14 +52,14 @@ class ChartFloORM(Base) :
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
     def __init__(self, idx, entity: ChartFlo) :
-        self.track_id = entity.id
+        # self.track_id = entity.id
         self.track_name = entity.name
-        self.artist_ids = list()
+        # self.artist_ids = list()
         self.artist_names = list()
-        for artist in entity.artistList :
-            self.artist_ids.append(artist.id)
-            self.artist_names.append(artist.name)
-        self.album_id = entity.album.id
+        # for artist in entity.artistList :
+            # self.artist_ids.append(artist.id)
+            # self.artist_names.append(artist.name)
+        # self.album_id = entity.album.id
         self.album_name = entity.album.title
         self.img_url = entity.album.imgList[0].url
         self.release_ymd = entity.album.releaseYmd
