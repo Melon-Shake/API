@@ -1,10 +1,6 @@
-import sys
-import os
-root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
-sys.path.append(root_path)
 from model.database import Base
 from sqlalchemy.sql.schema import Column
-from sqlalchemy import String, Integer, ARRAY
+from sqlalchemy import String, Integer, Float, ARRAY
 from pydantic import BaseModel, ConfigDict
 from typing import Dict, List, Union, Optional
 
@@ -73,9 +69,9 @@ class SearchArtists(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     href: str
     limit: int
-    next: Union[str, None]
+    next: Optional[str]
     offset: int
-    previous: Union[str, None]
+    previous: Optional[str]
     total: int
     items: List[ArtistsExt]
 
@@ -83,9 +79,9 @@ class SearchAlbums(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     href: str
     limit: int
-    next: Union[str, None]
+    next: Optional[str]
     offset: int
-    previous: Union[str, None]
+    previous: Optional[str]
     total: int
     items: List[AlbumsExt]
 
@@ -93,23 +89,23 @@ class SearchTracks(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     href: str
     limit: int
-    next: Union[str, None]
+    next: Optional[str]
     offset: int
-    previous: Union[str, None]
+    previous: Optional[str]
     total: int
     items: List[TracksExt]
 
 class Search(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    artists: SearchArtists
-    albums: SearchAlbums
-    tracks: SearchTracks
+    artists: Optional[SearchArtists]
+    albums: Optional[SearchAlbums]
+    tracks: Optional[SearchTracks]
 
 class SearchResult(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    artists: List[Union[Artists,ArtistsExt]]
-    albums: List[Union[Albums,AlbumsExt]]
-    tracks: List[Union[Tracks,TracksExt]]
+    artists: List[ArtistsExt]
+    tracks: List[TracksExt]
+    albums: List[AlbumsExt]
 
 class ArtistsORM(Base) :
     __tablename__ = 'spotify_artists'
@@ -192,3 +188,42 @@ class TracksORM(Base) :
         for artists in tracks.artists :
             self.artists_ids.append(artists.id)
         self.popularity = getattr(tracks,'popularity',None)
+
+class AudioFeatures(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    acousticness: float
+    danceability: float
+    energy: float
+    instrumentalness: float
+    liveness: float
+    loudness: float
+    speechiness: float
+    tempo: float
+    valence: float
+
+class AudioFeaturesORM(Base):
+    __tablename__ = 'spotify_audio_features'
+
+    id = Column(String, primary_key=True)
+    acousticness = Column(Float, default=0)
+    danceability = Column(Float, default=0)
+    energy = Column(Float, default=0)
+    instrumentalness = Column(Float, default=0)
+    liveness = Column(Float, default=0)
+    loudness = Column(Float, default=0)
+    speechiness = Column(Float, default=0)
+    tempo = Column(Float, default=0)
+    valence = Column(Float, default=0)
+
+    def __init__(self, audio:AudioFeatures) :
+        self.id = audio.id
+        self.acousticness = audio.acousticness
+        self.danceability = audio.danceability
+        self.energy = audio.energy
+        self.instrumentalness = audio.instrumentalness
+        self.liveness = audio.liveness
+        self.loudness = audio.loudness
+        self.speechiness = audio.speechiness
+        self.tempo = audio.tempo
+        self.valence = audio.valence

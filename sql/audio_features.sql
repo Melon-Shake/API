@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS audio_features (
-	track_id varchar(255),
+	id varchar(255),
 	romantic NUMERIC(10,5) DEFAULT 0,
 	adventurous NUMERIC(10,5) DEFAULT 0,
 	melancholic NUMERIC(10,5) DEFAULT 0,

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS lyrics_temp (
+CREATE TABLE IF NOT EXISTS lyrics (
     spotify_tracks_id varchar(255),
 	content TEXT NOT NULL,
     romantic_words integer,
