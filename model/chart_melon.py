@@ -33,9 +33,9 @@ class MelonORM(Base):
   __tablename__ = 'chart_melon'
 
   id = Column(Integer, primary_key=True)
-  song_name = Column(String, nullable=True)
+  track_name = Column(String, nullable=True)
   album_name = Column(String, nullable=True)
-  album_img = Column(String, nullable=True)
+  img_url = Column(String, nullable=True)
   cur_rank = Column(Integer, nullable=True)
   past_rank = Column(Integer, nullable=True)
   issue_date = Column(String, nullable=True)
@@ -45,9 +45,9 @@ class MelonORM(Base):
   created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
   def __init__(self, entity):
-    self.song_name = entity.SONGNAME
+    self.track_name = entity.SONGNAME
     self.album_name = entity.ALBUMNAME
-    self.album_img = entity.ALBUMIMG
+    self.img_url = entity.ALBUMIMG
     self.cur_rank = entity.CURRANK
     self.past_rank = entity.PASTRANK
     self.issue_date = entity.ISSUEDATE

@@ -46,7 +46,7 @@ class ChartFloORM(Base) :
     # album_id = Column(Integer, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
-    release_ymd = Column(String, nullable=True)
+    release_date = Column(String, nullable=True)
     rank = Column(Integer, nullable=True)
     points = Column(Integer, nullable=True)
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
@@ -56,6 +56,6 @@ class ChartFloORM(Base) :
         self.artist_names = list()
         self.album_name = entity.album.title
         self.img_url = entity.album.imgList[0].url
-        self.release_ymd = entity.album.releaseYmd
+        self.release_date = entity.album.releaseYmd
         self.rank = idx+1
         self.points = (100-idx)*6.1

@@ -29,20 +29,20 @@ class ChartGenieORM(Base) :
     __tablename__ = 'chart_genie'
 
     id = Column(Integer, primary_key=True)
-    song_name = Column(String, nullable=True)
-    artist_name = Column(ARRAY(String), nullable=True)
+    track_name = Column(String, nullable=True)
+    artist_names = Column(ARRAY(String), nullable=True)
     album_name = Column(String, nullable=True)
-    album_img_path = Column(String, nullable=True)
+    img_url = Column(String, nullable=True)
     rank_no = Column(Integer, nullable=True)
     pre_rank_no = Column(Integer, nullable=True)
     points = Column(Float, nullable=True)
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
     def __init__(self, genie:ChartGenie) :
-        self.song_name = genie.SONG_NAME
-        self.artist_name = list().append(genie.ARTIST_NAME)
+        self.track_name = genie.SONG_NAME
+        self.artist_names = list().append(genie.ARTIST_NAME)
         self.album_name = genie.ALBUM_NAME
-        self.album_img_path = genie.ALBUM_IMG_PATH
+        self.img_url = genie.ALBUM_IMG_PATH
         self.rank_no = int(genie.RANK_NO)
         self.pre_rank_no = int(genie.PRE_RANK_NO)
         self.points = (101-self.rank_no)*9.2
