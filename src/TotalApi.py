@@ -15,7 +15,6 @@ from lyric import lyric_search_and_input
 from sp_track import sp_and_track_input, get_sp_track_id
 from update_token import return_token
 # import sys, numpy as np, pandas as pd, json, requests, re
-import requests
 from model.chart_genie import ChartGenieORM
 from model.chart_flo import ChartFloORM
 from model.chart_vibe import  VibeORM
@@ -23,12 +22,12 @@ from model.chart_bugs import  BugsORM
 from model.chart_melon import MelonORM
 from typing import Dict, List, Union
 from model.database import session_scope
-import requests
 from model.jun_model import *
 from get_keyword import save_keyword_data
 from user_data import user_data
 from user_search_track import pick_data
 from daily_search_ranking import daily_search_ranking
+from integrate_chart_test import generate_total_chart
 # import sys, numpy as np, pandas as pd, json, requests, re
 
 
@@ -137,9 +136,6 @@ async def search_spotify(data:SearchKeyword):
     else:
         return {"error": "Spotify API request failed"}
 
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
 
 # junsung login api
 @app.post("/get_user_data/")
@@ -194,22 +190,6 @@ def get_melonChat():
 
     return entries
 
-# chart api
-# @app.post("/chart/integrated_chart/")
-# def get_integrated_chart():
-#     class TotalChart(BaseModel) :
-#         track_name : str
-#         artist_name : str
-#         album_name : str
-#         points : Union[int, float]
-        
-#     with session_scope() as session:
-#         genieOrms = session.query(ChartGenieORM).all()
-#         VibeOrms = session.query(VibeORM).all()
-#         floOrms = session.query(ChartFloORM).all()
-#         bugsOrms = session.query(BugsORM).all()
-#         melonOrms = session.query(MelonORM).all()
-
 
 # Lucete api
 @app.post("/lyric_input/")
@@ -237,3 +217,7 @@ def sp_track_input(item: sp_data):
         return result
     else:
         raise HTTPException(status_code=404, detail="Track not found or error in processing.")
+
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
