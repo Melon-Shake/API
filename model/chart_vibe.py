@@ -52,14 +52,8 @@ class VibeORM(Base):
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
     def __init__(self, entity) :
-        # self.track_id = entity.trackId
         self.track_title = entity.trackTitle
-        # self.artist_ids = list()
         self.artist_names = list()
-        # for artist in entity.artists :
-        #     self.artist_ids.append(artist.artistId)
-        #     self.artist_names.append(artist.artistName)
-        # self.album_id = entity.album.albumId
         self.album_title = entity.album.albumTitle
         self.image_url = entity.album.imageUrl
         self.release_date = entity.album.releaseDate

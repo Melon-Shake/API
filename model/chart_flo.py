@@ -52,14 +52,8 @@ class ChartFloORM(Base) :
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
     def __init__(self, idx, entity: ChartFlo) :
-        # self.track_id = entity.id
         self.track_name = entity.name
-        # self.artist_ids = list()
         self.artist_names = list()
-        # for artist in entity.artistList :
-            # self.artist_ids.append(artist.id)
-            # self.artist_names.append(artist.name)
-        # self.album_id = entity.album.id
         self.album_name = entity.album.title
         self.img_url = entity.album.imgList[0].url
         self.release_ymd = entity.album.releaseYmd
