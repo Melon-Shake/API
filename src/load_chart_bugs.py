@@ -97,6 +97,7 @@ if __name__ == '__main__':
                 for j in range(len(sp_json['tracks']['items'][0]['artists'])):
                     artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
                 artist_name.append(artists_sp)
+                # artist_name= ','.join(artist_name)
         #     elif response_sp.status_code != 200 :
         #         q = entries[i][0] + " " + artists_sub+ " " + entries[i][2]
         #         url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=KR&limit=1'
@@ -134,7 +135,7 @@ if __name__ == '__main__':
             orm.track_name = song_name[idx]
             orm.album_name = album_name[idx]
             orm.img_url = album_img[idx]
-            orm.artist_names = artist_name[idx]
+            orm.artist_names = ','.join(artist_name[idx])
 
             with session_scope() as session :
                 session.add(orm)
