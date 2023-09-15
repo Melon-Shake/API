@@ -89,13 +89,10 @@ with session_scope() as session:
     
     # 종합차트 합산 및 정렬
     merged_df = pd.DataFrame([vars(chart) for chart in integrated])     #dataframe 형식으로 변환
-    # print(merged_df)
     merged_df['artist_name'] = merged_df['artist_name'].apply(lambda x: ', '.join(x))
     result_df = merged_df.groupby(['track_name', 'album_name', 'img_url']).agg({'artist_name': 'first', 'points': 'sum'}).reset_index()
-    
     result_df = merged_df.groupby(['track_name', 'artist_name', 'album_name','img_url'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름,앨범이미지 같은경우 점수합산
     result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순으로 정렬
-    # print(result_df)
     
     df = result_df.drop('index', axis=1)    #index 컬럼 제거
 

@@ -24,7 +24,6 @@ from user_search_track import pick_data
 from daily_search_ranking import daily_search_ranking
 # import sys, numpy as np, pandas as pd, json, requests, re
 
-
 app = FastAPI()
 
 # access_token = module.read_AuthToken_from_file()
