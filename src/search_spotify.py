@@ -18,7 +18,7 @@ from src.get_token import update_token, return_token
 
 # 0 - get token and set header
 
-# access_token = update_token('iamsophie')
+access_token = update_token('iamsophie')
 access_token = return_token()
 search_header = {'Authorization': f'Bearer {access_token}'}
 
@@ -246,7 +246,7 @@ def bring_lucete(tracks_data:list[Spotify.TracksExt]) :
     with db.session_scope() as session :
         session.add_all(audios)
 
-    audio_features_update()
+    # audio_features_update()
 
 
 if __name__ == '__main__' :
@@ -258,127 +258,129 @@ if __name__ == '__main__' :
     # id = '0Y2AcMPMpeuPXtPQGVvRBq'
     # parsed_data = search_by_id(type,id)
 
-    keywords = '파이팅 해야지 (Feat. 이영지)'
-    keywords = 'YOU&I'
-    parsed_data = search_by_keywords(keywords,limit=30)
+    # keywords = '파이팅 해야지 (Feat. 이영지)'
+    # keywords = 'YOU&I'
+    # keywords = 'Blueming'
+    parsed_data = search_by_keywords(keywords,limit=3)
 
     # href = 'https://api.spotify.com/v1/search?q=%ED%8C%8C%EC%9D%B4%ED%8C%85+%ED%95%B4%EC%95%BC%EC%A7%80+%28Feat.+%EC%9D%B4%EC%98%81%EC%A7%80%29&type=artist%2Calbum%2Ctrack&limit=10&offset=0'
     # parsed_data = search_by_href(href)
 
-    culled_data = cull_data(parsed_data)
-    search_data = return_search(culled_data)
-    
+    # culled_data = cull_data(parsed_data)
+    # search_data = return_search(culled_data)
+
     # print(len(parsed_data.artists.items))
     # print(len(culled_data.artists))
 
-    load_spotify(culled_data)
-    bring_lucete(culled_data.tracks)
+    # load_spotify(culled_data)
+    # bring_lucete(culled_data.tracks)
 
 
-    # keywords = [
-    #     "Blueming",
-    #     "Meaning of you",
-    #     "Friday (feat.Jang Yi-jeong)",
-    #     "Autumn morning",
-    #     "Hold my hand",
-    #     "Palette (feat. G-DRAGON)",
-    #     "eight(Prod.&Feat. SUGA of BTS)",
-    #     "Love poem",
-    #     "Secret Garden",
-    #     "Celebrity",
-    #     "strawberry moon",
-    #     "YOU&I",
-    #     "Knees",
-    #     "Ah puh",
-    #     "BBIBBI",
-    #     "Twenty-three",
-    #     "Dear Name",
-    #     "above the time",
-    #     "Rain Drop",
-    #     "Give You My Heart",
-    #     "The shower",
-    #     "heart",
-    #     "Good day",
-    #     "Ending Scene",
-    #     "unlucky",
-    #     "My old story",
-    #     "NAKKA (with IU)",
-    #     "Every End of the Day",
-    #     "My sea",
-    #     "SoulMate (feat. IU)",
-    #     "Through the Night",
-    #     "Sleepless rainy night",
-    #     "Winter Sleep",
-    #     "GANADARA (Feat. IU)",
-    #     "Not Spring, Love, or Cherry Blossoms",
-    #     "Coin",
-    #     "Lullaby",
-    #     "Epilogue",
-    #     "LILAC",
-    #     "Troll (Feat. DEAN)",
-    #     "Into the I-LAND",
-    #     "People Pt.2 (feat. IU)",
-    #     "Flu",
-    #     "Can't Love You Anymore (With OHHYUK)",
-    #     "Drama",
-    #     "Nitpicking" ,
-    #     "Fry’s Dream",
-    #     "Love Lee",
-    #     "I love you",
-    #     "Last Goodbye",
-    #     "Time And Fallen Leaves",
-    #     "HAPPENING",
-    #     "How can I love the heartbreak, you're the one I love",
-    #     "How People Move",
-    #     "Endless dream, good night",
-    #     "Moon",
-    #     "Way Back Home",
-    #     "라면인건가",
-    #     "DINOSAUR",
-    #     "Reality",
-    #     "Melted",
-    #     "Officially missing you" ,
-    #     "200%",
-    #     "외국인의 고백",
-    #     "Crescendo",
-    #     "Little Star",
-    #     "Will Last Forever",
-    #     "RE-BYE",
-    #     "FREEDOM",
-    #     "Stupid love song (with Crush)",
-    #     "Fish in the water",
-    #     "Galaxy",
-    #     "Play Ugly",
-    #     "Whale",
-    #     "사랑은 은하수 다방에서" ,
-    #     "Hey kid, Close your eyes (with Lee Sun Hee)",
-    #     "Artificial Grass",
-    #     "Chantey",
-    #     "Tictoc Tictoc Tictoc (with Beenzino)",
-    #     "MY DARLING",
-    #     "On The Subway",
-    #     "EVEREST (with Sam Kim)",
-    #     "Green Window",
-    #     "다리꼬지마",
-    #     "BENCH (with Zion.T)",
-    #     "Be With You",
-    #     "Haughty Girl",
-    #     "Give Love",
-    #     "Dissonance (Feat. AKMU) (Prod. GRAY)",
-    #     "Love Loss",
-    #     "Day & Night (feat. Jay Park)",
-    #     "Live",
-    #     "Aku Yang Salah",
-    #     "707 Ocean Drive - orginal",
-    #     "Aku, Kamu Dan Samudra",
-    #     "Every moment of you 너의 모든 순간",
-    #     "넌 감동이었어",
-    #     "Goodbye , My Love",
-    #     "Farewell Once Again",
-    #     "좋을텐데"
-    # ]
+    keywords = [
+        "Blueming",
+        "Meaning of you",
+        "Friday (feat.Jang Yi-jeong)",
+        "Autumn morning",
+        "Hold my hand",
+        "Palette (feat. G-DRAGON)",
+        "eight(Prod.&Feat. SUGA of BTS)",
+        "Love poem",
+        "Secret Garden",
+        "Celebrity",
+        "strawberry moon",
+        "YOU&I",
+        "Knees",
+        "Ah puh",
+        "BBIBBI",
+        "Twenty-three",
+        "Dear Name",
+        "above the time",
+        "Rain Drop",
+        "Give You My Heart",
+        "The shower",
+        "heart",
+        "Good day",
+        "Ending Scene",
+        "unlucky",
+        "My old story",
+        "NAKKA (with IU)",
+        "Every End of the Day",
+        "My sea",
+        "SoulMate (feat. IU)",
+        "Through the Night",
+        "Sleepless rainy night",
+        "Winter Sleep",
+        "GANADARA (Feat. IU)",
+        "Not Spring, Love, or Cherry Blossoms",
+        "Coin",
+        "Lullaby",
+        "Epilogue",
+        "LILAC",
+        "Troll (Feat. DEAN)",
+        "Into the I-LAND",
+        "People Pt.2 (feat. IU)",
+        "Flu",
+        "Can't Love You Anymore (With OHHYUK)",
+        "Drama",
+        "Nitpicking" ,
+        "Fry’s Dream",
+        "Love Lee",
+        "I love you",
+        "Last Goodbye",
+        "Time And Fallen Leaves",
+        "HAPPENING",
+        "How can I love the heartbreak, you're the one I love",
+        "How People Move",
+        "Endless dream, good night",
+        "Moon",
+        "Way Back Home",
+        "라면인건가",
+        "DINOSAUR",
+        "Reality",
+        "Melted",
+        "Officially missing you" ,
+        "200%",
+        "외국인의 고백",
+        "Crescendo",
+        "Little Star",
+        "Will Last Forever",
+        "RE-BYE",
+        "FREEDOM",
+        "Stupid love song (with Crush)",
+        "Fish in the water",
+        "Galaxy",
+        "Play Ugly",
+        "Whale",
+        "사랑은 은하수 다방에서" ,
+        "Hey kid, Close your eyes (with Lee Sun Hee)",
+        "Artificial Grass",
+        "Chantey",
+        "Tictoc Tictoc Tictoc (with Beenzino)",
+        "MY DARLING",
+        "On The Subway",
+        "EVEREST (with Sam Kim)",
+        "Green Window",
+        "다리꼬지마",
+        "BENCH (with Zion.T)",
+        "Be With You",
+        "Haughty Girl",
+        "Give Love",
+        "Dissonance (Feat. AKMU) (Prod. GRAY)",
+        "Love Loss",
+        "Day & Night (feat. Jay Park)",
+        "Live",
+        "Aku Yang Salah",
+        "707 Ocean Drive - orginal",
+        "Aku, Kamu Dan Samudra",
+        "Every moment of you 너의 모든 순간",
+        "넌 감동이었어",
+        "Goodbye , My Love",
+        "Farewell Once Again",
+        "좋을텐데"
+    ]
     # for keyword in keywords :
-    #     parsed_data = search_by_keywords(keyword)
-    #     culled_data = cull_data(parsed_data)
-    #     load_spotify(culled_data)
-    #     bring_lucete(culled_data.tracks)
+        # parsed_data = search_by_keywords(keyword)
+        # if type(parsed_data) == str : print('#################'+parsed_data)
+        # culled_data = cull_data(parsed_data)
+        # load_spotify(culled_data)
+        # bring_lucete(culled_data.tracks)
