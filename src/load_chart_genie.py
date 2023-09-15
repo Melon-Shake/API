@@ -115,10 +115,10 @@ if __name__ == '__main__' :
     for idx, e in enumerate(responsed_data) :
         entity = ChartGenie(**e)
         orm = ChartGenieORM(entity)
-        orm.song_name = song_name[idx]
-        orm.artist_name = artist_name[idx]
+        orm.track_name = song_name[idx]
+        orm.artist_names = artist_name[idx]
         orm.album_name = album_name[idx]
-        orm.album_img_path = album_img[idx]
+        orm.img_url = album_img[idx]
 
         with session_scope() as session :
             session.add(orm)

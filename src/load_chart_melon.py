@@ -115,10 +115,10 @@ if __name__ == '__main__':
   for idx, item in enumerate(responsed_data):
     entity = ChartMelon(**item)
     orm = MelonORM(entity)
-    orm.song_name = song_name[idx]
+    orm.track_name = song_name[idx]
     orm.artist_names = artist_name[idx]
     orm.album_name = album_name[idx]
-    orm.album_img = album_img[idx]
+    orm.img_url = album_img[idx]
 
     with session_scope() as session :
       session.add(orm)
