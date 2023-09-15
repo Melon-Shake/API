@@ -1,0 +1,42 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python package
+
+on:
+  push:
+    branches: [ "main","test-release" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+        contents: write
+        packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9"]
+
+  
+    steps:
+      - uses: actions/checkout@v3
+      - name: id
+        id : tag
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B $GITHUB_SHA)
+          echo "release_tag=${COMMIT_MESSAGE}" >> $GITHUB_OUTPUT
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          release_name: ${{ steps.tag.outputs.release_tag }}
+          draft: false
+          prerelease: true
+
+            
+
