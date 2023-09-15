@@ -1,7 +1,11 @@
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 import sys
 import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
+from model.database import session_scope
+import model.spotify_search as Spotify
 
 import requests
 from urllib.parse import urlparse, parse_qs
@@ -242,7 +246,7 @@ def bring_lucete(tracks_data:list[Spotify.TracksExt]) :
     with db.session_scope() as session :
         session.add_all(audios)
 
-    # audio_features_update()
+    audio_features_update()
 
 
 if __name__ == '__main__' :
