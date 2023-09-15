@@ -14,6 +14,11 @@ def insert_data(content, track_id,api):
             query = f"INSERT INTO lyrics (content, spotify_tracks_id, musix_match) VALUES ('{escaped_content}', '{track_id}', 'True')"
         elif api == "genius":
             query = f"INSERT INTO lyrics (content, spotify_tracks_id, genius) VALUES ('{escaped_content}', '{track_id}', 'True')"
+        elif api == 'google':
+            query = f"INSERT INTO lyrics (content, spotify_tracks_id, google) VALUES ('{escaped_content}', '{track_id}', 'True')"
+        else:
+            query = f"INSERT INTO lyrics (content, spotify_tracks_id) VALUES ('No_Lyrics','{track_id}')"
+            
         cursor.execute(query)
 
         connection.commit()
@@ -21,7 +26,6 @@ def insert_data(content, track_id,api):
 
     except (Exception, psycopg2.Error) as error:
         print("데이터 삽입 중 에러 발생:", error)
-
     finally:
         if connection:
             cursor.close()
