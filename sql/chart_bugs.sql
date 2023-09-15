@@ -1,3 +1,5 @@
+--DROP TABLE IF EXISTS chart_bugs CASCADE
+;
 CREATE TABLE IF NOT EXISTS chart_bugs (
 	id serial,
     track_name varchar(255),
