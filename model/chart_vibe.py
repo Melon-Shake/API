@@ -41,7 +41,7 @@ class VibeORM(Base):
     # track_id = Column(Integer, nullable=True)
     track_name = Column(String, nullable=True)
     # artist_ids = Column(ARRAY(Integer), nullable=True)
-    artist_names = Column(ARRAY(String), nullable=True)
+    artist_names = Column(String, nullable=True)
     # album_id = Column(Integer, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
@@ -53,7 +53,7 @@ class VibeORM(Base):
 
     def __init__(self, entity) :
         self.track_name = entity.trackTitle
-        self.artist_names = list()
+        self.artist_names = entity.artists
         self.album_name = entity.album.albumTitle
         self.img_url = entity.album.imageUrl
         self.release_date = entity.album.releaseDate

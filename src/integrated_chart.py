@@ -21,7 +21,7 @@ from model.database import session_scope
 
 class TotalChart(BaseModel) :
     track_name : str
-    artist_names : List[str]
+    artist_names : str
     album_name : str
     points : Union[int, float]
     img_url : str
@@ -89,8 +89,8 @@ with session_scope() as session:
     
     # 종합차트 합산 및 정렬
     merged_df = pd.DataFrame([vars(chart) for chart in integrated])     #dataframe 형식으로 변환
-    merged_df['artist_names'] = merged_df['artist_names'].apply(lambda x: ', '.join(x))
-    result_df = merged_df.groupby(['track_name', 'album_name', 'img_url']).agg({'artist_names': 'first', 'points': 'sum'}).reset_index()
+    # merged_df['artist_names'] = merged_df['artist_names'].apply(lambda x: ', '.join(x))
+    # result_df = merged_df.groupby(['track_name', 'album_name', 'img_url']).agg({'artist_names': 'first', 'points': 'sum'}).reset_index()
     result_df = merged_df.groupby(['track_name', 'artist_names', 'album_name','img_url'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름,앨범이미지 같은경우 점수합산
     result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순으로 정렬
     

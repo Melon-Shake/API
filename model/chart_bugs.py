@@ -10,9 +10,9 @@ from sqlalchemy import Integer, String, Boolean, JSON, DateTime, Float
 from sqlalchemy.sql import func
 
 class rankInfo(BaseModel):
-     rank:int
-     rank_peak:int
-     rank_last:int
+    rank:int
+    rank_peak:int
+    rank_last:int
 class GenreModel(BaseModel):
     svc_type:int
     svc_nm:str
@@ -54,7 +54,7 @@ class BugsORM(Base) :
     img_url = Column(String, nullable=True)
     release_date = Column(String, nullable=True)
     release_local_date = Column(String, nullable=True)
-    artist_names = Column(ARRAY(String), nullable=True)
+    artist_names = Column(String, nullable=True)
     genres_name = Column(String, nullable=True) 
     likes_count = Column(Integer, nullable=True)
     rank = Column(Integer, nullable=True)
@@ -69,7 +69,7 @@ class BugsORM(Base) :
         self.img_url = entity.album.image.path
         self.release_date = entity.album.release_ymd
         self.release_local_date = entity.album.release_local_ymd
-        self.artist_names = list()
+        self.artist_names = entity.artists
         self.genres_name = entity.artists[0].genres[0].svc_nm
         self.likes_count = entity.adhoc_attr.likes_count
         self.rank = entity.list_attr.rank

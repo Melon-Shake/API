@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS chart_bugs (
     img_url varchar(255),
     release_date varchar(255),
     release_local_date varchar(255),
-    artist_names varchar(255) [], 
+    artist_names varchar(255), 
    	genres_name varchar(255), 
    	likes_count integer,
     "rank" integer,

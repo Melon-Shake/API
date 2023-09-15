@@ -30,7 +30,7 @@ class ChartGenieORM(Base) :
 
     id = Column(Integer, primary_key=True)
     track_name = Column(String, nullable=True)
-    artist_names = Column(ARRAY(String), nullable=True)
+    artist_names = Column(String, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
     rank_no = Column(Integer, nullable=True)
@@ -40,7 +40,7 @@ class ChartGenieORM(Base) :
 
     def __init__(self, genie:ChartGenie) :
         self.track_name = genie.SONG_NAME
-        self.artist_names = list().append(genie.ARTIST_NAME)
+        self.artist_names = genie.ARTIST_NAME
         self.album_name = genie.ALBUM_NAME
         self.img_url = genie.ALBUM_IMG_PATH
         self.rank_no = int(genie.RANK_NO)
