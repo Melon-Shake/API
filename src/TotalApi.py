@@ -28,7 +28,8 @@ from user_data import user_data
 from user_search_track import pick_data
 from daily_search_ranking import daily_search_ranking
 # import sys, numpy as np, pandas as pd, json, requests, re
-
+from search_spotify import *
+from model.spotify_search import *
 
 
 app = FastAPI()
@@ -66,6 +67,15 @@ class sp_data(BaseModel):
 def update_token():
     access_token = return_token()
     return access_token
+
+@app.post('/search/')
+async def search_spotify(data:SearchKeyword):
+    access_token = update_token()
+    search_header = {'Authorization': f'Bearer {access_token}'}
+    parsed_data = search_by_keywords(data.searchInput,limit=10)
+    culled_data = cull_data(parsed_data)
+    search_data = return_search(culled_data)
+    return search_data
 
 # ssg search api
 @app.post("/search/track/")
