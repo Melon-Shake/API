@@ -26,8 +26,6 @@ from model.jun_model import *
 from get_keyword import save_keyword_data
 from user_data import user_data
 from user_search_track import pick_data
-from daily_search_ranking import daily_search_ranking
-from integrate_chart_test import generate_total_chart
 # import sys, numpy as np, pandas as pd, json, requests, re
 
 
