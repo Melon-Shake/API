@@ -246,7 +246,7 @@ def bring_lucete(tracks_data:list[Spotify.TracksExt]) :
     with db.session_scope() as session :
         session.add_all(audios)
 
-    # audio_features_update()
+    audio_features_update()
 
 
 if __name__ == '__main__' :
