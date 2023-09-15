@@ -46,22 +46,16 @@ class ChartFloORM(Base) :
     # album_id = Column(Integer, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
-    release_ymd = Column(String, nullable=True)
+    release_date = Column(String, nullable=True)
     rank = Column(Integer, nullable=True)
     points = Column(Integer, nullable=True)
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
     def __init__(self, idx, entity: ChartFlo) :
-        # self.track_id = entity.id
         self.track_name = entity.name
-        # self.artist_ids = list()
         self.artist_names = list()
-        # for artist in entity.artistList :
-            # self.artist_ids.append(artist.id)
-            # self.artist_names.append(artist.name)
-        # self.album_id = entity.album.id
         self.album_name = entity.album.title
         self.img_url = entity.album.imgList[0].url
-        self.release_ymd = entity.album.releaseYmd
+        self.release_date = entity.album.releaseYmd
         self.rank = idx+1
         self.points = (100-idx)*6.1

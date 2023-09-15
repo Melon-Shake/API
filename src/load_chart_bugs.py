@@ -131,10 +131,10 @@ if __name__ == '__main__':
         for idx, e in enumerate(responsed_data) :
             entity = BugsEntity(**e)
             orm = BugsORM(entity)
-            orm.track_title = song_name[idx]
-            orm.album_title = album_name[idx]
-            orm.album_image_path = album_img[idx]
-            orm.artist_nms = artist_name[idx]
+            orm.track_name = song_name[idx]
+            orm.album_name = album_name[idx]
+            orm.img_url = album_img[idx]
+            orm.artist_names = artist_name[idx]
 
             with session_scope() as session :
                 session.add(orm)

@@ -21,7 +21,7 @@ from model.database import session_scope
 
 class TotalChart(BaseModel) :
     track_name : str
-    artist_name : List[str]
+    artist_names : List[str]
     album_name : str
     points : Union[int, float]
     img_url : str
@@ -35,34 +35,34 @@ with session_scope() as session:
     
     # 벅스 top100 차트
     entrie_bugs = [ TotalChart(
-                        track_name=bugsOrm.track_title
-                        ,artist_name=bugsOrm.artist_nms
-                        ,album_name=bugsOrm.album_title
+                        track_name=bugsOrm.track_name
+                        ,artist_names=bugsOrm.artist_names
+                        ,album_name=bugsOrm.album_name
                         ,points=bugsOrm.points
-                        ,img_url=bugsOrm.album_image_path
+                        ,img_url=bugsOrm.img_url
                     ) for bugsOrm in bugsOrms]
     # 지니 top100 차트
     entrie_genie = [ TotalChart(
-                    track_name=genieOrm.song_name
-                    ,artist_name=genieOrm.artist_name
+                    track_name=genieOrm.track_name
+                    ,artist_names=genieOrm.artist_names
                     ,album_name=genieOrm.album_name
                     ,points=genieOrm.points
-                    ,img_url=genieOrm.album_img_path
+                    ,img_url=genieOrm.img_url
                 ) for genieOrm in genieOrms]
 
     # 바이브 top100 차트
     entrie_vibe = [ TotalChart(
-                    track_name=VibeOrm.track_title
-                    ,artist_name=VibeOrm.artist_names
-                    ,album_name=VibeOrm.album_title
+                    track_name=VibeOrm.track_name
+                    ,artist_names=VibeOrm.artist_names
+                    ,album_name=VibeOrm.album_name
                     ,points=VibeOrm.points
-                    ,img_url=VibeOrm.image_url
+                    ,img_url=VibeOrm.img_url
                 ) for VibeOrm in VibeOrms]
 
     # flo top100 차트
     entrie_flo = [ TotalChart(
                     track_name=floOrm.track_name,
-                    artist_name=floOrm.artist_names,
+                    artist_names=floOrm.artist_names,
                     album_name=floOrm.album_name,
                     points=floOrm.points,
                     img_url=floOrm.img_url
@@ -72,11 +72,11 @@ with session_scope() as session:
     
     # 멜론 top100 차트
     entrie_melon = [ TotalChart(
-                    track_name=melonOrm.song_name
-                    ,artist_name=melonOrm.artist_names
+                    track_name=melonOrm.track_name
+                    ,artist_names=melonOrm.artist_names
                     ,album_name=melonOrm.album_name
                     ,points=melonOrm.points
-                    ,img_url=melonOrm.album_img
+                    ,img_url=melonOrm.img_url
                 ) for melonOrm in melonOrms]
         
     # 5개 차트 종합
@@ -89,9 +89,9 @@ with session_scope() as session:
     
     # 종합차트 합산 및 정렬
     merged_df = pd.DataFrame([vars(chart) for chart in integrated])     #dataframe 형식으로 변환
-    merged_df['artist_name'] = merged_df['artist_name'].apply(lambda x: ', '.join(x))
-    result_df = merged_df.groupby(['track_name', 'album_name', 'img_url']).agg({'artist_name': 'first', 'points': 'sum'}).reset_index()
-    result_df = merged_df.groupby(['track_name', 'artist_name', 'album_name','img_url'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름,앨범이미지 같은경우 점수합산
+    merged_df['artist_names'] = merged_df['artist_names'].apply(lambda x: ', '.join(x))
+    result_df = merged_df.groupby(['track_name', 'album_name', 'img_url']).agg({'artist_names': 'first', 'points': 'sum'}).reset_index()
+    result_df = merged_df.groupby(['track_name', 'artist_names', 'album_name','img_url'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름,앨범이미지 같은경우 점수합산
     result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순으로 정렬
     
     df = result_df.drop('index', axis=1)    #index 컬럼 제거

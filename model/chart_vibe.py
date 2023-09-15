@@ -39,12 +39,12 @@ class VibeORM(Base):
 
     id = Column(Integer, primary_key=True)
     # track_id = Column(Integer, nullable=True)
-    track_title = Column(String, nullable=True)
+    track_name = Column(String, nullable=True)
     # artist_ids = Column(ARRAY(Integer), nullable=True)
     artist_names = Column(ARRAY(String), nullable=True)
     # album_id = Column(Integer, nullable=True)
-    album_title = Column(String, nullable=True)
-    image_url = Column(String, nullable=True)
+    album_name = Column(String, nullable=True)
+    img_url = Column(String, nullable=True)
     release_date = Column(String, nullable=True)
     album_genres = Column(String, nullable=True)
     current_rank = Column(Integer, nullable=True)
@@ -52,16 +52,10 @@ class VibeORM(Base):
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
     def __init__(self, entity) :
-        # self.track_id = entity.trackId
-        self.track_title = entity.trackTitle
-        # self.artist_ids = list()
+        self.track_name = entity.trackTitle
         self.artist_names = list()
-        # for artist in entity.artists :
-        #     self.artist_ids.append(artist.artistId)
-        #     self.artist_names.append(artist.artistName)
-        # self.album_id = entity.album.albumId
-        self.album_title = entity.album.albumTitle
-        self.image_url = entity.album.imageUrl
+        self.album_name = entity.album.albumTitle
+        self.img_url = entity.album.imageUrl
         self.release_date = entity.album.releaseDate
         self.album_genres = entity.album.albumGenres
         self.current_rank = entity.rank.currentRank
