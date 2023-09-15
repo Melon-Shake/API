@@ -38,7 +38,7 @@ def audio_features_update():
     column_info = cursor.fetchall()
     # 컬럼 정보 조회 쿼리 실행
     cursor.execute("""
-                select track_id, romantic_words, adventurous_words, powerful_words, depresed_words from lyrics
+                select track_id, romantic_words, adventurous_words, powerful_words, depresed_words from lyrics_temp
     """)
 
     # 결과 가져오기
@@ -55,7 +55,7 @@ def audio_features_update():
     df = pd.DataFrame(column_info2, columns=columns)
     df['tempo']= df['tempo']/180
 
-    ly_df = pd.DataFrame(ly_column_info,columns=['track_id','romantic','adventurous','powerful','depresed'])
+    ly_df = pd.DataFrame(ly_column_info,columns=['spotify_tracks_id','romantic','adventurous','powerful','depresed'])
 
     df2 = normalize_rows(df.iloc[:, 1:])
 
