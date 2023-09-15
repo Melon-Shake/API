@@ -1,14 +1,13 @@
+--DROP TABLE IF EXISTS chart_melon CASCADE
+;
 CREATE TABLE IF NOT EXISTS chart_melon (
 	id serial,
-	song_id integer,
-	song_name varchar(255),
-	album_id integer, 
+	track_name varchar(255),
 	album_name varchar(255),
-	album_img varchar(255),
+	img_url varchar(255),
 	cur_rank integer,
 	past_rank integer,
 	issue_date varchar(255),
-	artist_ids integer [],
 	artist_names varchar(255) [],
 	genre_name varchar(255), 
     points NUMERIC(10,3),
