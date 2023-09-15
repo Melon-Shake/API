@@ -116,7 +116,7 @@ if __name__ == '__main__':
     entity = ChartMelon(**item)
     orm = MelonORM(entity)
     orm.track_name = song_name[idx]
-    orm.artist_names = artist_name[idx]
+    orm.artist_names = ','.join(artist_name[idx])
     orm.album_name = album_name[idx]
     orm.img_url = album_img[idx]
 

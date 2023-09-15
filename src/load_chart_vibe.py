@@ -201,7 +201,7 @@ if __name__ == '__main__':
             entity = VibeEntity(**e)
             orm = VibeORM(entity)
             orm.track_name = song_name[idx]
-            orm.artist_names = artist_name[idx]
+            orm.artist_names = ','.join(artist_name[idx])
             orm.album_name = album_name[idx]
             orm.img_url = album_img[idx]
 
