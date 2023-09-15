@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS chart_melon (
 	id serial,
-	song_name varchar(255),
+	track_name varchar(255),
 	album_name varchar(255),
-	album_img varchar(255),
+	img_url varchar(255),
 	cur_rank integer,
 	past_rank integer,
 	issue_date varchar(255),

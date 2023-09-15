@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS chart_flo (
   artist_names varchar(255) [],
   album_name varchar(255),
   img_url varchar(255),
-  release_ymd varchar(255),
+  release_date varchar(255),
   "rank" integer,
   points NUMERIC(10,3),
   created_datetime timestamp DEFAULT current_timestamp,
