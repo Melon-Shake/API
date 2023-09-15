@@ -3,7 +3,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import psycopg2
 import config.db_info as db
-GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
+GENIUS_API_KEY = "cF1xnE_T3hUohQNUfsTWNR9G-m1nLIfCmN7KrIZKN6LgNzviE_HZHMcQWECqOSMo"
 
 def insert_data(content, track_id,api):
     try:
@@ -11,9 +11,9 @@ def insert_data(content, track_id,api):
         cursor = connection.cursor()
         escaped_content = content.replace("'", "''")
         if api == "musix_match":
-            query = f"INSERT INTO lyrics (content, spotify_tracks_id, musix_match) VALUES ('{escaped_content}', '{track_id}', 'True')"
+            query = f"INSERT INTO lyrics (content, id, musix_match) VALUES ('{escaped_content}', '{track_id}', 'True')"
         elif api == "genius":
-            query = f"INSERT INTO lyrics (content, spotify_tracks_id, genius) VALUES ('{escaped_content}', '{track_id}', 'True')"
+            query = f"INSERT INTO lyrics (content, id, genius) VALUES ('{escaped_content}', '{track_id}', 'True')"
         cursor.execute(query)
 
         connection.commit()
