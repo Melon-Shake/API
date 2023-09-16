@@ -1,0 +1,13 @@
+fastapi==0.103.0
+bcrypt==4.0.1
+beautifulsoup4==4.12.2
+psycopg2==2.9.7
+pydantic==2.3.0
+requests==2.31.0
+SQLAlchemy==2.0.20
+uvicorn==0.23.2
+google-api-python-client==1.7.2
+google-auth==1.8.0
+google-auth-httplib2==0.0.3
+google-auth-oauthlib==0.4.1
+pandas==2.1.0
