@@ -1,6 +1,5 @@
 import requests
 import lib.module as module
-import streamlit as st
 
 access_token = module.read_AuthToken_from_file()
 

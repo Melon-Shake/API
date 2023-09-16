@@ -11,9 +11,6 @@ class SpotifyTokenORM(Base) :
     is_expired = Column(Boolean, default=False)
     
     def __init__(self,token):
-        # self.id = token.get('id')
-        # self.value = token.get('value')
-        # self.is_expired = token.get('is_expired')
         self.value = token
 
 class SpotifyTokenEntity(BaseModel) :
@@ -27,6 +24,4 @@ if __name__ == '__main__' :
     from sqlalchemy import inspect
     mapper = inspect(SpotifyTokenORM)
     table_name = mapper.persist_selectable.name
-    print("Table Name:", table_name)
     column_names = [column.key for column in mapper.columns]
-    print("Column Names:", column_names)
