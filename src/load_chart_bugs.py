@@ -32,6 +32,9 @@ if __name__ == '__main__':
         artist_name = []
         album_name = []
         album_img = []
+        song_ids = []
+        artist_ids = []
+        album_ids = []
 
         entries = {}
         for index, item in enumerate(responsed_data):
@@ -90,13 +93,18 @@ if __name__ == '__main__':
             if response_sp.status_code == 200:
                 sp_json = response_sp.json()
                 artists_sp = []
+                artist_id = []
                 song_name.append(sp_json['tracks']['items'][0]['name'])
+                song_ids.append(sp_json['tracks']['items'][0]['id'])
                 album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+                album_ids.append(sp_json['tracks']['items'][0]['album']['id'])
                 album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
 
                 for j in range(len(sp_json['tracks']['items'][0]['artists'])):
                     artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
+                    artist_id.append(sp_json['tracks']['items'][0]['artists'][j]['id'])
                 artist_name.append(artists_sp)
+                artist_ids.append(artist_id)
                 # artist_name= ','.join(artist_name)
         #     elif response_sp.status_code != 200 :
         #         q = entries[i][0] + " " + artists_sub+ " " + entries[i][2]
@@ -128,14 +136,19 @@ if __name__ == '__main__':
         # print(album_img[0])
         # print('#')
         # print(artist_name)
+        # print(song_ids[0])
+        # print(album_ids[0])
+        # print(song_ids[0])
         
         for idx, e in enumerate(responsed_data) :
             entity = BugsEntity(**e)
             orm = BugsORM(entity)
             orm.track_name = song_name[idx]
+            orm.track_id = song_ids[idx]
             orm.album_name = album_name[idx]
+            orm.album_id = album_ids[idx]
             orm.img_url = album_img[idx]
             orm.artist_names = ','.join(artist_name[idx])
-
+            orm.artist_ids = artist_ids[idx]
             with session_scope() as session :
                 session.add(orm)
