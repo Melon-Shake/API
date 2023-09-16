@@ -1,10 +1,8 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
 import sys
 import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
-import requests, pandas as pd
 import lib.module as module
 from pydantic import BaseModel
 import bcrypt
@@ -14,6 +12,7 @@ from config.db_info import db_params
 from lyric import lyric_search_and_input
 from sp_track import sp_and_track_input, get_sp_track_id
 from update_token import return_token
+import requests
 from model.chart_genie import ChartGenieORM
 from model.chart_flo import ChartFloORM
 from model.chart_vibe import  VibeORM
