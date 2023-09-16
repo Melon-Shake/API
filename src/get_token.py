@@ -12,9 +12,9 @@ def func_base64(input):
     output = output_byte.decode()
     return output    
 
-def update_token(user) :
+def update_token(user='iamsophie') :
     with session_scope() as session :
-        client = session.query(SpotifyClientORM).filter_by(user=user).one()
+        client = session.query(SpotifyClientORM).filter_by(user=user).first()
 
         response = requests.post('https://accounts.spotify.com/api/token'
                       ,headers={
@@ -38,13 +38,3 @@ def return_token():
         from sqlalchemy import desc
         token_orm = session.query(SpotifyTokenORM).order_by(desc(SpotifyTokenORM.id)).first()
         return token_orm.value
-    
-if __name__ == '__main__' :
-    user = 'iamsophie'
-    token_updated = update_token(user)
-    token_latest = return_token()
-    try:
-        assert token_updated == token_latest
-    except AssertionError as e :
-        print("새로 갱신된 액세스 토큰 :" + token_updated)
-        print("가장 최근 액세스 토큰 :" + token_latest)

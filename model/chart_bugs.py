@@ -10,9 +10,9 @@ from sqlalchemy import Integer, String, Boolean, JSON, DateTime, Float
 from sqlalchemy.sql import func
 
 class rankInfo(BaseModel):
-     rank:int
-     rank_peak:int
-     rank_last:int
+    rank:int
+    rank_peak:int
+    rank_last:int
 class GenreModel(BaseModel):
     svc_type:int
     svc_nm:str
@@ -49,15 +49,12 @@ class BugsORM(Base) :
     __tablename__ = 'chart_bugs'
 
     id = Column(Integer, primary_key=True)
-    track_id = Column(Integer, nullable=True)
-    track_title = Column(String, nullable=True)
-    album_id = Column(Integer, nullable=True)
-    album_title = Column(String, nullable=True)
-    album_image_path = Column(String, nullable=True)
-    album_release_ymd = Column(String, nullable=True)
-    album_release_local_ymd = Column(String, nullable=True)
-    artist_ids = Column(ARRAY(Integer), nullable=True)
-    artist_nms = Column(ARRAY(String), nullable=True)
+    track_name = Column(String, nullable=True)
+    album_name = Column(String, nullable=True)
+    img_url = Column(String, nullable=True)
+    release_date = Column(String, nullable=True)
+    release_local_date = Column(String, nullable=True)
+    artist_names = Column(String, nullable=True)
     genres_name = Column(String, nullable=True) 
     likes_count = Column(Integer, nullable=True)
     rank = Column(Integer, nullable=True)
@@ -67,18 +64,12 @@ class BugsORM(Base) :
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
 
     def __init__(self,entity:BugsEntity) :
-        self.track_id = entity.track_id
-        self.track_title = entity.track_title
-        self.album_id = entity.album.album_id
-        self.album_title = entity.album.title
-        self.album_image_path = 'https://image.bugsm.co.kr/album/images/256'+entity.album.image.path
-        self.album_release_ymd = entity.album.release_ymd
-        self.album_release_local_ymd = entity.album.release_local_ymd
-        self.artist_ids = list()
-        self.artist_nms = list()
-        for artist in entity.artists :
-            self.artist_ids.append(artist.artist_id)
-            self.artist_nms.append(artist.artist_nm)
+        self.track_name = entity.track_title
+        self.album_name = entity.album.title
+        self.img_url = entity.album.image.path
+        self.release_date = entity.album.release_ymd
+        self.release_local_date = entity.album.release_local_ymd
+        self.artist_names = entity.artists
         self.genres_name = entity.artists[0].genres[0].svc_nm
         self.likes_count = entity.adhoc_attr.likes_count
         self.rank = entity.list_attr.rank
