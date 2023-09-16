@@ -34,4 +34,3 @@ if __name__ == '__main__' :
     mapper = inspect(SpotifyClientORM)
     table_name = mapper.persist_selectable.name
     column_names = [column.key for column in mapper.columns]
-

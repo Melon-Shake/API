@@ -3,4 +3,3 @@ Pipfile
 Pipfile.lock
 *.pyc
 *.ipynb
-__pycache__/

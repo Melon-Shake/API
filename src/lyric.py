@@ -3,6 +3,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import psycopg2
 import config.db_info as db
+
 GENIUS_API_KEY = "cF1xnE_T3hUohQNUfsTWNR9G-m1nLIfCmN7KrIZKN6LgNzviE_HZHMcQWECqOSMo"
 
 def insert_data(content, track_id,api):
