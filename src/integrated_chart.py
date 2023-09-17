@@ -21,8 +21,11 @@ from model.database import session_scope
 
 class TotalChart(BaseModel) :
     track_name : str
+    track_id : str
     artist_names : str
+    artist_ids : List[str]
     album_name : str
+    album_id : str
     points : Union[int, float]
     img_url : str
 
@@ -36,16 +39,22 @@ with session_scope() as session:
     # 벅스 top100 차트
     entrie_bugs = [ TotalChart(
                         track_name=bugsOrm.track_name
+                        ,track_id=bugsOrm.track_id
                         ,artist_names=bugsOrm.artist_names
+                        ,artist_ids=bugsOrm.artist_ids
                         ,album_name=bugsOrm.album_name
+                        ,album_id=bugsOrm.album_id
                         ,points=bugsOrm.points
                         ,img_url=bugsOrm.img_url
                     ) for bugsOrm in bugsOrms]
     # 지니 top100 차트
     entrie_genie = [ TotalChart(
                     track_name=genieOrm.track_name
+                    ,track_id=genieOrm.track_id
                     ,artist_names=genieOrm.artist_names
+                    ,artist_ids=genieOrm.artist_ids
                     ,album_name=genieOrm.album_name
+                    ,album_id=genieOrm.album_id
                     ,points=genieOrm.points
                     ,img_url=genieOrm.img_url
                 ) for genieOrm in genieOrms]
@@ -53,28 +62,36 @@ with session_scope() as session:
     # 바이브 top100 차트
     entrie_vibe = [ TotalChart(
                     track_name=VibeOrm.track_name
+                    ,track_id=VibeOrm.track_id
                     ,artist_names=VibeOrm.artist_names
+                    ,artist_ids=VibeOrm.artist_ids
                     ,album_name=VibeOrm.album_name
+                    ,album_id=VibeOrm.album_id
                     ,points=VibeOrm.points
                     ,img_url=VibeOrm.img_url
                 ) for VibeOrm in VibeOrms]
 
     # flo top100 차트
     entrie_flo = [ TotalChart(
-                    track_name=floOrm.track_name,
-                    artist_names=floOrm.artist_names,
-                    album_name=floOrm.album_name,
-                    points=floOrm.points,
-                    img_url=floOrm.img_url
-                    ) for floOrm in floOrms 
-                  ]
+                    track_name=floOrm.track_name
+                    ,track_id=floOrm.track_id
+                    ,artist_names=floOrm.artist_names
+                    ,artist_ids=floOrm.artist_ids
+                    ,album_name=floOrm.album_name
+                    ,album_id=floOrm.album_id
+                    ,points=floOrm.points
+                    ,img_url=floOrm.img_url
+                    ) for floOrm in floOrms]
         
     
     # 멜론 top100 차트
     entrie_melon = [ TotalChart(
                     track_name=melonOrm.track_name
+                    ,track_id=melonOrm.track_id
                     ,artist_names=melonOrm.artist_names
+                    ,artist_ids=melonOrm.artist_ids
                     ,album_name=melonOrm.album_name
+                    ,album_id=melonOrm.album_id
                     ,points=melonOrm.points
                     ,img_url=melonOrm.img_url
                 ) for melonOrm in melonOrms]
@@ -89,9 +106,9 @@ with session_scope() as session:
     
     # 종합차트 합산 및 정렬
     merged_df = pd.DataFrame([vars(chart) for chart in integrated])     #dataframe 형식으로 변환
-    # merged_df['artist_names'] = merged_df['artist_names'].apply(lambda x: ', '.join(x))
+    merged_df['artist_ids'] = merged_df['artist_ids'].apply(lambda x: ', '.join(x))
     # result_df = merged_df.groupby(['track_name', 'album_name', 'img_url']).agg({'artist_names': 'first', 'points': 'sum'}).reset_index()
-    result_df = merged_df.groupby(['track_name', 'artist_names', 'album_name','img_url'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름,앨범이미지 같은경우 점수합산
+    result_df = merged_df.groupby(['track_name', 'artist_names', 'album_name','img_url','track_id','artist_ids','album_id'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름,앨범이미지 같은경우 점수합산
     result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순으로 정렬
     
     df = result_df.drop('index', axis=1)    #index 컬럼 제거
