@@ -5,9 +5,7 @@ import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
-import requests
-from urllib.parse import urlparse, parse_qs
-from fastapi.encoders import jsonable_encoder
+import model.database as DB
 import model.spotify_search as Spotify
 
 import requests
@@ -19,9 +17,114 @@ import model.metadata as Meta
 import model.spotify_search as Spotify
 from src.get_token import update_token, return_token
 
-import requests
 
-def deduplicate(models) :
+# 0 - get token and set header
+
+access_token = update_token('iamsophie')
+access_token = return_token()
+search_header = {'Authorization': f'Bearer {access_token}'}
+
+
+# 1 - spotify API responsed_data -> parsed_data
+
+def search_by_keywords(keywords:str,type:list[str]=['artist','album','track'],limit:int=3,offset:int=0) :
+    response = requests.get('https://api.spotify.com/v1/search?'
+                            +'q={}'.format(keywords)
+                            +'&type={}'.format('%2C'.join(type))
+                            +'&limit={}'.format(limit)
+                            +'&offset={}'.format(offset)
+                            ,headers=search_header)
+
+    response_code = response.status_code
+    if response_code == 200 :
+        responsed_data = response.json()
+
+        try : parsed_data = Spotify.Search(**responsed_data)
+        except :
+            parsed_data = Spotify.Search(
+                artists=(Spotify.SearchArtists(**responsed_data.get('artists')) if 'artists' in responsed_data else None),
+                albums=(Spotify.SearchAlbums(**responsed_data.get('albums')) if 'albums' in responsed_data else None),
+                tracks=(Spotify.SearchTracks(**responsed_data.get('tracks')) if 'tracks' in responsed_data else None)
+            )
+        return parsed_data
+    
+    elif response_code == 401 :
+        print(f'search_by_keywords() - 토큰만료오류')
+    elif response_code == 404 :
+        print(f'search_by_keywords() - 리퀘스트오류')
+    else : print(f'search_by_keywords() - {response.status_code}')
+
+def search_by_query(query_params:dict[str,list]) :
+    keywords = query_params.get('q' or 'query').pop()
+    type = query_params.get('type').pop().split(',')
+    limit = query_params.get('limit').pop()
+    offset = query_params.get('offset').pop()
+
+    response = requests.get('https://api.spotify.com/v1/search?'
+                            +'q={}'.format(keywords)
+                            +'&type={}'.format('%2C'.join(type))
+                            +'&limit={}'.format(limit)
+                            +'&offset={}'.format(offset)
+                            ,headers=search_header)
+
+    response_code = response.status_code
+    if response_code == 200 :
+        responsed_data = response.json()
+
+        try : parsed_data = Spotify.Search(**responsed_data)
+        except :
+            parsed_data = Spotify.Search(
+                artists=(Spotify.SearchArtists(**responsed_data.get('artists')) if 'artists' in responsed_data else None),
+                albums=(Spotify.SearchAlbums(**responsed_data.get('albums')) if 'albums' in responsed_data else None),
+                tracks=(Spotify.SearchTracks(**responsed_data.get('tracks')) if 'tracks' in responsed_data else None)
+            )
+        return parsed_data
+
+    elif response_code == 401 :
+        print(f'search_by_query() - 토큰만료오류')
+    elif response_code == 404 :
+        print(f'search_by_query() - 리퀘스트오류')
+    else : print(f'search_by_query() - {response.status_code}')
+
+def search_by_id(type:str,id:str) :
+    type = type[:-1]
+    response = requests.get(f'https://api.spotify.com/v1/{type}s/{id}'
+                            ,headers=search_header)
+
+    response_code = response.status_code
+    if response_code == 200 :
+        responsed_data = response.json()
+
+        parsed_data = None
+        if type == 'artist' :
+            parsed_data = Spotify.ArtistsExt(**responsed_data)
+        elif type == 'album' :
+            parsed_data = Spotify.AlbumsExt(**responsed_data)
+        elif type == 'track' :
+            parsed_data = Spotify.TracksExt(**responsed_data)
+        return parsed_data
+    
+    elif response_code == 401 :
+        print(f'search_by_id() - 토큰만료오류')
+    elif response_code == 404 :
+        print(f'search_by_id() - 리퀘스트오류')
+    else : print(f'search_by_id() - {response.status_code}')
+
+def search_by_href(href:str) :
+    parsed_url = urlparse(href)
+    if not parsed_url.query :
+        path_params = parsed_url.path.split('/')
+        type = path_params[-2]
+        id = path_params[-1]
+        return search_by_id(type,id)
+    else : 
+        query_params = parse_qs(parsed_url.query)
+        return search_by_query(query_params=query_params)
+
+
+# 2 - parsed_data -> culled_data
+
+def deduplicate(models:list[object]) :
     ids_uniq = set(model.id for model in models)
     uniq = list()
     for model in models :
@@ -30,7 +133,6 @@ def deduplicate(models) :
             ids_uniq.remove(model.id)
     return uniq
 
-def deduplicate_by_filter(models:list[object],models_filter:list[object]) :
 def deduplicate_by_filter(models:list[object],models_filter:list[object]) :
     ids_uniq = set(model.id for model in models_filter)
     uniq = list()
@@ -49,15 +151,6 @@ def cull_data(parsed_data:Spotify.Search) :
     artists_data = [artist for track in tracks_data for artist in track.artists]
     artists_data = deduplicate(artists_data)
     artists_data = [search_by_href(artist.href) for artist in artists_data]
-def cull_data(parsed_data:Spotify.Search) :
-    tracks_data = parsed_data.tracks.items
-
-    albums_data = [track.album for track in tracks_data]
-    albums_data = deduplicate(albums_data)
-
-    artists_data = [artist for track in tracks_data for artist in track.artists]
-    artists_data = deduplicate(artists_data)
-    artists_data = [search_by_href(artist.href) for artist in artists_data]
 
     culled_data = Spotify.SearchResult(
         tracks=tracks_data,
@@ -65,16 +158,6 @@ def cull_data(parsed_data:Spotify.Search) :
         artists=artists_data
     )
     return culled_data
-
-
-# 3 - culled_data -> search_data
-    culled_data = Spotify.SearchResult(
-        tracks=tracks_data,
-        albums=albums_data,
-        artists=artists_data
-    )
-    return culled_data
-
 
 # 3 - culled_data -> search_data
 
@@ -86,13 +169,10 @@ def convert_timestamp(millis:int) :
     return ':'.join(map(str, duration))
 
 def return_search(search_result:Spotify.SearchResult) :
-
-def return_search(search_result:Spotify.SearchResult) :
     tracks = search_result.tracks
     albums = search_result.albums
     artists = search_result.artists
 
-    tracks_result = [Meta.Track(
     tracks_result = [Meta.Track(
                         name=track.name
                         ,img=track.album.images[0].url if hasattr(track.album,'images') and track.album.images and track.album.images[0].url else None
@@ -100,22 +180,15 @@ def return_search(search_result:Spotify.SearchResult) :
                         ,duration=convert_timestamp(int(track.duration_ms))
                     ) for track in tracks]
     albums_result = [Meta.Album(
-    albums_result = [Meta.Album(
                         name=album.name
                         ,img=album.images[0].url if hasattr(album,'images') and album.images and album.images[0].url else None
                         ,artists=', '.join([artist.name for artist in album.artists])
                         ,release_year=album.release_date
                     ) for album in albums]
     artists_result = [Meta.Artist(
-    artists_result = [Meta.Artist(
                         name=artist.name
                         ,img=artist.images[0].url if hasattr(artist,'images') and artist.images and artist.images[0].url else None
                     ) for artist in artists]
-    
-    search_result = Meta.SearchResult(
-        artists=artists_result,
-        albums=albums_result,
-        tracks=tracks_result
     
     search_result = Meta.SearchResult(
         artists=artists_result,
@@ -134,12 +207,14 @@ def load_spotify(search_result:Spotify.SearchResult) :
         audios.append(Spotify.AudioFeaturesORM(get_audio_features(track.id)))
     albums = [Spotify.AlbumsORM(album) for album in search_result.albums]
     artists = [Spotify.ArtistsORM(artist) for artist in search_result.artists]
-
+    
     with DB.session_scope() as session :
         session.add_all(tracks)
         session.add_all(audios)
         session.add_all(albums)
         session.add_all(artists)
+    
+    func_lyric(search_result.tracks)
 
 # 4 - load and update db : spotify_audio_featurs, lyrics, audio_features
 
@@ -159,3 +234,27 @@ def get_audio_features(track_id:str) :
     elif response_code == 404 :
         print(f'get_audio_features() - 리퀘스트오류')
     else : print(f'get_audio_features() - {response.status_code}')
+
+def func_lyric(tracks_data:list[Spotify.TracksORM]):
+    import src.lyric as Lyric
+    import src.lyrics_analyze as AnalyzeLyric
+    import src.track_analyze as AnalyzeTrack
+    for track in tracks_data :
+        Lyric.lyric_search_and_input(
+            track_id=track.id, track=track.name, artist=','.join([artist.name for artist in track.artists])
+            , GENIUS_API_KEY=Lyric.GENIUS_API_KEY)
+    with DB.engine.connect() as con :
+        res = con.execute(DB.text('''
+                                    SELECT tr.id, tr.name, string_agg(DISTINCT ta."name"::TEXT,',') 
+                                    FROM spotify_artists ta 
+                                    LEFT JOIN spotify_tracks tr ON ta.id = any(tr.artists_ids)
+                                    LEFT JOIN lyrics lr ON lr.id = tr.id
+                                    WHERE lr."content" IS NULL AND tr.id IS NOT NULL AND tr.name IS NOT null
+                                    GROUP BY tr.id, tr.name
+                                  ''')).fetchall()
+        for row in res :
+            track_id, track_name, artist_names = row[0], row[1], row[2]
+            Lyric.lyric_search_and_input(track_id=track_id,track=track_name,artist=artist_names
+                                         , GENIUS_API_KEY=Lyric.GENIUS_API_KEY)
+    AnalyzeLyric.lyrics_analyze()
+    AnalyzeTrack.audio_features_update()
