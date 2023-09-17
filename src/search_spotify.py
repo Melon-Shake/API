@@ -4,15 +4,17 @@ import sys
 import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
+
 from model.database import session_scope
 import model.spotify_search as Spotify
 
 import requests
 from urllib.parse import urlparse, parse_qs
 from fastapi.encoders import jsonable_encoder
-import model.spotify_search as Spotify
+
+import model.database as DB
 import model.metadata as Meta
-import model.database as db
+import model.spotify_search as Spotify
 from src.get_token import update_token, return_token
 
 
