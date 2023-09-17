@@ -128,8 +128,11 @@ if __name__ == '__main__':
     if response.status_code == 200 :
         responsed_data = response.json().get('response').get('result').get('chart').get('items').get('tracks')
         song_name = []
+        song_ids = []
         artist_name = []
+        artist_ids = []
         album_name = []
+        album_ids = []
         album_img = []
         # print(responsed_data[0])
         entries = {}
@@ -171,9 +174,7 @@ if __name__ == '__main__':
                     parse_artist = urllib.parse.quote(parse_artist)
                 artists.append(parse_artist) 
             artists = ','.join(artists)
-                # artist_ids.append(artist_id)
             entries[index] = [pre_track_title, artists, parse_album]
-        # print(entries[1][0])
         
         for i in range(len(entries)):
             q = entries[i][0] + " " + entries[i][1]
@@ -186,12 +187,17 @@ if __name__ == '__main__':
             if response_sp.status_code == 200:
                 sp_json = response_sp.json()
                 artists_sp_nm = []
+                artist_id = []
                 song_name.append(sp_json['tracks']['items'][0]['name'])
+                song_ids.append(sp_json['tracks']['items'][0]['id'])
                 album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+                album_ids.append(sp_json['tracks']['items'][0]['album']['id'])
                 album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
                 for j in range(len(sp_json['tracks']['items'][0]['artists'])):
                     artists_sp_nm.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
+                    artist_id.append(sp_json['tracks']['items'][0]['artists'][j]['id'])
                 artist_name.append(artists_sp_nm)
+                artist_ids.append(artist_id)
         # print(song_name[0])
         # print(album_img[0])
         # print(album_name[0])
@@ -201,8 +207,11 @@ if __name__ == '__main__':
             entity = VibeEntity(**e)
             orm = VibeORM(entity)
             orm.track_name = song_name[idx]
+            orm.track_id = song_ids[idx]
             orm.artist_names = ','.join(artist_name[idx])
+            orm.artist_ids = artist_ids[idx]
             orm.album_name = album_name[idx]
+            orm.album_id = album_ids[idx]
             orm.img_url = album_img[idx]
 
             with session_scope() as session :

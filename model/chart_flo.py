@@ -39,11 +39,11 @@ class ChartFloORM(Base) :
     __tablename__ = 'chart_flo'
 
     id = Column(Integer, primary_key=True)
-    # track_id = Column(Integer, nullable=True)
+    track_id = Column(Integer, nullable=True)
     track_name = Column(String, nullable=True)
-    # artist_ids = Column(ARRAY(Integer), nullable=True)
+    artist_ids = Column(ARRAY(String), nullable=True)
     artist_names = Column(String, nullable=True)
-    # album_id = Column(Integer, nullable=True)
+    album_id = Column(Integer, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
     release_date = Column(String, nullable=True)

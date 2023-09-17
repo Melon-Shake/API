@@ -6,7 +6,7 @@ from typing import Dict, List, Union
 
 from model.database import Base
 from sqlalchemy.sql.schema import Column
-from sqlalchemy import Integer, String, Boolean, JSON, DateTime, Float
+from sqlalchemy import Integer, String, Boolean, JSON, DateTime, Float, ARRAY
 from sqlalchemy.sql import func
 
 class rankInfo(BaseModel):
@@ -62,6 +62,9 @@ class BugsORM(Base) :
     rank_last = Column(Integer, nullable=True)
     points = Column(Float, nullable=True)
     created_datetime = Column(DateTime(timezone=True), server_default=func.now())
+    track_id = Column(String, nullable=True)
+    album_id = Column(String, nullable=True)
+    artist_ids = Column(ARRAY(String), nullable=True)
 
     def __init__(self,entity:BugsEntity) :
         self.track_name = entity.track_title
