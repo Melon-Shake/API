@@ -7,7 +7,7 @@ sys.path.append(root_path)
 import urllib.parse
 from model.chart_vibe import VibeEntity, VibeORM
 from model.database import session_scope
-from update_token import return_token
+from get_token import return_token
 
 access_token = return_token()
 

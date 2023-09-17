@@ -14,7 +14,7 @@ from datetime import datetime
 from config.db_info import db_params
 from lyric import lyric_search_and_input
 from sp_track import sp_and_track_input, get_sp_track_id
-from update_token import return_token
+from get_token import return_token
 from model.chart_genie import GenieORM
 from model.chart_flo import FloORM
 from model.chart_vibe import  VibeORM

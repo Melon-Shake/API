@@ -5,7 +5,7 @@ import sys
 import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
-from update_token import return_token
+from get_token import return_token
 from model.chart_genie import ChartGenie, GenieORM
 from model.database import session_scope
 
