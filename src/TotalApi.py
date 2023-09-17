@@ -33,9 +33,6 @@ from model.spotify_search import *
 
 app = FastAPI()
 
-class SearchKeyword(BaseModel):
-    searchInput : str
-    
 class lyric_data(BaseModel):
     artist : str
     track : str
@@ -53,12 +50,13 @@ def update_token():
     return access_token
 
 @app.post('/search/')
-async def search_spotify(data:SearchKeyword):
+async def search_spotify(data:Spotify.SearchKeyword):
     access_token = update_token()
     search_header = {'Authorization': f'Bearer {access_token}'}
-    parsed_data = search_by_keywords(data.searchInput,limit=10)
-    culled_data = cull_data(parsed_data)
-    search_data = return_search(culled_data)
+    parsed_data = Search.search_by_keywords(data.searchInput,limit=10)
+    culled_data = Search.cull_data(parsed_data)
+    search_data = Search.return_search(culled_data)
+    Search.load_spotify(culled_data)
     return search_data
 
 @app.post("/get_user_data/")
