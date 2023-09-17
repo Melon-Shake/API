@@ -36,9 +36,9 @@ if __name__ == '__main__':
     entries = {}
     for index, item in enumerate(responsed_data):
         pre_track_title = item['SONGNAME']
-        # pre_track_title = urllib.parse.unquote(pre_track_title)
         pre_track_title = pre_track_title.replace("-", "")
         pre_track_title = pre_track_title.replace("Prod. by", "Prod.")
+        pre_track_title = urllib.parse.unquote(pre_track_title)
 
         if pre_track_title == '이브, 프시케 그리고 푸른 수염의 아내':
                 pre_track_title = 'Eve, Psyche & The Bluebeard’s wife'
@@ -53,7 +53,6 @@ if __name__ == '__main__':
         elif pre_track_title == 'STAY (Explicit Ver.)':
             pre_track_title = 'STAY'
         
-        #
         pre_artists = item.get('ARTISTLIST')
         artists = []
         for artist in pre_artists:
@@ -69,11 +68,9 @@ if __name__ == '__main__':
 
             
         entries[index] = [pre_track_title, artists, pre_album_title]
-    # print(entries)
     
   for i in range(len(entries)):
     q = entries[i][0] + " " + entries[i][1]
-    # print(q)
     url = f'https://api.spotify.com/v1/search?q={q}&type=track&maket=KR&limit=1'
     headers = {
         'Authorization': 'Bearer '+access_token
@@ -94,31 +91,6 @@ if __name__ == '__main__':
           artist_id.append(sp_json['tracks']['items'][0]['artists'][j]['id'])
         artist_name.append(artists_sp)
         artist_ids.append(artist_id)
-    # elif response_sp.status_code != 200 :
-    #     q = entries[i][0] + " " + entries[i][1]+ " " + entries[i][2]
-    #     url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=KR&limit=1'
-    #     headers = {
-    #         'Authorization': 'Bearer '+access_token
-    #     }
-    #     response_sp = requests.get(url, headers=headers)
-    #     if response_sp.status_code == 200:
-    #         sp_json = response_sp.json()
-    #         artists_sp = []
-    #         song_name.append(sp_json['tracks']['items'][0]['name'])
-    #         album_name.append(sp_json['tracks']['items'][0]['album']['name'])
-    #         album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
-            
-    #         for j in range(len(sp_json['tracks']['items'][0]['artists'])):
-    #             artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
-            # artist_name.append(artists_sp)
-    # responsed_data[i]['SONGNAME'] = song_name[i]
-    # responsed_data[i]['ARTISTLIST'] = [ dict(ARTISTID=x.get('ARTISTID'),ARTISTNAME=artists_sp[i]) for i, x in enumerate(responsed_data[i]['ARTISTLIST'])]
-    # responsed_data[i]['ALBUMNAME'] = album_name[i]
-    # responsed_data[i]['ALBUMIMG'] = album_img[i]
-  # print(song_name[0])
-  # print(album_img[0])
-  # print(album_name[0])
-  # print(artist_name[0])
   
   for idx, item in enumerate(responsed_data):
     entity = ChartMelon(**item)

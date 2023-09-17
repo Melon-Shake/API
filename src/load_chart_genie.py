@@ -6,7 +6,7 @@ import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 from update_token import return_token
-from model.chart_genie import ChartGenie, ChartGenieORM
+from model.chart_genie import ChartGenie, GenieORM
 from model.database import session_scope
 
 access_token = return_token()
@@ -34,13 +34,11 @@ if __name__ == '__main__' :
 
         entries = {}
         for index, item in enumerate(responsed_data):
-            # 제목 디코딩
             pre_track_title = item['SONG_NAME']
-            pre_track_title = urllib.parse.unquote(pre_track_title)
             pre_track_title = pre_track_title.replace("-", "")
             pre_track_title = pre_track_title.replace("Prod. by", "Prod.")
+            pre_track_title = urllib.parse.unquote(pre_track_title)
             
-            # 예외 처리
             if pre_track_title == '이브, 프시케 그리고 푸른 수염의 아내':
                 pre_track_title = 'Eve, Psyche & The Bluebeard’s wife'
             elif pre_track_title == '파이팅 해야지 (Feat. 이영지)':
@@ -52,7 +50,6 @@ if __name__ == '__main__' :
             elif pre_track_title == 'STAY (Explicit Ver.)':
                 pre_track_title = 'STAY'
            
-            # 아티스트 디코딩
             pre_artists = item.get('ARTIST_NAME')
             pre_artists = urllib.parse.unquote(pre_artists)
             if pre_artists == '#안녕':
@@ -60,17 +57,14 @@ if __name__ == '__main__' :
             artists = pre_artists.split(' & ')
             artists = ','.join(artists)
             
-            # 앨범제목
             pre_album = item['ALBUM_NAME']
             album = urllib.parse.unquote(pre_album)
             
             entries[index] = [pre_track_title, artists, album]
-        # print(entries)
 
     for i in range(len(entries)):
         
         q = entries[i][0] + " " + entries[i][1]
-        # print(q)
         url = f'https://api.spotify.com/v1/search?q={q}&type=track&maket=KR&limit=1'
         headers = {
             'Authorization': 'Bearer '+access_token
@@ -92,15 +86,10 @@ if __name__ == '__main__' :
             artist_name.append(artists_sp)
             artist_ids.append(artist_id)
  
- 
-    # print(song_name[0])
-    # print(artist_name[0])
-    # print(album_name[0])
-    # print(album_img[0])
 
     for idx, e in enumerate(responsed_data) :
         entity = ChartGenie(**e)
-        orm = ChartGenieORM(entity)
+        orm = GenieORM(entity)
         orm.track_name = song_name[idx]
         orm.track_id = song_ids[idx]
         orm.artist_names = ','.join(artist_name[idx])

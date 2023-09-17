@@ -31,7 +31,7 @@ class VibeEntity(BaseModel) :
     album: Albuminfo
     rank:rankInfo
 
-class Vibe_Load(BaseModel) :
+class ChartVibe(BaseModel) :
     tracks: List[VibeEntity]
 
 class VibeORM(Base):
