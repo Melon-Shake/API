@@ -117,7 +117,6 @@ if __name__ == '__main__':
             # responsed_data[i]['album']['title'] = album_name[i]
             # responsed_data[i]['album']['imgList'][0]['url'] = album_img[i]
             
-      
                     
         for idx, e in enumerate(responsed_data) :
             entity = ChartFlo(**e)

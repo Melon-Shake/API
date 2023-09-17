@@ -74,9 +74,6 @@ if __name__ == '__main__':
             pre_album = item['album']['title']
         #     album = urllib.parse.unquote(pre_album)
         #     cleaned_album = re.sub(r'\([^)]*\)', '', album)
-            
-            # print(pre_track_title, artists, pre_album)
-            
             entries[index] = [pre_track_title, artists, pre_album]
 
         # # {1: ['Smoke (Prod. Dynamicduo, Padi)', ['다이나믹 듀오', '이영지'], '스트릿 우먼 파이터2(SWF2) 계급미션'],}
@@ -139,7 +136,6 @@ if __name__ == '__main__':
         # print(song_ids[0])
         # print(album_ids[0])
         # print(song_ids[0])
-        
         for idx, e in enumerate(responsed_data) :
             entity = BugsEntity(**e)
             orm = BugsORM(entity)

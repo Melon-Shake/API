@@ -18,14 +18,14 @@ def pick_data(data: search_track,db_params):
     else:
         user_id = None
 
-    track_search = "SELECT id from track where name_org = %s"
+    track_search = "SELECT id from spotify_tracks where name = %s"
     track_value = (track_title,)
     cursor.execute(track_search, track_value)
     track_query_result = cursor.fetchone()
     if user_query_result:
         track_id = track_query_result[0]
 
-    search_query = "INSERT INTO search_log_tracks(track_id,user_id) values (%s,%s);"
+    search_query = "INSERT INTO search_log_tracks(spotify_tracks_id,user_id) values (%s,%s);"
     user_values = (track_id, user_id)
     cursor.execute(search_query, user_values)
     connection.commit()

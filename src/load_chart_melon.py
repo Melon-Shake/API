@@ -32,7 +32,6 @@ if __name__ == '__main__':
     album_name = []
     album_ids = []
     album_img = []
-    
 
     entries = {}
     for index, item in enumerate(responsed_data):
@@ -130,6 +129,7 @@ if __name__ == '__main__':
     orm.artist_ids = artist_ids[idx]
     orm.album_name = album_name[idx]
     orm.album_id = album_ids[idx]
+
     orm.img_url = album_img[idx]
 
     with session_scope() as session :
