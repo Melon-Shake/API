@@ -106,9 +106,7 @@ class SearchResult(BaseModel):
     artists: List[ArtistsExt]
     tracks: List[TracksExt]
     albums: List[AlbumsExt]
-
-class SearchKeyword(BaseModel):
-    searchInput : str
+    tracks: List[TracksExt]
 
 class ArtistsORM(Base) :
     __tablename__ = 'spotify_artists'

@@ -105,6 +105,13 @@ if __name__ == '__main__':
             #         song_name.append(sp_json['tracks']['items'][0]['name'])
             #         album_name.append(sp_json['tracks']['items'][0]['album']['name'])
             #         album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
+            #     response_sp = requests.get(url, headers=headers)
+            #     if response_sp.status_code == 200:
+            #         sp_json = response_sp.json()
+            #         artists_sp = []
+            #         song_name.append(sp_json['tracks']['items'][0]['name'])
+            #         album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+            #         album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
                     
             #         for j in range(len(sp_json['tracks']['items'][0]['artists'])):
             #             artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])

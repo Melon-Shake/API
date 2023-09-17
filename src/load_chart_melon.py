@@ -6,6 +6,7 @@ sys.path.append(root_path)
 import urllib.parse
 
 from update_token import return_token
+from update_token import return_token
 from model.database import session_scope
 from model.chart_melon import ChartMelon, MelonORM
 import requests

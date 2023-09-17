@@ -72,11 +72,12 @@ if __name__ == '__main__':
             
         #     # 앨범제목    
             pre_album = item['album']['title']
-        #     album = urllib.parse.unquote(pre_album)
-        #     cleaned_album = re.sub(r'\([^)]*\)', '', album)
-            entries[index] = [pre_track_title, artists, pre_album]
+            album = urllib.parse.unquote(pre_album)
+            cleaned_album = re.sub(r'\([^)]*\)', '', album)
+            
+            entries[index] = [cleaned_track, artist_pre, cleaned_album]
 
-        # # {1: ['Smoke (Prod. Dynamicduo, Padi)', ['다이나믹 듀오', '이영지'], '스트릿 우먼 파이터2(SWF2) 계급미션'],}
+        # {1: ['Smoke (Prod. Dynamicduo, Padi)', ['다이나믹 듀오', '이영지'], '스트릿 우먼 파이터2(SWF2) 계급미션'],}
         
         for i in range(len(entries)):
             # artists_sub = ' '.join(entries[i][1])
@@ -99,52 +100,34 @@ if __name__ == '__main__':
 
                 for j in range(len(sp_json['tracks']['items'][0]['artists'])):
                     artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
-                    artist_id.append(sp_json['tracks']['items'][0]['artists'][j]['id'])
-                artist_name.append(artists_sp)
-                artist_ids.append(artist_id)
-                # artist_name= ','.join(artist_name)
-        #     elif response_sp.status_code != 200 :
-        #         q = entries[i][0] + " " + artists_sub+ " " + entries[i][2]
-        #         url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=KR&limit=1'
-        #         headers = {
-        #             'Authorization': 'Bearer '+access_token
-        #         }
-        #         response_sp = requests.get(url, headers=headers)
-        #         if response_sp.status_code == 200:
-        #             sp_json = response_sp.json()
-        #             artists_sp = []
-        #             song_name.append(sp_json['tracks']['items'][0]['name'])
-        #             album_name.append(sp_json['tracks']['items'][0]['album']['name'])
-        #             album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
+                artist_name.append(', '.join(artists_sp))
+            elif response_sp.status_code != 200 :
+                q = entries[i][0] + " " + entries[i][1]+ " " + entries[i][2]
+                url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=KR&limit=1'
+                headers = {
+                    'Authorization': 'Bearer '+access_token
+                }
+                response_sp = requests.get(url, headers=headers)
+                if response_sp.status_code == 200:
+                    sp_json = response_sp.json()
+                    artists_sp = []
+                    song_name.append(sp_json['tracks']['items'][0]['name'])
+                    album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+                    album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
                     
-        #             for j in range(len(sp_json['tracks']['items'][0]['artists'])):
-        #                 artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
-        #             artist_name.append(', '.join(artists_sp))
-            # responsed_data[i]['track_title'] = song_name[i]
-            # for k in range(len(responsed_data[i]['artists'])):
-            #     responsed_data[i]['artists'][k]['artist_nm'] = artist_name[i][k]
-            # responsed_data[i]['album']['title'] = album_name[i]
-            # responsed_data[i]['album']['image']['path'] = album_img[i]
+                    for j in range(len(sp_json['tracks']['items'][0]['artists'])):
+                        artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
+                    artist_name.append(', '.join(artists_sp))
+
+                responsed_data[i]['track_title'] = song_name[i]
+                responsed_data[i]['artists'][0]['artist_nm'] = artist_name.pop()
+                responsed_data[i]['album']['title'] = album_name[i]
+                responsed_data[i]['album']['image']['path'] = album_img[i]
+
         
-        # print(song_name[0])
-        # print('#')
-        # print(album_name[0])
-        # print('#')
-        # print(album_img[0])
-        # print('#')
-        # print(artist_name)
-        # print(song_ids[0])
-        # print(album_ids[0])
-        # print(song_ids[0])
-        for idx, e in enumerate(responsed_data) :
-            entity = BugsEntity(**e)
+        for x in responsed_data :
+            entity = BugsEntity(**x)
             orm = BugsORM(entity)
-            orm.track_name = song_name[idx]
-            orm.track_id = song_ids[idx]
-            orm.album_name = album_name[idx]
-            orm.album_id = album_ids[idx]
-            orm.img_url = album_img[idx]
-            orm.artist_names = ','.join(artist_name[idx])
-            orm.artist_ids = artist_ids[idx]
+
             with session_scope() as session :
                 session.add(orm)

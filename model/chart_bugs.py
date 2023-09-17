@@ -67,12 +67,18 @@ class BugsORM(Base) :
     artist_ids = Column(ARRAY(String), nullable=True)
 
     def __init__(self,entity:BugsEntity) :
-        self.track_name = entity.track_title
-        self.album_name = entity.album.title
-        self.img_url = entity.album.image.path
-        self.release_date = entity.album.release_ymd
-        self.release_local_date = entity.album.release_local_ymd
-        self.artist_names = entity.artists
+        self.track_id = entity.track_id
+        self.track_title = entity.track_title
+        self.album_id = entity.album.album_id
+        self.album_title = entity.album.title
+        self.album_image_path = 'https://image.bugsm.co.kr/album/images/256'+entity.album.image.path
+        self.album_release_ymd = entity.album.release_ymd
+        self.album_release_local_ymd = entity.album.release_local_ymd
+        self.artist_ids = list()
+        self.artist_nms = list()
+        for artist in entity.artists :
+            self.artist_ids.append(artist.artist_id)
+            self.artist_nms.append(artist.artist_nm)
         self.genres_name = entity.artists[0].genres[0].svc_nm
         self.likes_count = entity.adhoc_attr.likes_count
         self.rank = entity.list_attr.rank
