@@ -1,16 +1,20 @@
 import requests
+import sys
+import os, urllib.parse, re
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
 import lib.module as module
 import string
 import psycopg2
 import config.db_info as db
-
+from update_token import return_token
 
 conn = psycopg2.connect(**db.db_params)
 
-access_token = module.read_AuthToken_from_file()
+access_token = return_token()
 
 # test용
-track_id = '3rrYAxy6f1Aj5GO9vVRyDr'
+track_id = "6tlMVCqZlmxfnjZt3OiHjE"
 
 url = f'https://api.spotify.com/v1/tracks/{track_id}?market=kr'
 header = {
@@ -57,9 +61,9 @@ if name_has != True:
 else:
     name_org = response_json['name']
     name_eng = response_json['name']
-    query2 = "INSERT INTO track (name_org, name_eng, duration, image, id) VALUES(%s,%s,%s,%s)"
+    query2 = "INSERT INTO track (name_org, name_eng, duration, image,id) VALUES(%s,%s,%s,%s,%s)"
     cur = conn.cursor()
-    cur.execute(query2, (name_org, name_eng, duration, image))
+    cur.execute(query2, (name_org, name_eng, duration, image,29))
 
     # 커밋 및 연결 닫기
     conn.commit()
@@ -67,13 +71,13 @@ else:
     conn.close()
 
 # 커서
-cur = conn.cursor()
-query1 = "INSERT INTO sp_track (disc_number, duration_ms, explicit, external_urls, href, id, is_playable, name, popularity, preview_url, track_number, type, uri, is_local, album_id, artist_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-cur.execute(query1, (disc_number,duration_ms,explicit,external_urls,href,id,is_playable,name,popularity,preview_url,track_number,type,uri,is_local,album_id,artist_id))
-# 커밋 및 연결 닫기
-conn.commit()
-cur.close()
-conn.close()
+# cur = conn.cursor()
+# query1 = "INSERT INTO sp_track (disc_number, duration_ms, explicit, external_urls, href, id, is_playable, name, popularity, preview_url, track_number, type, uri, is_local, album_id, artist_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+# cur.execute(query1, (disc_number,duration_ms,explicit,external_urls,href,id,is_playable,name,popularity,preview_url,track_number,type,uri,is_local,album_id,artist_id))
+# # 커밋 및 연결 닫기
+# conn.commit()
+# cur.close()
+# conn.close()
 
 
 

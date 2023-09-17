@@ -12,11 +12,11 @@ def daily_search_ranking():
         WHERE keyword IN (
             SELECT DISTINCT item
             FROM (
-                SELECT name_org as item FROM artist
+                SELECT name as item FROM spotify_artists
                 UNION ALL
-                SELECT name_org as item FROM track
+                SELECT name as item FROM spotify_tracks
                 UNION ALL
-                SELECT name_org as item FROM album
+                SELECT name as item FROM spotify_albums
             ) AS items
             WHERE item IS NOT NULL
         )
