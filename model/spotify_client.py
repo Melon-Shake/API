@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import String
 
+
 class SpotifyClientORM(Base) :
     __tablename__ = 'spotify_client'
 
@@ -34,4 +35,3 @@ if __name__ == '__main__' :
     mapper = inspect(SpotifyClientORM)
     table_name = mapper.persist_selectable.name
     column_names = [column.key for column in mapper.columns]
-
