@@ -25,13 +25,16 @@ class ChartGenie(BaseModel) :
     def decode_url(cls, v):
         return unquote(v)
 
-class ChartGenieORM(Base) :
+class GenieORM(Base) :
     __tablename__ = 'chart_genie'
 
     id = Column(Integer, primary_key=True)
     track_name = Column(String, nullable=True)
+    track_id = Column(String, nullable=True)
     artist_names = Column(String, nullable=True)
+    artist_ids = Column(ARRAY(String), nullable=True)
     album_name = Column(String, nullable=True)
+    album_id = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
     rank_no = Column(Integer, nullable=True)
     pre_rank_no = Column(Integer, nullable=True)
