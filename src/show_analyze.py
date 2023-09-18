@@ -113,75 +113,102 @@ def show_plt_by_track_id(target_track_id):
     plt.grid(True)
     plt.show()
     
-    
-    
-    
+
 def main():
-    st.title("hello")
-    if st.button("성별에 따른 특성 선호도 분석"):
-        num_features = len(grouped_by_gender.columns)
-
-        # 각 변수의 각도 계산
-        angles = np.linspace(0, 2 * np.pi, num_features, endpoint=False).tolist()
-        angles += angles[:1]
-
-        # 그래프 설정
-        plt.figure(figsize=(18, 6))
-
-        # F vs M 비교 그래프
-        plt.subplot(1, 3, 1, polar=True)
-        for gender in ['F', 'M']:
-            values = grouped_by_gender.loc[gender].values.tolist()
-            values += values[:1]
-            plt.fill(angles, values, alpha=0.5, label=gender)
-        plt.xticks(angles[:-1], grouped_by_gender.columns)
-        plt.title('F vs M Radar Chart')
-        plt.ylim(0, 1)
-        plt.legend()
-
-        # F에 대한 레이더 차트
-        plt.subplot(1, 3, 2, polar=True)
-        values_F = grouped_by_gender.loc['F'].values.tolist()
-        values_F += values_F[:1]
-        plt.fill(angles, values_F, 'b', alpha=0.5)
-        plt.xticks(angles[:-1], grouped_by_gender.columns)
-        plt.title('F Radar Chart')
-        plt.ylim(0, 1)
-
-        # M에 대한 레이더 차트
-        plt.subplot(1, 3, 3, polar=True)
-        values_M = grouped_by_gender.loc['M'].values.tolist()
-        values_M += values_M[:1]
-        plt.fill(angles, values_M, 'r', alpha=0.5)
-        plt.xticks(angles[:-1], grouped_by_gender.columns)
-        plt.title('M Radar Chart')
-        plt.ylim(0, 1)
-
-        # 그래프 표시
-        plt.tight_layout()
-        # plt.show()
-        st.pyplot(plt)
-    
+    if "current_page" not in st.session_state:
+        st.session_state.current_page = "main_page"
+    if st.session_state.current_page == "main_page":
+        main_page()
+    elif st.session_state.current_page =='by_gender':
+        by_gender()
+    elif st.session_state.current_page =='by_age':
+        by_age()    
+    elif st.session_state.current_page =='by_track':
+        by_track()   
+        
+def main_page():
+    st.title("Melon-Shake Data Analyze")
     if st.button('연령대 별 특성 레이더 차트'):
+        st.session_state.current_page='by_age'
+        st.experimental_rerun()
+    if st.button("성별에 따른 특성 선호도 분석"):
+        st.session_state.current_page='by_gender'
+        st.experimental_rerun()
 
-        # 연령대 선택
-        selected_age = st.radio('연령대 선택', grouped_age.index)
-
-        # 선택한 연령대에 따라 레이더 차트 그리기
-        if selected_age in grouped_age.index:
-            values = grouped_age.loc[selected_age].values.tolist()
-            features = grouped_age.columns.tolist()
-
-            # 레이더 차트 그리기
-            fig, ax = plt.subplots(figsize=(8, 6), subplot_kw=dict(polar=True))
-            ax.fill(features, values, alpha=0.5)
-            ax.set_title(f'{selected_age}세 연령대 특성 레이더 차트')
-            st.pyplot(fig)
-        else:
-            st.write('선택한 연령대에 대한 데이터가 없습니다.')
-
-    id = st.text_input('음원 ID를 입력 해 주세요')
     if st.button('음원에 대한 연령대별, 성별 선호도'):
+        st.session_state.current_page='by_track'
+        st.experimental_rerun()
+def by_gender():
+    num_features = len(grouped_by_gender.columns)
+    # 각 변수의 각도 계산
+    angles = np.linspace(0, 2 * np.pi, num_features, endpoint=False).tolist()
+    angles += angles[:1]
+
+    # 그래프 설정
+    plt.figure(figsize=(18, 6))
+
+    # F vs M 비교 그래프
+    plt.subplot(1, 3, 1, polar=True)
+    for gender in ['F', 'M']:
+        values = grouped_by_gender.loc[gender].values.tolist()
+        values += values[:1]
+        plt.fill(angles, values, alpha=0.5, label=gender)
+    plt.xticks(angles[:-1], grouped_by_gender.columns)
+    plt.title('F vs M Radar Chart')
+    plt.ylim(0, 1)
+    plt.legend()
+
+    # F에 대한 레이더 차트
+    plt.subplot(1, 3, 2, polar=True)
+    values_F = grouped_by_gender.loc['F'].values.tolist()
+    values_F += values_F[:1]
+    plt.fill(angles, values_F, 'b', alpha=0.5)
+    plt.xticks(angles[:-1], grouped_by_gender.columns)
+    plt.title('F Radar Chart')
+    plt.ylim(0, 1)
+
+    # M에 대한 레이더 차트
+    plt.subplot(1, 3, 3, polar=True)
+    values_M = grouped_by_gender.loc['M'].values.tolist()
+    values_M += values_M[:1]
+    plt.fill(angles, values_M, 'r', alpha=0.5)
+    plt.xticks(angles[:-1], grouped_by_gender.columns)
+    plt.title('M Radar Chart')
+    plt.ylim(0, 1)
+
+    # 그래프 표시
+    plt.tight_layout()
+    # plt.show()
+    st.pyplot(plt)
+    
+    if st.button("BACK"):
+        st.session_state.current_page = "main_page"
+        st.experimental_rerun()
+def by_age():
+    # 연령대 선택
+    selected_age = st.radio('연령대 선택', grouped_age.index)
+
+    # 선택한 연령대에 따라 레이더 차트 그리기
+    if selected_age in grouped_age.index:
+        values = grouped_age.loc[selected_age].values.tolist()
+        features = grouped_age.columns.tolist()
+
+        # 레이더 차트 그리기
+        fig, ax = plt.subplots(figsize=(8, 6), subplot_kw=dict(polar=True))
+        ax.fill(features, values, alpha=0.5)
+        ax.set_title(f'Radar Chart of {selected_age}-year-old Age Group Characteristics')
+        st.pyplot(fig)
+    else:
+        st.write('선택한 연령대에 대한 데이터가 없습니다.')
+    if st.button("BACK"):
+        st.session_state.current_page = "main_page"
+        st.experimental_rerun()
+def by_track():  
+    id = st.text_input('음원 ID를 입력 해 주세요')
+    if id:
         st.pyplot(show_plt_by_track_id(id))
+    if st.button("BACK"):
+        st.session_state.current_page = "main_page"
+        st.experimental_rerun()
 if __name__ == "__main__":
     main()
