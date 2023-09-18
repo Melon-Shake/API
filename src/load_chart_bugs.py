@@ -39,8 +39,8 @@ if __name__ == '__main__':
             # 제목 디코딩
             pre_track_title = item['track_title']
             pre_track_title = pre_track_title.replace("-", "")
-        #     track_title = urllib.parse.unquote(pre_track_title)
-        #     cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
+            pre_track_title = pre_track_title.replace("Prod. by", "Prod.")
+            track_title = urllib.parse.unquote(pre_track_title)
 
             if pre_track_title == '이브, 프시케 그리고 푸른 수염의 아내':
                 pre_track_title = 'Eve, Psyche & The Bluebeard’s wife'
@@ -63,21 +63,13 @@ if __name__ == '__main__':
                     artist_nm = urllib.parse.quote(artist_nm)
                 artist_pre.append(artist_nm)
             artists = ','.join(artist_pre)
-        #         parse_artist = urllib.parse.unquote(artist_nm)
-        #         cleaned_artist = re.sub(r'\([^)]*\)', '', parse_artist)
-        #         artist_pre.append(parse_artist)
             
-        #     # 앨범제목    
+            # 앨범제목    
             pre_album = item['album']['title']
-        #     album = urllib.parse.unquote(pre_album)
-        #     cleaned_album = re.sub(r'\([^)]*\)', '', album)
-            
-            # print(pre_track_title, artists, pre_album)
+            album = urllib.parse.unquote(pre_album)
             
             entries[index] = [pre_track_title, artists, pre_album]
-
-        # # {1: ['Smoke (Prod. Dynamicduo, Padi)', ['다이나믹 듀오', '이영지'], '스트릿 우먼 파이터2(SWF2) 계급미션'],}
-        
+                    
         for i in range(len(entries)):
             # artists_sub = ' '.join(entries[i][1])
             q = entries[i][0] +' '+ entries[i][1]
