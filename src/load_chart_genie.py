@@ -33,27 +33,34 @@ if __name__ == '__main__' :
 
         entries = {}
         for index, item in enumerate(responsed_data):
+            # 제목 디코딩
             pre_track_title = item['SONG_NAME']
-            track_title = urllib.parse.unquote(pre_track_title)
-            cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
+            pre_track_title = pre_track_title.replace("-", "")
+            pre_track_title = pre_track_title.replace("Prod. by", "Prod.")
+            pre_track_title = urllib.parse.unquote(pre_track_title)
             
             # 예외 처리
-            if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
-                cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
-                
-            if track_title == '건물 사이에 피어난 장미 (Rose Blossom)':
-                track_title = 'Rose Blossom'
-                
-            if track_title == '해요 (2022)':
-                track_title = 'haeyo 2022'
+            if pre_track_title == '이브, 프시케 그리고 푸른 수염의 아내':
+                pre_track_title = 'Eve, Psyche & The Bluebeard’s wife'
+            elif pre_track_title == '파이팅 해야지 (Feat. 이영지)':
+                pre_track_title ='Fighting'
+            elif pre_track_title == '손오공':
+                pre_track_title ='Super'
+            elif pre_track_title == '사람 Pt.2 ':
+                pre_track_title = 'People Pt.2 (feat. IU)'
+            elif pre_track_title == 'STAY (Explicit Ver.)':
+                pre_track_title = 'STAY'
            
             pre_artists = item.get('ARTIST_NAME')
-            pre_artists = urllib.parse.unquote(pre_artists)
-            if pre_artists == '#안녕':
-                pre_artists = urllib.parse.quote(pre_artists)# URL 디코딩
-            artists = pre_artists.split(' & ')
-            artists = ','.join(artists)
+            artist_pre = []
+            for artist in pre_artists:
+                artist_nm = artist['name']
+                if artist_nm == '#안녕':
+                    artist_nm = urllib.parse.quote(artist_nm)
+                artist_pre.append(artist_nm)
+            artists = ','.join(artist_pre)
             
+            # 앨범제목
             pre_album = item['ALBUM_NAME']
             album = urllib.parse.unquote(pre_album)
             
@@ -82,7 +89,6 @@ if __name__ == '__main__' :
                 artist_id.append(sp_json['tracks']['items'][0]['artists'][j]['id'])
             artist_name.append(artists_sp)
             artist_ids.append(artist_id)
- 
 
     for idx, e in enumerate(responsed_data) :
         entity = ChartGenie(**e)

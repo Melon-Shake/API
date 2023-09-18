@@ -3,7 +3,6 @@ from pydantic import BaseModel, ConfigDict, field_validator
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import Integer, String, Boolean, ARRAY
 from typing import Dict, List, Union
-
 from model.database import Base
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import Integer, String, Boolean, JSON, DateTime, Float, ARRAY
@@ -13,41 +12,40 @@ class rankInfo(BaseModel):
     rank:int
     rank_peak:int
     rank_last:int
+    
 class GenreModel(BaseModel):
     svc_type:int
     svc_nm:str
+    
 class ArtistModel(BaseModel):
     artist_id:int
     artist_nm:str
     genres:List[GenreModel]
+    
 class Adhoc_Attr(BaseModel):
     likes_count:int
+    
 class ImageInfo(BaseModel):
     path:str
+    
 class Albuminfo(BaseModel):
      album_id: int
      title: str
      image:ImageInfo
      release_ymd : str
      release_local_ymd : str
-
-
+     
 class BugsEntity(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
-
     track_id: int
     track_title: str
     album: Albuminfo
     artists: List[ArtistModel]
     adhoc_attr: Adhoc_Attr
     list_attr:rankInfo
-
-class ChartBugs(BaseModel) :
-    vibe: List[BugsEntity]
-
+    
 class BugsORM(Base) :
     __tablename__ = 'chart_bugs'
-
     id = Column(Integer, primary_key=True)
     track_name = Column(String, nullable=True)
     album_name = Column(String, nullable=True)
@@ -72,7 +70,7 @@ class BugsORM(Base) :
         self.img_url = entity.album.image.path
         self.release_date = entity.album.release_ymd
         self.release_local_date = entity.album.release_local_ymd
-        self.artist_names = list()
+        self.artist_names = entity.artists
         self.genres_name = entity.artists[0].genres[0].svc_nm
         self.likes_count = entity.adhoc_attr.likes_count
         self.rank = entity.list_attr.rank

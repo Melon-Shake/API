@@ -1,6 +1,5 @@
 import pandas as pd
 import psycopg2
-from config.db_info import db_params
 
 
 def lyrics_analyze():
@@ -23,28 +22,44 @@ def lyrics_analyze():
 
         return word_counts
 
+
+
+ 
+
+    # 데이터베이스 연결 정보 설정
+    db_params = {
+        'user': 'postgres',
+        'password': '12345678',
+        'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
+        'port': '5432',
+        'database': 'postgres'
+    }
+
+    # 데이터베이스에 연결
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
 
     # 쿼리 작성: romantic_words와 powerful_words가 모두 0인 행을 선택
-    query = "SELECT * FROM lyrics WHERE romantic_words IS NULL AND powerful_words IS NULL AND adventurous_words IS NULL AND depressed_words IS NULL;"
+    query = "SELECT * FROM lyrics_temp WHERE romantic_words IS NULL AND powerful_words IS NULL AND adventurous_words IS NULL AND depressed_words IS NULL;"
     dataframe = pd.read_sql_query(query, conn)
 
 
-    for i, k in enumerate(zip(dataframe['content'], dataframe['id'])):
+    for i, k in enumerate(zip(dataframe['content'], dataframe['spotify_tracks_id'])):
         result = count_words_in_lyrics(k[0],words_dict)
         for j in result:
             dataframe.loc[i, j] = result[j]
 
-        track_id = dataframe.loc[i]['id']
+        track_id = dataframe.loc[i]['spotify_tracks_id']
         romantic_words = dataframe.loc[i]['romantic_words']
         adventurous_words = dataframe.loc[i]['adventurous_words']
         powerful_words = dataframe.loc[i]['powerful_words']
         depresed_words = dataframe.loc[i]['depressed_words']
         print(track_id,romantic_words,adventurous_words,powerful_words,depresed_words)
-        query = f"""UPDATE lyrics
+        query = f"""UPDATE lyrics_temp
                 SET romantic_words = {romantic_words}, adventurous_words = {adventurous_words}, powerful_words = {powerful_words}, depressed_words = {depresed_words}
-                WHERE id = '{track_id}';"""
+                WHERE spotify_tracks_id = '{track_id}';"""
         cursor.execute(query)
+        
+    # 연결 닫기
     conn.commit()
     conn.close()
