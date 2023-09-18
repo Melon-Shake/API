@@ -21,8 +21,8 @@ from user_data import user_data
 from user_search_track import pick_data
 from daily_search_ranking import daily_search_ranking
 from make_playlist import make_playlist
-from search_spotify import *
-from model.spotify_search import *
+import model.spotify_search as Spotify
+import src.search_spotify as Search
 
 
 app = FastAPI()
@@ -67,9 +67,9 @@ async def load_spotify(data:Spotify.SearchKeyword):
     for album_id in album_ids :
         Search.get_album_tracks(album_id)
     
-    artist_ids = [artist.id for artist in culled_data.artists]
-    for artist_id in artist_ids :
-        Search.get_artist_albums(artist_id)
+    # artist_ids = [artist.id for artist in culled_data.artists]
+    # for artist_id in artist_ids :
+    #     Search.get_artist_albums(artist_id)
 
 @app.post("/get_user_data/")
 def get_user_data(data: LoginData):
