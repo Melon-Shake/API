@@ -6,6 +6,7 @@ root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
 import model.database as DB
+from model.database import session_scope
 import model.spotify_search as Spotify
 
 import requests
@@ -186,8 +187,8 @@ def deduplicate_by_filter(models:list[object],models_filter:list[object]) :
             ids_uniq.remove(model.id)
     return uniq
 
-def cull_data(parsed_data:Spotify.SearchTracks) :
-    tracks_data = parsed_data.items
+def cull_data(parsed_data:Spotify.Search) :
+    tracks_data = parsed_data.tracks.items
 
     albums_data = [track.album for track in tracks_data]
     albums_data = deduplicate(albums_data)

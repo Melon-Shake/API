@@ -24,9 +24,9 @@ if __name__ == '__main__':
         responsed_data = response.get('data').get('trackList')
         
         song_name = []
-        song_ids =[]
+        song_ids = []
         artist_name = []
-        aritst_ids = []
+        artist_ids = []
         album_name = []
         album_ids = []
         album_img = []
@@ -35,10 +35,13 @@ if __name__ == '__main__':
         entries = {}
         for index, item in enumerate(responsed_data):
             
+            # 노래제목
             pre_track_title = item['name']
             pre_track_title = pre_track_title.replace("-", "")
-            pre_title = urllib.parse.unquote(pre_track_title)
+            pre_track_title = pre_track_title.replace("Prod. by", "Prod.")
+            pre_track_title = urllib.parse.unquote(pre_track_title)
 
+            # 예외 처리
             if pre_track_title == '이브, 프시케 그리고 푸른 수염의 아내':
                 pre_track_title = 'Eve, Psyche & The Bluebeard’s wife'
             elif pre_track_title == '파이팅 해야지 (Feat. 이영지)':
@@ -50,6 +53,7 @@ if __name__ == '__main__':
             elif pre_track_title == 'STAY (Explicit Ver.)':
                 pre_track_title = 'STAY'
             
+            # 아티스트 디코딩
             pre_artist = item.get('artistList')
             artist_pre = []
             for artist in pre_artist:
@@ -66,7 +70,6 @@ if __name__ == '__main__':
 
         for i in range(len(responsed_data)):
             q = entries[i][0] + " " + entries[i][1]
-
             url = f'https://api.spotify.com/v1/search?q={q}&type=track&limit=1'
             headers = {
                 'Authorization': 'Bearer '+access_token
@@ -86,18 +89,18 @@ if __name__ == '__main__':
                     artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
                     artist_id.append(sp_json['tracks']['items'][0]['artists'][j]['id'])
                 artist_name.append(artists_sp)
-                aritst_ids.append(artist_id)
-            
+                artist_ids.append(artist_id)
+                    
         for idx, e in enumerate(responsed_data) :
             entity = ChartFlo(**e)
             orm = FloORM(idx, entity)
             orm.track_name = song_name[idx]
             orm.track_id = song_ids[idx]
+            orm.artist_names = ','.join(artist_name[idx])
+            orm.artist_ids = artist_ids[idx]
             orm.album_name = album_name[idx]
             orm.album_id = album_ids[idx]
             orm.img_url = album_img[idx]
-            orm.artist_names = ','.join(artist_name[idx])
-            orm.artist_ids = aritst_ids[idx]
             
             with session_scope() as session :
                 session.add(orm)

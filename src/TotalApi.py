@@ -20,6 +20,7 @@ from get_keyword import save_keyword_data
 from user_data import user_data
 from user_search_track import pick_data
 from daily_search_ranking import daily_search_ranking
+from make_playlist import make_playlist
 from search_spotify import *
 from model.spotify_search import *
 
@@ -86,3 +87,33 @@ def get_use_data(data: search_track):
 def get_daily_search_ranking():
     search_ranking_result = daily_search_ranking()
     return search_ranking_result
+
+@app.post('/playlist/')
+def get_playlist(data:playlist):
+    return make_playlist(data,5,db_params)
+
+@app.post("/lyric_input/")
+def lyric_input(item : lyric_data):
+    artist = item.artist
+    track = item.track
+    track_id = item.track_id
+    GENIUS_API_KEY = item.GENIUS_API_KEY
+    
+    result = lyric_search_and_input(artist,track,track_id,GENIUS_API_KEY)
+    if result:
+        return {"result" : f"Lyrics have been added to track_id : {track_id}"}
+    else:
+        raise HTTPException(status_code=404, detail="Lyric ERR.")
+    
+# @app.post("/sp_and_track_update/")
+# def sp_track_input(item: sp_data):
+#     artist = item.artist
+#     album = item.album
+#     track = item.track
+#     d = get_sp_track_id(artist, album, track)
+    
+#     if d[0] is not None and d[1] is not None:  # get_sp_track_id 함수의 반환값이 None이 아닌지 확인
+#         result = sp_and_track_input(d[0], d[1], artist, album, track)
+#         return result
+#     else:
+#         raise HTTPException(status_code=404, detail="Track not found or error in processing.")

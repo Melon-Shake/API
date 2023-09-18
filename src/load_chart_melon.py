@@ -42,7 +42,7 @@ if __name__ == '__main__':
         pre_track_title = urllib.parse.unquote(pre_track_title)
 
         if pre_track_title == '이브, 프시케 그리고 푸른 수염의 아내':
-                pre_track_title = 'Eve, Psyche & The Bluebeard’s wife'
+            pre_track_title = 'Eve, Psyche & The Bluebeard’s wife'
         elif pre_track_title == '파이팅 해야지 (Feat. 이영지)':
             pre_track_title ='Fighting'
         elif pre_track_title == '손오공':
@@ -102,7 +102,6 @@ if __name__ == '__main__':
     orm.artist_ids = artist_ids[idx]
     orm.album_name = album_name[idx]
     orm.album_id = album_ids[idx]
-
     orm.img_url = album_img[idx]
 
     with session_scope() as session :

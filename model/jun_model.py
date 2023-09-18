@@ -18,3 +18,7 @@ class Keyword(BaseModel):
 class search_track(BaseModel):
    email : str
    track_title : str
+
+
+class playlist(BaseModel):
+    email: str
