@@ -72,7 +72,7 @@ class BugsORM(Base) :
         self.img_url = entity.album.image.path
         self.release_date = entity.album.release_ymd
         self.release_local_date = entity.album.release_local_ymd
-        self.artist_names = entity.artists
+        self.artist_names = list()
         self.genres_name = entity.artists[0].genres[0].svc_nm
         self.likes_count = entity.adhoc_attr.likes_count
         self.rank = entity.list_attr.rank
