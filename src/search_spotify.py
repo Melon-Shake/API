@@ -27,9 +27,54 @@ search_header = {'Authorization': f'Bearer {access_token}'}
 
 # 1 - spotify API responsed_data -> parsed_data
 
+def get_artist_albums(artist_id:str, limit:int=50,offset:int=0) :
+    response = requests.get(f'https://api.spotify.com/v1/artists/{artist_id}/albums'
+                            +'?limit={}&offset={}'.format(limit,offset)
+                            ,headers=search_header)
+    response_code = response.status_code
+    if response_code == 200 :
+        responsed_data = response.json()
+        album_items = responsed_data.get('items')
+        album_ids = [album.get('id') for album in album_items]
+        for album_id in album_ids :
+            get_album_tracks(album_id)
+    
+    elif response_code == 401 :
+        print(f'get_artist_albums(artist_id={artist_id}) - 토큰만료오류')
+    elif response_code == 404 :
+        print(f'get_artist_albums(artist_id={artist_id}) - 리퀘스트오류')
+    else : print(f'get_artist_albums(artist_id={artist_id}) - {response.status_code}')
+
+def get_album_tracks(album_id:str,limit:int=50,offset:int=0) :
+    response = requests.get(f'https://api.spotify.com/v1/albums/{album_id}/tracks'
+                            +'?limit={}&offset={}'.format(limit,offset)
+                            ,headers=search_header)
+    response_code = response.status_code
+    if response_code == 200 :
+        responsed_data = response.json()
+        track_items = responsed_data.get('items')
+        track_ids = [track.get('id') for track in track_items]
+
+        tracks_data = [search_by_id('track',id) for id in track_ids]
+        tracks = [Spotify.TracksORM(track) for track in tracks_data]
+
+        audios = list()
+        for track_id in track_ids :
+            audios.append(Spotify.AudioFeaturesORM(get_audio_features(track_id)))
+
+        with DB.session_scope() as session :
+            session.add_all(tracks)
+            session.add_all(audios)
+
+    elif response_code == 401 :
+        print(f'get_album_tracks(album_id={album_id}) - 토큰만료오류')
+    elif response_code == 404 :
+        print(f'get_album_tracks(album_id={album_id}) - 리퀘스트오류')
+    else : print(f'get_album_tracks(album_id={album_id}) - {response.status_code}')
+
 def search_by_keywords(keywords:str,type:list[str]=['artist','album','track'],limit:int=3,offset:int=0) :
-    response = requests.get('https://api.spotify.com/v1/search?'
-                            +'q={}'.format(keywords)
+    response = requests.get('https://api.spotify.com/v1/search'
+                            +'?q={}'.format(keywords)
                             +'&type={}'.format('%2C'.join(type))
                             +'&limit={}'.format(limit)
                             +'&offset={}'.format(offset)
@@ -49,10 +94,10 @@ def search_by_keywords(keywords:str,type:list[str]=['artist','album','track'],li
         return parsed_data
     
     elif response_code == 401 :
-        print(f'search_by_keywords() - 토큰만료오류')
+        print(f'search_by_keywords(keywords={keywords}) - 토큰만료오류')
     elif response_code == 404 :
-        print(f'search_by_keywords() - 리퀘스트오류')
-    else : print(f'search_by_keywords() - {response.status_code}')
+        print(f'search_by_keywords(keywords={keywords}) - 리퀘스트오류')
+    else : print(f'search_by_keywords(keywords={keywords}) - {response.status_code}')
 
 def search_by_query(query_params:dict[str,list]) :
     keywords = query_params.get('q' or 'query').pop()
@@ -81,13 +126,12 @@ def search_by_query(query_params:dict[str,list]) :
         return parsed_data
 
     elif response_code == 401 :
-        print(f'search_by_query() - 토큰만료오류')
+        print(f'search_by_query(type={type}, keywords={keywords}) - 토큰만료오류')
     elif response_code == 404 :
-        print(f'search_by_query() - 리퀘스트오류')
-    else : print(f'search_by_query() - {response.status_code}')
+        print(f'search_by_query(type={type}, keywords={keywords}) - 리퀘스트오류')
+    else : print(f'search_by_query(type={type}, keywords={keywords}) - {response.status_code}')
 
 def search_by_id(type:str,id:str) :
-    type = type[:-1]
     response = requests.get(f'https://api.spotify.com/v1/{type}s/{id}'
                             ,headers=search_header)
 
@@ -105,16 +149,16 @@ def search_by_id(type:str,id:str) :
         return parsed_data
     
     elif response_code == 401 :
-        print(f'search_by_id() - 토큰만료오류')
+        print(f'search_by_id({type}s/{id}) - 토큰만료오류')
     elif response_code == 404 :
         print(f'search_by_id() - 리퀘스트오류')
-    else : print(f'search_by_id() - {response.status_code}')
+    else : print(f'search_by_id({type}s/{id}) - {response.status_code}')
 
 def search_by_href(href:str) :
     parsed_url = urlparse(href)
     if not parsed_url.query :
         path_params = parsed_url.path.split('/')
-        type = path_params[-2]
+        type = path_params[-2][:-1]
         id = path_params[-1]
         return search_by_id(type,id)
     else : 
@@ -142,8 +186,8 @@ def deduplicate_by_filter(models:list[object],models_filter:list[object]) :
             ids_uniq.remove(model.id)
     return uniq
 
-def cull_data(parsed_data:Spotify.Search) :
-    tracks_data = parsed_data.tracks.items
+def cull_data(parsed_data:Spotify.SearchTracks) :
+    tracks_data = parsed_data.items
 
     albums_data = [track.album for track in tracks_data]
     albums_data = deduplicate(albums_data)
@@ -207,14 +251,13 @@ def load_spotify(search_result:Spotify.SearchResult) :
         audios.append(Spotify.AudioFeaturesORM(get_audio_features(track.id)))
     albums = [Spotify.AlbumsORM(album) for album in search_result.albums]
     artists = [Spotify.ArtistsORM(artist) for artist in search_result.artists]
-    
     with DB.session_scope() as session :
         session.add_all(tracks)
         session.add_all(audios)
         session.add_all(albums)
         session.add_all(artists)
     
-    func_lyric(search_result.tracks)
+    # func_lyric(search_result.tracks)
 
 # 4 - load and update db : spotify_audio_featurs, lyrics, audio_features
 
@@ -230,9 +273,9 @@ def get_audio_features(track_id:str) :
         return parsed_data
 
     elif response_code == 401 :
-        print(f'get_audio_features() - 토큰만료오류')
+        print(f'get_audio_features(track_id={track_id}) - 토큰만료오류')
     elif response_code == 404 :
-        print(f'get_audio_features() - 리퀘스트오류')
+        print(f'get_audio_features(track_id={track_id}) - 리퀘스트오류')
     else : print(f'get_audio_features() - {response.status_code}')
 
 def func_lyric(tracks_data:list[Spotify.TracksORM]):
@@ -258,3 +301,7 @@ def func_lyric(tracks_data:list[Spotify.TracksORM]):
                                          , GENIUS_API_KEY=Lyric.GENIUS_API_KEY)
     AnalyzeLyric.lyrics_analyze()
     AnalyzeTrack.audio_features_update()
+
+
+if __name__ == '__main__' :
+    pass

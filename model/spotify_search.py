@@ -104,7 +104,6 @@ class Search(BaseModel):
 class SearchResult(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     artists: List[ArtistsExt]
-    tracks: List[TracksExt]
     albums: List[AlbumsExt]
     tracks: List[TracksExt]
 
