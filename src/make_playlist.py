@@ -3,6 +3,8 @@ import pandas as pd
 import psycopg2
 from model.jun_model import playlist
 
+
+
 def make_playlist(data:playlist,song_count,db_params):
     email = data.email
     conn = psycopg2.connect(**db_params)
