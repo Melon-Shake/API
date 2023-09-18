@@ -37,7 +37,7 @@ class FloORM(Base) :
     track_name = Column(String, nullable=True)
     artist_ids = Column(ARRAY(String), nullable=True)
     artist_names = Column(String, nullable=True)
-    album_id = Column(Integer, nullable=True)
+    album_id = Column(String, nullable=True)
     album_name = Column(String, nullable=True)
     img_url = Column(String, nullable=True)
     release_date = Column(String, nullable=True)

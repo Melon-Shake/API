@@ -1,10 +1,10 @@
 import requests
 import sys
-import os, urllib.parse, re
+import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
-from update_token import return_token
+from get_token import return_token
 from model.chart_bugs import BugsEntity, BugsORM
 from model.database import session_scope
 
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     }
 
     Domestic = 20152 # 국내차트 - 20152
-    Realtime = 'realtime' # 시간별차트
+    Realtime = 'realtime' 
     headers = {"User-Agent": _USER_AGENT}
     data = {"svc_type": Domestic, "period_tp": Realtime,"size":100,}
     response = requests.post(_CHART_API_URL, headers=headers, data=data)
@@ -35,6 +35,9 @@ if __name__ == '__main__':
         album_name = []
         album_ids = []
         album_img = []
+        song_ids = []
+        artist_ids = []
+        album_ids = []
 
         entries = {}
         for index, item in enumerate(responsed_data):
@@ -67,7 +70,6 @@ if __name__ == '__main__':
                 artist_pre.append(artist_nm)
             artists = ','.join(artist_pre)
             
-            # 앨범제목    
             pre_album = item['album']['title']
             album = urllib.parse.unquote(pre_album)
             

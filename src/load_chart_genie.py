@@ -1,4 +1,3 @@
-import re
 import requests
 import sys
 
@@ -52,7 +51,6 @@ if __name__ == '__main__' :
             elif pre_track_title == 'STAY (Explicit Ver.)':
                 pre_track_title = 'STAY'
            
-            # 아티스트 디코딩
             pre_artists = item.get('ARTIST_NAME')
             artist_pre = []
             for artist in pre_artists:

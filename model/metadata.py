@@ -12,9 +12,6 @@ class Album(BaseModel) :
     img: Optional[str]
     artists: str
     release_year: str
-
-# class AlbumExt(Album) :
-#     model_config = ConfigDict(from_attributes=True)
     
 class Track(BaseModel) :
     model_config = ConfigDict(from_attributes=True)

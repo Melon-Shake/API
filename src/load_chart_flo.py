@@ -1,11 +1,11 @@
 import requests
 import sys
-import os, urllib.parse, re
+import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
 from update_token import return_token
-from model.chart_flo import ChartFlo, FloORM
+from model.chart_flo import ChartFlo, ChartFloORM
 from model.database import session_scope
 
 access_token = return_token()
@@ -30,6 +30,7 @@ if __name__ == '__main__':
         album_name = []
         album_ids = []
         album_img = []
+        
         
         entries = {}
         for index, item in enumerate(responsed_data):
@@ -62,7 +63,6 @@ if __name__ == '__main__':
                 artist_pre.append(artist_nm)
             artists = ','.join(artist_pre)
                     
-            # 앨범 제목
             pre_album = item['album']['title']
             album = urllib.parse.unquote(pre_album)
             
