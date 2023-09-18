@@ -39,8 +39,7 @@ if __name__ == '__main__':
         album_name = []
         album_ids = []
         album_img = []
-        # print(responsed_data[0])
-        # print(responsed_data[0])
+
         entries = {}
         
         for index, item in enumerate(responsed_data):

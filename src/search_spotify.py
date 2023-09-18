@@ -6,7 +6,6 @@ root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
 import model.database as DB
-from model.database import session_scope
 import model.spotify_search as Spotify
 
 import requests
@@ -47,6 +46,7 @@ def get_artist_albums(artist_id:str, limit:int=50,offset:int=0) :
     else : print(f'get_artist_albums(artist_id={artist_id}) - {response.status_code}')
 
 def get_album_tracks(album_id:str,limit:int=50,offset:int=0) :
+    print("!!!!!!!!!!!!!!!!!!!!!!")
     response = requests.get(f'https://api.spotify.com/v1/albums/{album_id}/tracks'
                             +'?limit={}&offset={}'.format(limit,offset)
                             ,headers=search_header)
@@ -187,8 +187,8 @@ def deduplicate_by_filter(models:list[object],models_filter:list[object]) :
             ids_uniq.remove(model.id)
     return uniq
 
-def cull_data(parsed_data:Spotify.Search) :
-    tracks_data = parsed_data.tracks.items
+def cull_data(parsed_data:Spotify.SearchTracks) :
+    tracks_data = parsed_data.items
 
     albums_data = [track.album for track in tracks_data]
     albums_data = deduplicate(albums_data)
@@ -262,7 +262,7 @@ def load_spotify(search_result:Spotify.SearchResult) :
         session.add_all(albums)
         session.add_all(artists)
     
-    func_lyric(search_result.tracks)
+    # func_lyric(search_result.tracks)
 
 # 4 - load and update db : spotify_audio_featurs, lyrics, audio_features
 
@@ -290,20 +290,26 @@ def func_lyric(tracks_data:list[Spotify.TracksORM]):
         Lyric.lyric_search_and_input(
             track_id=track.id, track=track.name, artist=','.join([artist.name for artist in track.artists])
             , GENIUS_API_KEY=Lyric.GENIUS_API_KEY)
-    # with DB.engine.connect() as con :
-    #     res = con.execute(DB.text('''
-    #                                 SELECT tr.id, tr.name, string_agg(DISTINCT ta."name"::TEXT,',') 
-    #                                 FROM spotify_artists ta 
-    #                                 LEFT JOIN spotify_tracks tr ON ta.id = any(tr.artists_ids)
-    #                                 LEFT JOIN lyrics lr ON lr.id = tr.id
-    #                                 WHERE lr."content" IS NULL AND tr.id IS NOT NULL AND tr.name IS NOT null
-    #                                 GROUP BY tr.id, tr.name
-    #                               ''')).fetchall()
-    #     for row in res :
-    #         track_id, track_name, artist_names = row[0], row[1], row[2]
-    #         Lyric.lyric_search_and_input(track_id=track_id,track=track_name,artist=artist_names
-    #                                      , GENIUS_API_KEY=Lyric.GENIUS_API_KEY)
+    with DB.engine.connect() as con :
+        res = con.execute(DB.text('''
+                                    SELECT tr.id, tr.name, string_agg(DISTINCT ta."name"::TEXT,',') 
+                                    FROM spotify_artists ta 
+                                    LEFT JOIN spotify_tracks tr ON ta.id = any(tr.artists_ids)
+                                    LEFT JOIN lyrics lr ON lr.id = tr.id
+                                    WHERE lr."content" IS NULL AND tr.id IS NOT NULL AND tr.name IS NOT null
+                                    GROUP BY tr.id, tr.name
+                                  ''')).fetchall()
+        for row in res :
+            track_id, track_name, artist_names = row[0], row[1], row[2]
+            Lyric.lyric_search_and_input(track_id=track_id,track=track_name,artist=artist_names
+                                         , GENIUS_API_KEY=Lyric.GENIUS_API_KEY)
     Analyze.lyrics_analyze()
+    # func_analyze()
+
+def func_analyze():
+    import src.full_analyze as Analyze
+    Analyze.audio_features_update()
+    Analyze.user_features_update()
 
 if __name__ == '__main__' :
     pass
