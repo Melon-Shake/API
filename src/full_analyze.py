@@ -64,6 +64,8 @@ def audio_features_update():
         for pop in range(len(ad_fe_data)):
             id = ad_fe_data[pop][0]
             point = sum_chart_points(id)[1]
+            if point == np.nan:
+                point = 0
             cursor.execute(f"""
                             UPDATE audio_features
                             SET popularity = {point}
@@ -87,6 +89,8 @@ def audio_features_update():
         for i in range(pop_data.shape[0]):
             id = pop_data.loc[i][0]
             point = pop_data.loc[i][1]
+            if point == np.nan:
+                point = 0
             cursor.execute(f"""
                             UPDATE audio_features
                             SET popularity = {point}
@@ -326,3 +330,10 @@ def make_playlist(user_id, song_count):
     cursor.close()
     conn.close()
     return recommended_playlist
+
+
+
+
+
+
+
