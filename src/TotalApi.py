@@ -21,8 +21,8 @@ from user_data import user_data
 from user_search_track import pick_data
 from daily_search_ranking import daily_search_ranking
 from make_playlist import make_playlist
-from search_spotify import *
-from model.spotify_search import *
+import model.spotify_search as Spotify
+import src.search_spotify as Search
 
 
 app = FastAPI()
