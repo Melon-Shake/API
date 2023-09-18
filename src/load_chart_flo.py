@@ -4,8 +4,8 @@ import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 
-from update_token import return_token
-from model.chart_flo import ChartFlo, ChartFloORM
+from get_token import return_token
+from model.chart_flo import ChartFlo, FloORM
 from model.database import session_scope
 
 access_token = return_token()

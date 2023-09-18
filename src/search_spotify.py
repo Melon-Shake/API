@@ -231,7 +231,7 @@ def return_search(search_result:Spotify.SearchResult) :
                         ,artists=', '.join([artist.name for artist in album.artists])
                         ,release_year=album.release_date
                     ) for album in albums]
-    artists_output = [dict(
+    artists_result = [dict(
                         name=artist.name
                         ,img=artist.images[0].url if hasattr(artist,'images') and artist.images and artist.images[0].url else None
                     ) for artist in artists]

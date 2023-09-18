@@ -44,9 +44,6 @@ class BugsEntity(BaseModel) :
     adhoc_attr: Adhoc_Attr
     list_attr:rankInfo
     
-class Bugs_Load(BaseModel) :
-    vibe: List[BugsEntity]
-    
 class BugsORM(Base) :
     __tablename__ = 'chart_bugs'
     id = Column(Integer, primary_key=True)
