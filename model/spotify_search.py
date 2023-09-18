@@ -104,8 +104,11 @@ class Search(BaseModel):
 class SearchResult(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     artists: List[ArtistsExt]
-    tracks: List[TracksExt]
     albums: List[AlbumsExt]
+    tracks: List[TracksExt]
+
+class SearchKeyword(BaseModel) :
+    searchInput: str
 
 class ArtistsORM(Base) :
     __tablename__ = 'spotify_artists'
