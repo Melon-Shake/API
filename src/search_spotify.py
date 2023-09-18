@@ -197,16 +197,12 @@ def cull_data(parsed_data:Spotify.Search) :
     artists_data = deduplicate(artists_data)
     artists_data = [search_by_href(artist.href) for artist in artists_data]
 
-    culled_data = Spotify.SearchResult(
+    culled_data= Spotify.SearchResult(
         tracks=tracks_data,
         albums=albums_data,
         artists=artists_data
-    )
+        )
     return culled_data
-
-
-# 3 - culled_data -> search_data
-
 def convert_timestamp(millis:int) :
     seconds = millis // 1000
     minutes, seconds = divmod(seconds, 60)
@@ -231,15 +227,10 @@ def return_search(search_result:Spotify.SearchResult) :
                         ,artists=', '.join([artist.name for artist in album.artists])
                         ,release_year=album.release_date
                     ) for album in albums]
-    artists_result = [dict(
+    artists_result = [Meta.Artist(
                         name=artist.name
                         ,img=artist.images[0].url if hasattr(artist,'images') and artist.images and artist.images[0].url else None
                     ) for artist in artists]
-    
-    search_result = Meta.SearchResult(
-        artists=artists_result,
-        albums=albums_result,
-        tracks=tracks_result
     
     search_result = Meta.SearchResult(
         artists=artists_result,
