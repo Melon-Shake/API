@@ -190,12 +190,6 @@ for index, row in selected_columns.iterrows():
     cursor.execute("SELECT name FROM spotify_tracks;")
     all_songs = cursor.fetchall()
 
-    # 데이터프레임 생성 (예: selected_columns)
-    # 아래 코드에선 selected_columns를 직접 생성하거나 사용하는 데이터프레임으로 대체해야 합니다.
-    # 데이터프레임의 'hashtag' 열에는 "[]" 값이 들어있어야 합니다.
-
-    # "[]" 값을 대체하는 코드
-     # "[]" 값을 대체하는 코드
     hashtag = row['hashtag']
     if hashtag == '[]':
         hashtag = random.choice(all_songs)[0]
@@ -229,5 +223,3 @@ for index, row in selected_columns.iterrows():
     user_values = (datetime,track_id, user_id)
     cursor.execute(search_query, user_values)
     conn.commit()  # 커밋
-
-

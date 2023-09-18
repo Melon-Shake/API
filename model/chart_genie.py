@@ -25,7 +25,7 @@ class ChartGenie(BaseModel) :
     def decode_url(cls, v):
         return unquote(v)
 
-class ChartGenieORM(Base) :
+class GenieORM(Base) :
     __tablename__ = 'chart_genie'
 
     id = Column(Integer, primary_key=True)

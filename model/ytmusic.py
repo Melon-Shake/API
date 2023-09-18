@@ -8,12 +8,10 @@ class ThumbnailInfo(BaseModel):
     default:DefaultInfo
 class Snippet(BaseModel):
     title: str
-    # description: str
     thumbnails: ThumbnailInfo
     position: int
 
 class ContentDetails(BaseModel):
-    # videoId: str
     videoPublishedAt: str
 class js_ChartYoutube(BaseModel) :
     snippet: Snippet
@@ -22,8 +20,6 @@ class js_ChartYoutube(BaseModel) :
 class js_SumChart(BaseModel) :
     model_config = ConfigDict(from_attributes=True)
     result_item: List[js_ChartYoutube]
-    
-# --------------------------------------------------------------------------
     
 class hy_ChartYoutube(BaseModel) :
     model_config = ConfigDict(from_attributes=True)

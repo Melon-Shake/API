@@ -162,6 +162,3 @@ def lyric_search_and_input(artist, track, track_id, GENIUS_API_KEY):
         insert_data(lyric,track_id,api)
         return True
 
-# artist = "(여자) 아이들"
-# track = "All Night"
-# print(lyric_search(artist,track,GENIUS_API_KEY))
