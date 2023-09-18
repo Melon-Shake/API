@@ -2,7 +2,6 @@ from model.spotify_client import SpotifyClientORM, SpotifyClientEntity
 from model.database import session_scope
 
 import requests
-import json
 
 if __name__ == '__main__':
     
@@ -12,10 +11,6 @@ if __name__ == '__main__':
         , 'secret': '696d03cb2ad84ac693342793df26bc09'
         , 'redirect_uri': 'http://localhost:8000/callback'
      }
-    
-    # with session_scope() as session :
-    #     client_orm = SpotifyClientORM(client)
-    #     session.add(client_orm)
 
     with session_scope() as session :
         client_orm = session.query(SpotifyClientORM).filter_by(user=client.get('user')).first()

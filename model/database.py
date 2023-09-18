@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 from sqlalchemy.ext.declarative import declarative_base
