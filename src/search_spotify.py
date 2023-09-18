@@ -304,7 +304,7 @@ def func_lyric(tracks_data:list[Spotify.TracksORM]):
             Lyric.lyric_search_and_input(track_id=track_id,track=track_name,artist=artist_names
                                          , GENIUS_API_KEY=Lyric.GENIUS_API_KEY)
     Analyze.lyrics_analyze()
-    func_analyze()
+    # func_analyze()
 
 def func_analyze():
     import src.full_analyze as Analyze

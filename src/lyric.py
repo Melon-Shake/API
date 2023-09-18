@@ -62,10 +62,9 @@ def insert_data(content, track_id,api):
         # content가 문자열인 경우
         if isinstance(content, str):
             escaped_content = content.replace("'", "''")
-        # content가 리스트인 경우, 첫 번째 값을 사용
-        elif isinstance(content, list) and len(content) > 0:
-            print(content)
-            escaped_content = content[0].replace("'", "''")
+        # content가 리스트인 경우, 모든 문자열을 이어붙임
+        elif isinstance(content, list):
+            escaped_content = ''.join(content).replace("'", "''")
         else:
             print("데이터 삽입 실패: 유효한 content가 제공되지 않았습니다.")
             escaped_content = 'False'
