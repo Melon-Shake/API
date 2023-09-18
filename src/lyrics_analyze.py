@@ -1,5 +1,6 @@
 import pandas as pd
 import psycopg2
+from config.db_info import db_params
 
 
 def lyrics_analyze():
@@ -22,16 +23,6 @@ def lyrics_analyze():
 
         return word_counts
 
-    # 데이터베이스 연결 정보 설정
-    db_params = {
-        'user': 'postgres',
-        'password': '12345678',
-        'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-        'port': '5432',
-        'database': 'postgres'
-    }
-
-    # 데이터베이스에 연결
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
 
@@ -55,7 +46,6 @@ def lyrics_analyze():
                 SET romantic_words = {romantic_words}, adventurous_words = {adventurous_words}, powerful_words = {powerful_words}, depressed_words = {depresed_words}
                 WHERE id = '{track_id}';"""
         cursor.execute(query)
-        
-    # 연결 닫기
+
     conn.commit()
     conn.close()

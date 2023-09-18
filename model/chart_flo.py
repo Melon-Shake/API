@@ -35,7 +35,7 @@ class ChartFlo(BaseModel) :
     artistList: List[Artist]
     album: Album
 
-class ChartFloORM(Base) :
+class FloORM(Base) :
     __tablename__ = 'chart_flo'
 
     id = Column(Integer, primary_key=True)

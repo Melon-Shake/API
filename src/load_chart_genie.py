@@ -1,12 +1,11 @@
-import re
 import requests
 import sys
 
 import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
-from update_token import return_token
-from model.chart_genie import ChartGenie , ChartGenieORM
+from get_token import return_token
+from model.chart_genie import ChartGenie, GenieORM
 from model.database import session_scope
 
 access_token = return_token()
@@ -34,40 +33,37 @@ if __name__ == '__main__' :
 
         entries = {}
         for index, item in enumerate(responsed_data):
-            # 제목 디코딩
             pre_track_title = item['SONG_NAME']
-            track_title = urllib.parse.unquote(pre_track_title)
-            cleaned_track = re.sub(r'\([^)]*\)', '', track_title)
+            pre_track_title = pre_track_title.replace("-", "")
+            pre_track_title = pre_track_title.replace("Prod. by", "Prod.")
+            pre_track_title = urllib.parse.unquote(pre_track_title)
             
-            # 예외 처리
-            if cleaned_track == '이브, 프시케 그리고 푸른 수염의 아내':
-                cleaned_track = 'Eve, Psyche & The Bluebeard’s wife'
-                
-            if track_title == '건물 사이에 피어난 장미 (Rose Blossom)':
-                track_title = 'Rose Blossom'
-                
-            if track_title == '해요 (2022)':
-                track_title = 'haeyo 2022'
+            if pre_track_title == '이브, 프시케 그리고 푸른 수염의 아내':
+                pre_track_title = 'Eve, Psyche & The Bluebeard’s wife'
+            elif pre_track_title == '파이팅 해야지 (Feat. 이영지)':
+                pre_track_title ='Fighting'
+            elif pre_track_title == '손오공':
+                pre_track_title ='Super'
+            elif pre_track_title == '사람 Pt.2 ':
+                pre_track_title = 'People Pt.2 (feat. IU)'
+            elif pre_track_title == 'STAY (Explicit Ver.)':
+                pre_track_title = 'STAY'
            
-            # 아티스트 디코딩
             pre_artists = item.get('ARTIST_NAME')
-            artists = urllib.parse.unquote(pre_artists) 
-            cleaned_artist = re.sub(r'\([^)]*\)', '', artists)
+            pre_artists = urllib.parse.unquote(pre_artists)
+            if pre_artists == '#안녕':
+                pre_artists = urllib.parse.quote(pre_artists)# URL 디코딩
+            artists = pre_artists.split(' & ')
+            artists = ','.join(artists)
             
-            #예외 처리
-            if cleaned_artist == '#안녕':
-                cleaned_artist = urllib.parse.quote(pre_artists)
-                
-            # 앨범제목
             pre_album = item['ALBUM_NAME']
             album = urllib.parse.unquote(pre_album)
             
-            entries[index] = [cleaned_track, cleaned_artist, cleaned_album]
+            entries[index] = [pre_track_title, artists, album]
 
     for i in range(len(entries)):
         
         q = entries[i][0] + " " + entries[i][1]
-
         url = f'https://api.spotify.com/v1/search?q={q}&type=track&maket=KR&limit=1'
         headers = {
             'Authorization': 'Bearer '+access_token
@@ -89,15 +85,17 @@ if __name__ == '__main__' :
             artist_name.append(artists_sp)
             artist_ids.append(artist_id)
  
- 
-    # print(song_name[0])
-    # print(artist_name[0])
-    # print(album_name[0])
-    # print(album_img[0])
 
     for idx, e in enumerate(responsed_data) :
         entity = ChartGenie(**e)
-        orm = ChartGenieORM(entity)
+        orm = GenieORM(entity)
+        orm.track_name = song_name[idx]
+        orm.track_id = song_ids[idx]
+        orm.artist_names = ','.join(artist_name[idx])
+        orm.artist_ids = artist_ids[idx]
+        orm.album_name = album_name[idx]
+        orm.album_id = album_ids[idx]
+        orm.img_url = album_img[idx]
 
         with session_scope() as session :
             session.add(orm)

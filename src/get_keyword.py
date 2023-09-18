@@ -8,7 +8,6 @@ def save_keyword_data(data: Keyword,db_params):
     email = data.email  # 사용자 이메일
     connection = psycopg2.connect(**db_params)
     cursor = connection.cursor()
-    # 등록한 이메일인 경우 ID 가져오기
     user_query = "SELECT id FROM \"user\" WHERE email = %s;"
     user_values = (email,)
     cursor.execute(user_query, user_values)

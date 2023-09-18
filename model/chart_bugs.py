@@ -42,7 +42,7 @@ class BugsEntity(BaseModel) :
     adhoc_attr: Adhoc_Attr
     list_attr:rankInfo
 
-class Bugs_Load(BaseModel) :
+class ChartBugs(BaseModel) :
     vibe: List[BugsEntity]
 
 class BugsORM(Base) :
