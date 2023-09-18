@@ -35,9 +35,6 @@ if __name__ == '__main__':
         album_name = []
         album_ids = []
         album_img = []
-        song_ids = []
-        artist_ids = []
-        album_ids = []
 
         entries = {}
         for index, item in enumerate(responsed_data):

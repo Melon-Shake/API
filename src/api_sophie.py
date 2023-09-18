@@ -17,7 +17,7 @@ async def search_spotify(data:Spotify.SearchKeyword):
     access_token = update_token()
     search_header = {'Authorization': f'Bearer {access_token}'}
 
-    parsed_data = Search.search_by_keywords(data.searchInput,limit=10)
+    parsed_data = Search.search_by_keywords(data.searchInput,limit=1)
     culled_data = Search.cull_data(parsed_data.tracks)
     
     search_data = Search.return_search(culled_data)
@@ -28,7 +28,7 @@ async def load_spotify(data:Spotify.SearchKeyword):
     access_token = update_token()
     search_header = {'Authorization': f'Bearer {access_token}'}
 
-    parsed_data = Search.search_by_keywords(data.searchInput,limit=1)
+    parsed_data = Search.search_by_keywords(data.searchInput,limit=10)
     culled_data = Search.cull_data(parsed_data.tracks)
     Search.load_spotify(culled_data)
 
@@ -39,3 +39,5 @@ async def load_spotify(data:Spotify.SearchKeyword):
     # artist_ids = [artist.id for artist in culled_data.artists]
     # for artist_id in artist_ids :
     #     Search.get_artist_albums(artist_id)
+
+    Search.func_lyric(culled_data.tracks)
