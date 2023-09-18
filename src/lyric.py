@@ -28,6 +28,31 @@ def gg_lyrics_craw(artist,track,album=''):
             lyrics_list.append(val.text)
     return lyrics_list
 
+from selenium import webdriver
+from urllib.parse import urlparse, parse_qs
+
+def gg_lyrics_craw(artist,track,album=''):
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')  
+
+
+    driver = webdriver.Chrome(options=chrome_options)
+
+    url = f"https://www.google.com/search?q={artist}+{track}+{album}+lyrics&sca_esv=565545338&ei=adsDZcrGD_nY1e8P8NC1yAQ&ved=0ahUKEwiKn8vV4auBAxV5bPUHHXBoDUkQ4dUDCBA&uact=5&oq={artist}+{track}+{album}+lyrics&gs_lp=Egxnd3Mtd2l6LXNlcnAiH-yVhOydtOycoCDsoovsnYDrgqAgUkVBTCBseXJpY3MyCBAhGKABGMMEMggQIRigARjDBDIIECEYoAEYwwQyCBAhGKABGMMESLAjULMIWIwccAJ4AZABAJgBlwGgAZgFqgEDMC41uAEDyAEA-AEBwgIKEAAYRxjWBBiwA8ICBBAAGB7iAwQYACBBiAYBkAYK&sclient=gws-wiz-serp"
+
+    driver.get(url)
+    # time.sleep(10)
+    req = driver.page_source
+    soup = BeautifulSoup(req, 'html.parser')
+
+    articles = soup.find_all('div', class_='sATSHe')
+    lyrics_list = []
+    for div in articles:
+        vals = div.find_all('div', class_='ujudUb')
+        for val in vals:
+            lyrics_list.append(val.text)
+    return lyrics_list
+
 GENIUS_API_KEY = "hvNyikfbrRz7IrjRN2wyrFwCc2YstwyCSsxcUAiwg9hbat_vNaEk8nqMBguxrlNt"
 
 def insert_data(content, track_id,api):
@@ -189,15 +214,43 @@ def lyric_search(artist, track, GENIUS_API_KEY):
 #         lyric = genius_unique_search(artist,track,GENIUS_API_KEY)[-1] 
 #         insert_data(lyric,track_id,api)
 #         return True
+# def lyric_search_and_input(artist, track, track_id, GENIUS_API_KEY):
+#     lyric = musix_match_lyric_search(artist,track)
+#     if lyric:
+#         api = "musix_match"
+#         insert_data(lyric,track_id,api)
+#         return True
+#     else:
+#         api = "genius"
+#         lyric = genius_unique_search(artist,track,GENIUS_API_KEY)[-1] 
+#         insert_data(lyric,track_id,api)
+#         return True
 def lyric_search_and_input(artist, track, track_id, GENIUS_API_KEY):
+    lyric = musix_match_lyric_search(artist, track)
+    
     lyric = musix_match_lyric_search(artist, track)
     
     if lyric:
         api = "musix_match"
         insert_data(lyric, track_id, api)
+        insert_data(lyric, track_id, api)
         return True
     else:
         api = "genius"
+        genius_lyric = genius_unique_search(artist, track, GENIUS_API_KEY)[-1]
+        
+        if genius_lyric:
+            insert_data(genius_lyric, track_id, api)
+            return True
+        else:
+            # 만약 genius_unique_search에서도 가사를 찾지 못한 경우 gg_search 함수 호출
+            gg_lyric = gg_lyrics_craw(artist, track)
+            if gg_lyric:
+                api = 'google'
+                insert_data(gg_lyric, track_id, api)
+                return True
+            else:
+                insert_data('NO_lyrics', track_id, 'no')
         genius_lyric = genius_unique_search(artist, track, GENIUS_API_KEY)[-1]
         
         if genius_lyric:
