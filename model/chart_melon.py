@@ -26,6 +26,7 @@ class ChartMelon(BaseModel):
   PASTRANK: str
   ALBUMIMG: str
   ISSUEDATE: str
+  
 class MelonORM(Base):
   __tablename__ = 'chart_melon'
 

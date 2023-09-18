@@ -7,8 +7,8 @@ import pandas as pd
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 from model.database import engine
-from model.chart_genie import ChartGenieORM
-from model.chart_flo import ChartFloORM
+from model.chart_genie import GenieORM
+from model.chart_flo import FloORM
 from model.chart_vibe import  VibeORM
 from model.chart_bugs import  BugsORM
 from model.chart_melon import MelonORM
@@ -25,9 +25,9 @@ class TotalChart(BaseModel) :
     img_url : str
 
 with session_scope() as session:
-    genieOrms = session.query(ChartGenieORM).all()
+    genieOrms = session.query(GenieORM).all()
     VibeOrms = session.query(VibeORM).all()
-    floOrms = session.query(ChartFloORM).all()
+    floOrms = session.query(FloORM).all()
     bugsOrms = session.query(BugsORM).all()
     melonOrms = session.query(MelonORM).all()
     
@@ -88,7 +88,6 @@ with session_scope() as session:
                     ,img_url=melonOrm.img_url
                 ) for melonOrm in melonOrms]
     
-    # 5개 차트합
     integrated = []
     integrated.extend(entrie_bugs)
     integrated.extend(entrie_flo)
@@ -99,6 +98,6 @@ with session_scope() as session:
     merged_df = pd.DataFrame([vars(chart) for chart in integrated])     #dataframe 형식으로 변환
     merged_df['artist_ids'] = merged_df['artist_ids'].apply(lambda x: ', '.join(x))
     result_df = merged_df.groupby(['track_name', 'artist_names', 'album_name','img_url','track_id','artist_ids','album_id'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름,아이디들이 같은경우 점수합산
-    result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순으로 정렬
+    result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순 정렬
     df = result_df.drop('index', axis=1)
     df.to_sql('total_chart', engine, if_exists='replace', index=True)   #데이터프레임을 데이터베이스 'total_chart'로 생성
