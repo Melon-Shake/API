@@ -1,5 +1,7 @@
 --DROP TABLE IF EXISTS chart_vibe CASCADE
 ;
+--DROP TABLE IF EXISTS chart_vibe CASCADE
+;
 CREATE TABLE IF NOT EXISTS chart_vibe (
 	id serial,
   track_name varchar(255),

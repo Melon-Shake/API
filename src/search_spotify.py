@@ -178,6 +178,7 @@ def deduplicate(models:list[object]) :
     return uniq
 
 def deduplicate_by_filter(models:list[object],models_filter:list[object]) :
+def deduplicate_by_filter(models:list[object],models_filter:list[object]) :
     ids_uniq = set(model.id for model in models_filter)
     uniq = list()
     for model in models :
@@ -196,14 +197,12 @@ def cull_data(parsed_data:Spotify.SearchTracks) :
     artists_data = deduplicate(artists_data)
     artists_data = [search_by_href(artist.href) for artist in artists_data]
 
-    culled_data = Spotify.SearchResult(
-        tracks=tracks_data,
-        albums=albums_data,
-        artists=artists_data
-    )
-    return culled_data
-
-# 3 - culled_data -> search_data
+        search_result = Spotify.SearchResult(
+            tracks = deduplicate(tracks_data)
+            , albums = deduplicate(albums_data)
+            , artists = deduplicate_by_filter(artists_data,artists_filter)
+        )
+        return search_result
 
 def convert_timestamp(millis:int) :
     seconds = millis // 1000
@@ -213,10 +212,13 @@ def convert_timestamp(millis:int) :
     return ':'.join(map(str, duration))
 
 def return_search(search_result:Spotify.SearchResult) :
+
+def return_search(search_result:Spotify.SearchResult) :
     tracks = search_result.tracks
     albums = search_result.albums
     artists = search_result.artists
 
+    tracks_result = [Meta.Track(
     tracks_result = [Meta.Track(
                         name=track.name
                         ,img=track.album.images[0].url if hasattr(track.album,'images') and track.album.images and track.album.images[0].url else None
@@ -224,11 +226,13 @@ def return_search(search_result:Spotify.SearchResult) :
                         ,duration=convert_timestamp(int(track.duration_ms))
                     ) for track in tracks]
     albums_result = [Meta.Album(
+    albums_result = [Meta.Album(
                         name=album.name
                         ,img=album.images[0].url if hasattr(album,'images') and album.images and album.images[0].url else None
                         ,artists=', '.join([artist.name for artist in album.artists])
                         ,release_year=album.release_date
                     ) for album in albums]
+    artists_result = [Meta.Artist(
     artists_result = [Meta.Artist(
                         name=artist.name
                         ,img=artist.images[0].url if hasattr(artist,'images') and artist.images and artist.images[0].url else None
@@ -238,7 +242,15 @@ def return_search(search_result:Spotify.SearchResult) :
         artists=artists_result,
         albums=albums_result,
         tracks=tracks_result
+    
+    search_result = Meta.SearchResult(
+        artists=artists_result,
+        albums=albums_result,
+        tracks=tracks_result
     )
+    return search_result
+
+# 3 - culled_data -> load db : spotify_artists, spotify_albums, spotify_tracks
     return search_result
 
 # 3 - culled_data -> load db : spotify_artists, spotify_albums, spotify_tracks

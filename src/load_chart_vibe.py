@@ -137,6 +137,7 @@ if __name__ == '__main__':
         album_ids = []
         album_img = []
         # print(responsed_data[0])
+        # print(responsed_data[0])
         entries = {}
         
         
@@ -193,51 +194,27 @@ if __name__ == '__main__':
             pre_album = e.album.albumTitle
             parse_album = urllib.parse.unquote(pre_album)
             
-            pre_artist = e.artists
-            artists = []
-            pre_artist = e.artists
-            artists = []
             for artist in pre_artist:
-                pre_artist = artist.artistName
-                parse_artist = urllib.parse.unquote(pre_artist)  # URL 디코딩
-                if parse_artist == '#안녕':
-                    parse_artist = urllib.parse.quote(parse_artist)
-                artists.append(parse_artist) 
-            artists = ','.join(artists)
-            entries[index] = [pre_track_title, artists, parse_album]
-        
-        for i in range(len(entries)):
-            q = entries[i][0] + " " + entries[i][1]
-            url = f'https://api.spotify.com/v1/search?q={q}&type=track&maket=KR&limit=1'
-            headers = {
-                'Authorization': 'Bearer '+access_token
-            }
-            response_sp = requests.get(url, headers=headers)
-            if response_sp.status_code == 200:
-                sp_json = response_sp.json()
-                artists_sp_nm = []
-                artist_id = []
-                song_name.append(sp_json['tracks']['items'][0]['name'])
-                song_ids.append(sp_json['tracks']['items'][0]['id'])
-                album_name.append(sp_json['tracks']['items'][0]['album']['name'])
-                album_ids.append(sp_json['tracks']['items'][0]['album']['id'])
-                album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
-                for j in range(len(sp_json['tracks']['items'][0]['artists'])):
-                    artists_sp_nm.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
-                    artist_id.append(sp_json['tracks']['items'][0]['artists'][j]['id'])
-                artist_name.append(artists_sp_nm)
-                artist_ids.append(artist_id)
-        
-        for idx, e in enumerate(responsed_data):
-            entity = VibeEntity(**e)
-            orm = VibeORM(entity)
-            orm.track_name = song_name[idx]
-            orm.track_id = song_ids[idx]
-            orm.artist_names = ','.join(artist_name[idx])
-            orm.artist_ids = artist_ids[idx]
-            orm.album_name = album_name[idx]
-            orm.album_id = album_ids[idx]
-            orm.img_url = album_img[idx]
+                artist_nm = artist['artistName']
+                artists = urllib.parse.unquote(artist_nm)
+                cleaned_artist = re.sub(r'\([^)]*\)', '', artists)
+                artist_pre.append(cleaned_artist)
+                
+                if artist_nm == '#안녕':
+                    artists = urllib.parse.quote(artist_nm)
+                    
+                artist_pre.append(artists)
+            
+            # 앨범 제목
+            pre_album = item['album']['title']
+            album = urllib.parse.unquote(pre_album)
+            cleaned_album = re.sub(r'\([^)]*\)', '', album)
 
-            with session_scope() as session :
-                session.add(orm)
+            artist_pre.append(artist_nm)
+            entries[index] = [track_title, artist_pre, album_title]
+        # for x in responsed_data :
+        #     entity = VibeEntity(**x)
+        #     orm = VibeORM(entity)
+
+        #     with session_scope() as session :
+        #         session.add(orm)

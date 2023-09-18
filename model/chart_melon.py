@@ -41,7 +41,6 @@ class MelonORM(Base):
   cur_rank = Column(Integer, nullable=True)
   past_rank = Column(Integer, nullable=True)
   issue_date = Column(String, nullable=True)
-  artist_ids = Column(ARRAY(Integer), nullable=True)
   artist_names = Column(ARRAY(String), nullable=True)
   genre_name = Column(String, nullable=True)
   points = Column(Float, nullable=True)
@@ -49,15 +48,13 @@ class MelonORM(Base):
 
   def __init__(self, entity):
     self.track_name = entity.SONGNAME
+    self.track_name = entity.SONGNAME
     self.album_name = entity.ALBUMNAME
+    self.img_url = entity.ALBUMIMG
     self.img_url = entity.ALBUMIMG
     self.cur_rank = entity.CURRANK
     self.past_rank = entity.PASTRANK
     self.issue_date = entity.ISSUEDATE
-    self.artist_ids = list()
     self.artist_names = list()
-    for artist in entity.ARTISTLIST :
-      self.artist_ids.append(artist.ARTISTID)
-      self.artist_names.append(artist.ARTISTNAME)
     self.genre_name = entity.GENRELIST[0].GENRENAME
     self.points = (101-self.cur_rank)*32.8

@@ -1,7 +1,9 @@
 import sys
 import os
+import re
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
+import urllib.parse
 import urllib.parse
 
 from get_token import return_token
