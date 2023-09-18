@@ -20,6 +20,7 @@ from get_keyword import save_keyword_data
 from user_data import user_data
 from user_search_track import pick_data
 from daily_search_ranking import daily_search_ranking
+from make_playlist import make_playlist
 from search_spotify import *
 from model.spotify_search import *
 
@@ -70,6 +71,10 @@ def get_use_data(data: search_track):
 def get_daily_search_ranking():
     search_ranking_result = daily_search_ranking()
     return search_ranking_result
+
+@app.post('/playlist/')
+def get_playlist(data:playlist):
+    return make_playlist(data,5,db_params)
 
 @app.post("/lyric_input/")
 def lyric_input(item : lyric_data):
