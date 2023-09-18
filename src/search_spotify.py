@@ -197,12 +197,15 @@ def cull_data(parsed_data:Spotify.Search) :
     artists_data = deduplicate(artists_data)
     artists_data = [search_by_href(artist.href) for artist in artists_data]
 
-    culled_data= Spotify.SearchResult(
+    culled_data = Spotify.SearchResult(
         tracks=tracks_data,
         albums=albums_data,
         artists=artists_data
-        )
+    )
     return culled_data
+
+# 3 - culled_data -> search_data
+
 def convert_timestamp(millis:int) :
     seconds = millis // 1000
     minutes, seconds = divmod(seconds, 60)
@@ -216,19 +219,23 @@ def return_search(search_result:Spotify.SearchResult) :
     artists = search_result.artists
 
     tracks_result = [Meta.Track(
-                        name=track.name
+                        id=track.id
+                        ,album_id=track.album.id
+                        ,name=track.name
                         ,img=track.album.images[0].url if hasattr(track.album,'images') and track.album.images and track.album.images[0].url else None
-                        ,artists=', '.join([artist.name for artist in track.artists])
+                        ,artist=', '.join([artist.name for artist in track.artists])
                         ,duration=convert_timestamp(int(track.duration_ms))
                     ) for track in tracks]
     albums_result = [Meta.Album(
-                        name=album.name
+                        id=album.id
+                        ,name=album.name
                         ,img=album.images[0].url if hasattr(album,'images') and album.images and album.images[0].url else None
-                        ,artists=', '.join([artist.name for artist in album.artists])
+                        ,artist=', '.join([artist.name for artist in album.artists])
                         ,release_year=album.release_date
                     ) for album in albums]
     artists_result = [Meta.Artist(
-                        name=artist.name
+                        id=artist.id
+                        ,name=artist.name
                         ,img=artist.images[0].url if hasattr(artist,'images') and artist.images and artist.images[0].url else None
                     ) for artist in artists]
     
@@ -237,9 +244,6 @@ def return_search(search_result:Spotify.SearchResult) :
         albums=albums_result,
         tracks=tracks_result
     )
-    return search_result
-
-# 3 - culled_data -> load db : spotify_artists, spotify_albums, spotify_tracks
     return search_result
 
 # 3 - culled_data -> load db : spotify_artists, spotify_albums, spotify_tracks
@@ -258,7 +262,7 @@ def load_spotify(search_result:Spotify.SearchResult) :
         session.add_all(albums)
         session.add_all(artists)
     
-    # func_lyric(search_result.tracks)
+    func_lyric(search_result.tracks)
 
 # 4 - load and update db : spotify_audio_featurs, lyrics, audio_features
 
@@ -281,28 +285,25 @@ def get_audio_features(track_id:str) :
 
 def func_lyric(tracks_data:list[Spotify.TracksORM]):
     import src.lyric as Lyric
-    import src.lyrics_analyze as AnalyzeLyric
-    import src.track_analyze as AnalyzeTrack
+    import src.lyrics_analyze as Analyze
     for track in tracks_data :
         Lyric.lyric_search_and_input(
             track_id=track.id, track=track.name, artist=','.join([artist.name for artist in track.artists])
             , GENIUS_API_KEY=Lyric.GENIUS_API_KEY)
-    with DB.engine.connect() as con :
-        res = con.execute(DB.text('''
-                                    SELECT tr.id, tr.name, string_agg(DISTINCT ta."name"::TEXT,',') 
-                                    FROM spotify_artists ta 
-                                    LEFT JOIN spotify_tracks tr ON ta.id = any(tr.artists_ids)
-                                    LEFT JOIN lyrics lr ON lr.id = tr.id
-                                    WHERE lr."content" IS NULL AND tr.id IS NOT NULL AND tr.name IS NOT null
-                                    GROUP BY tr.id, tr.name
-                                  ''')).fetchall()
-        for row in res :
-            track_id, track_name, artist_names = row[0], row[1], row[2]
-            Lyric.lyric_search_and_input(track_id=track_id,track=track_name,artist=artist_names
-                                         , GENIUS_API_KEY=Lyric.GENIUS_API_KEY)
-    AnalyzeLyric.lyrics_analyze()
-    AnalyzeTrack.audio_features_update()
-
+    # with DB.engine.connect() as con :
+    #     res = con.execute(DB.text('''
+    #                                 SELECT tr.id, tr.name, string_agg(DISTINCT ta."name"::TEXT,',') 
+    #                                 FROM spotify_artists ta 
+    #                                 LEFT JOIN spotify_tracks tr ON ta.id = any(tr.artists_ids)
+    #                                 LEFT JOIN lyrics lr ON lr.id = tr.id
+    #                                 WHERE lr."content" IS NULL AND tr.id IS NOT NULL AND tr.name IS NOT null
+    #                                 GROUP BY tr.id, tr.name
+    #                               ''')).fetchall()
+    #     for row in res :
+    #         track_id, track_name, artist_names = row[0], row[1], row[2]
+    #         Lyric.lyric_search_and_input(track_id=track_id,track=track_name,artist=artist_names
+    #                                      , GENIUS_API_KEY=Lyric.GENIUS_API_KEY)
+    Analyze.lyrics_analyze()
 
 if __name__ == '__main__' :
     pass
