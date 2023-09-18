@@ -86,13 +86,38 @@ if __name__ == '__main__':
 
                 for j in range(len(sp_json['tracks']['items'][0]['artists'])):
                     artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
-                    artist_id.append(sp_json['tracks']['items'][0]['artists'][j]['id'])
-                artist_name.append(artists_sp)
-                artist_ids.append(artist_id)
+                artist_name.append(', '.join(artists_sp))
+            elif response_sp.status_code != 200 :
+                q = entries[i][0] + " " + entries[i][1]+ " " + entries[i][2]
+                url = f'https://api.spotify.com/v1/search?q={q}&type=track&market=KR&limit=1'
+                headers = {
+                    'Authorization': 'Bearer '+access_token
+                }
+                response_sp = requests.get(url, headers=headers)
+                if response_sp.status_code == 200:
+                    sp_json = response_sp.json()
+                    artists_sp = []
+                    song_name.append(sp_json['tracks']['items'][0]['name'])
+                    album_name.append(sp_json['tracks']['items'][0]['album']['name'])
+                    album_img.append(sp_json['tracks']['items'][0]['album']['images'][0]['url'])
+                    
+                    for j in range(len(sp_json['tracks']['items'][0]['artists'])):
+                        artists_sp.append(sp_json['tracks']['items'][0]['artists'][j]['name'])
+                    artist_name.append(', '.join(artists_sp))
+
+                responsed_data[i]['track_title'] = song_name[i]
+                responsed_data[i]['artists'][0]['artist_nm'] = artist_name.pop()
+                responsed_data[i]['album']['title'] = album_name[i]
+                responsed_data[i]['album']['image']['path'] = album_img[i]
+
         
         for idx, e in enumerate(responsed_data) :
             entity = BugsEntity(**e)
             orm = BugsORM(entity)
+            orm.track_name = song_name[idx]
+            orm.album_name = album_name[idx]
+            orm.img_url = album_img[idx]
+            orm.artist_names = artist_name[idx]
 
             with session_scope() as session :
                 session.add(orm)
