@@ -46,7 +46,6 @@ def lyrics_analyze():
                 SET romantic_words = {romantic_words}, adventurous_words = {adventurous_words}, powerful_words = {powerful_words}, depressed_words = {depresed_words}
                 WHERE id = '{track_id}';"""
         cursor.execute(query)
-        
-    # 연결 닫기
+
     conn.commit()
     conn.close()

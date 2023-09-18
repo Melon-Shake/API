@@ -1,6 +1,6 @@
 import requests
 import sys
-import os, urllib.parse, re
+import os, urllib.parse
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 

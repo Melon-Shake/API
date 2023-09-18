@@ -5,7 +5,6 @@ import os
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 import pandas as pd
-import requests
 import lib.module as module
 from pydantic import BaseModel
 import bcrypt
@@ -13,13 +12,7 @@ import psycopg2
 from datetime import datetime
 from config.db_info import db_params
 from lyric import lyric_search_and_input
-from sp_track import sp_and_track_input, get_sp_track_id
 from get_token import return_token
-from model.chart_genie import GenieORM
-from model.chart_flo import FloORM
-from model.chart_vibe import  VibeORM
-from model.chart_bugs import  BugsORM
-from model.chart_melon import MelonORM
 from typing import Dict, List, Union
 from model.database import session_scope
 from model.jun_model import *
@@ -91,15 +84,15 @@ def lyric_input(item : lyric_data):
     else:
         raise HTTPException(status_code=404, detail="Lyric ERR.")
     
-@app.post("/sp_and_track_update/")
-def sp_track_input(item: sp_data):
-    artist = item.artist
-    album = item.album
-    track = item.track
-    d = get_sp_track_id(artist, album, track)
+# @app.post("/sp_and_track_update/")
+# def sp_track_input(item: sp_data):
+#     artist = item.artist
+#     album = item.album
+#     track = item.track
+#     d = get_sp_track_id(artist, album, track)
     
-    if d[0] is not None and d[1] is not None:  # get_sp_track_id 함수의 반환값이 None이 아닌지 확인
-        result = sp_and_track_input(d[0], d[1], artist, album, track)
-        return result
-    else:
-        raise HTTPException(status_code=404, detail="Track not found or error in processing.")
+#     if d[0] is not None and d[1] is not None:  # get_sp_track_id 함수의 반환값이 None이 아닌지 확인
+#         result = sp_and_track_input(d[0], d[1], artist, album, track)
+#         return result
+#     else:
+#         raise HTTPException(status_code=404, detail="Track not found or error in processing.")
