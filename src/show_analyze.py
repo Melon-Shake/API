@@ -10,6 +10,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
+from config.db_info import db_params
+
 def show_plt_by_track_id(target_track_id):
     # target_track_id = '3ucfniv4fLB3RPA6N9iLM2'
 
@@ -40,14 +42,6 @@ def data_analyze():
         if isinstance(value, Decimal):
             return round(value, 2)
         return value
-    
-    db_params = {
-        'user': 'postgres',
-        'password': '12345678',
-        'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-        'port': '5432',
-        'database': 'postgres'
-    }
 
     # 데이터베이스에 연결
     conn = psycopg2.connect(**db_params)

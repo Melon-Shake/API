@@ -1,15 +1,11 @@
 import numpy as np
+import psycopg2
+import pandas as pd
+from config.db_info import db_params
 from sklearn.metrics.pairwise import cosine_similarity
 
 def ml_playlist(user_id, song_count):
-    db_params = {
-        'user': 'postgres',
-        'password': '12345678',
-        'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-        'port': '5432',
-        'database': 'postgres'
-    }
-
+    
     # 데이터베이스에 연결
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()

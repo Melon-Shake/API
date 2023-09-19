@@ -3,6 +3,8 @@ import psycopg2
 import pandas as pd
 from tqdm import tqdm
 import decimal
+from config.db_info import db_params
+import numpy as np
 
 
 
@@ -33,13 +35,7 @@ def audio_features_update():
                 if id in df['id'].values:
                     total_score += df.loc[df['id'] == id, 'points'].sum()
             return id, total_score
-        db_params = {
-            'user': 'postgres',
-            'password': '12345678',
-            'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-            'port': '5432',
-            'database': 'postgres'
-        }
+
 
         # 데이터베이스에 연결
         conn = psycopg2.connect(**db_params)
@@ -101,14 +97,6 @@ def audio_features_update():
         cursor.close()
         conn.close()
 
-    # 데이터베이스 연결 정보
-    db_params = {
-        'user': 'postgres',
-        'password': '12345678',
-        'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-        'port': '5432',
-        'database': 'postgres'
-    }
 
     # 데이터베이스에 연결
     conn = psycopg2.connect(**db_params)
@@ -203,14 +191,7 @@ import pandas as pd
 from tqdm import tqdm
 
 def user_features_update():
-    # 데이터베이스 연결 정보
-    db_params = {
-        'user': 'postgres',
-        'password': '12345678',
-        'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-        'port': '5432',
-        'database': 'postgres'
-    }
+    
 
     # 데이터베이스에 연결
     conn = psycopg2.connect(**db_params)

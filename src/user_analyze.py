@@ -1,15 +1,7 @@
 import psycopg2
 import pandas as pd
 from tqdm import tqdm
-
-# 데이터베이스 연결 정보
-db_params = {
-    'user': 'postgres',
-    'password': '12345678',
-    'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-    'port': '5432',
-    'database': 'postgres'
-}
+from config.db_info import db_params
 
 # 데이터베이스에 연결
 conn = psycopg2.connect(**db_params)
