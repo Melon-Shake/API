@@ -29,32 +29,6 @@ def gg_lyrics_craw(artist,track,album=''):
             lyrics_list.append(val.text)
     return lyrics_list
 
-# def insert_data(content, track_id,api):
-#     try:
-#         connection = psycopg2.connect(**db.db_params)
-#         cursor = connection.cursor()
-#         escaped_content = content.replace("'", "''")
-#         if api == "musix_match":
-#             query = f"INSERT INTO lyrics (content, id, musix_match) VALUES ('{escaped_content}', '{track_id}', 'True')"
-#         elif api == "genius":
-#             query = f"INSERT INTO lyrics (content, id, genius) VALUES ('{escaped_content}', '{track_id}', 'True')"
-#         elif api == 'google':
-#             query = f"INSERT INTO lyrics (content, id, google) VALUES ('{escaped_content}', '{track_id}', 'True')"
-#         else:
-#             query = f"INSERT INTO lyrics (content, id) VALUES ('No_Lyrics','{track_id}')"
-            
-#         cursor.execute(query)
-
-#         connection.commit()
-#         print("데이터가 성공적으로 삽입되었습니다.")
-
-#     except (Exception, psycopg2.Error) as error:
-#         print("데이터 삽입 중 에러 발생:", error)
-#     finally:
-#         if connection:
-#             cursor.close()
-#             connection.close()
-
 def insert_data(content, track_id,api):
     try:
         connection = psycopg2.connect(**db.db_params)
@@ -68,12 +42,19 @@ def insert_data(content, track_id,api):
         else:
             print("데이터 삽입 실패: 유효한 content가 제공되지 않았습니다.")
             escaped_content = 'False'
+
         if api == "musix_match":
             query = f"INSERT INTO lyrics (content, id, musix_match) VALUES ('{escaped_content}', '{track_id}', 'True')"
         elif api == "genius":
             query = f"INSERT INTO lyrics (content, id, genius) VALUES ('{escaped_content}', '{track_id}', 'True')"
+        elif api == 'google':
+            query = f"INSERT INTO lyrics (content, id, google) VALUES ('{escaped_content}', '{track_id}', 'True')"
+        else:
+            query = f"INSERT INTO lyrics (content, id) VALUES ('No_Lyrics','{track_id}')"
+
         cursor.execute(query)
         connection.commit()
+
         print("데이터가 성공적으로 삽입되었습니다.")
     except (Exception, psycopg2.Error) as error:
         print("데이터 삽입 중 에러 발생:", error)

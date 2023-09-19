@@ -14,6 +14,7 @@ from model.chart_bugs import  BugsORM
 from model.chart_melon import MelonORM
 from model.database import session_scope
 import src.search_spotify as Search
+from src.get_token import update_token
 
 class TotalChart(BaseModel) :
     track_name : str
@@ -99,8 +100,13 @@ with session_scope() as session:
     merged_df = pd.DataFrame([vars(chart) for chart in integrated])     #dataframe 형식으로 변환
     merged_df['artist_ids'] = merged_df['artist_ids'].apply(lambda x: ', '.join(x))
     result_df = merged_df.groupby(['track_name', 'artist_names', 'album_name','img_url','track_id','artist_ids','album_id'])['points'].sum().reset_index()    # 노래제목,가수이름,앨범이름,아이디들이 같은경우 점수합산
-    track_ids = result_df['track_id'].tolist()
     
+    track_ids = result_df['track_id'].tolist()
+    access_token = update_token()
+    search_header = {'Authorization': f'Bearer {access_token}'}
+    parsed_data = [Search.search_by_id(type='track',id=track_id) for track_id in track_ids]
+    culled_data = Search.cull_data(parsed_data)
+    Search.load_spotify(culled_data)
 
     result_df = result_df.sort_values(by='points', ascending=False).reset_index()       #점수 높은순 정렬
     df = result_df.drop('index', axis=1)
