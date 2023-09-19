@@ -258,6 +258,9 @@ def user_features_update():
     cursor.close()
     conn.close()
 
+audio_features_update()
+user_features_update()
+
 
 
 
