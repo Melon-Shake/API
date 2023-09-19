@@ -12,7 +12,7 @@ import psycopg2
 from datetime import datetime
 from config.db_info import db_params
 from lyric import lyric_search_and_input
-from get_token import return_token
+from get_token import return_token, update_token
 from typing import Dict, List, Union
 from model.database import session_scope
 from model.jun_model import *
@@ -28,13 +28,13 @@ import src.search_spotify as Search
 app = FastAPI()
 
 @app.get('/token/')
-def update_token():
-    access_token = return_token()
+def get_token():
+    access_token = update_token()
     return access_token
 
 @app.post('/search/')
 async def search_spotify(data:Spotify.SearchKeyword):
-    access_token = update_token()
+    access_token = get_token()
     search_header = {'Authorization': f'Bearer {access_token}'}
 
     parsed_data = Search.search_by_keywords(data.searchInput,limit=10)
@@ -45,7 +45,7 @@ async def search_spotify(data:Spotify.SearchKeyword):
 
 @app.post('/load/')
 async def load_spotify(data:Spotify.SearchKeyword):
-    access_token = update_token()
+    access_token = get_token()
     search_header = {'Authorization': f'Bearer {access_token}'}
 
     parsed_data = Search.search_by_keywords(data.searchInput,limit=10)
