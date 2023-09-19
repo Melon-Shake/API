@@ -33,13 +33,13 @@ if __name__ == '__main__' :
 
         entries = {}
         for index, item in enumerate(responsed_data):
-            # 제목 디코딩
+            
             pre_track_title = item['SONG_NAME']
             pre_track_title = pre_track_title.replace("-", "")
             pre_track_title = pre_track_title.replace("Prod. by", "Prod.")
             pre_track_title = urllib.parse.unquote(pre_track_title)
             
-            # 예외 처리
+           
             if pre_track_title == '이브, 프시케 그리고 푸른 수염의 아내':
                 pre_track_title = 'Eve, Psyche & The Bluebeard’s wife'
             elif pre_track_title == '파이팅 해야지 (Feat. 이영지)':
