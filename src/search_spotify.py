@@ -187,8 +187,9 @@ def deduplicate_by_filter(models:list[object],models_filter:list[object]) :
             ids_uniq.remove(model.id)
     return uniq
 
+# def cull_data(parsed_data) :
 def cull_data(parsed_data:Spotify.SearchTracks) :
-    tracks_data = parsed_data.items
+    tracks_data = parsed_data.items if hasattr(parsed_data,'items') else parsed_data
 
     albums_data = [track.album for track in tracks_data]
     albums_data = deduplicate(albums_data)
