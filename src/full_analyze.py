@@ -1,8 +1,14 @@
 ## audio_features update
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
 import psycopg2
 import pandas as pd
 from tqdm import tqdm
 import decimal
+from config.db_info import db_params
+import numpy as np
 
 
 
@@ -33,13 +39,7 @@ def audio_features_update():
                 if id in df['id'].values:
                     total_score += df.loc[df['id'] == id, 'points'].sum()
             return id, total_score
-        db_params = {
-            'user': 'postgres',
-            'password': '12345678',
-            'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-            'port': '5432',
-            'database': 'postgres'
-        }
+
 
         # 데이터베이스에 연결
         conn = psycopg2.connect(**db_params)
@@ -101,14 +101,6 @@ def audio_features_update():
         cursor.close()
         conn.close()
 
-    # 데이터베이스 연결 정보
-    db_params = {
-        'user': 'postgres',
-        'password': '12345678',
-        'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-        'port': '5432',
-        'database': 'postgres'
-    }
 
     # 데이터베이스에 연결
     conn = psycopg2.connect(**db_params)
@@ -203,14 +195,7 @@ import pandas as pd
 from tqdm import tqdm
 
 def user_features_update():
-    # 데이터베이스 연결 정보
-    db_params = {
-        'user': 'postgres',
-        'password': '12345678',
-        'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-        'port': '5432',
-        'database': 'postgres'
-    }
+    
 
     # 데이터베이스에 연결
     conn = psycopg2.connect(**db_params)
@@ -249,14 +234,13 @@ def user_features_update():
         popularity = 0.0
         user_id = int(user_track_data.loc[users]['user'])
         print(user_track_data.loc[users])
-        for i, track in enumerate(user_track_data.loc[users][1]):
-            print(i,track)
-            rows = audio_features_data[audio_features_data['id'] == track]
-            romantic += float(rows['romantic'].values[0])
-            adventurous += float(rows['adventurous'].values[0])
-            depressed += float(rows['depressed'].values[0])
-            powerful += float(rows['powerful'].values[0])
-            popularity += float(rows['popularity'].values[0])
+    for i, track in enumerate(user_track_data.loc[users][1]): #['45bE4HXI0AwGZXfZtMp8JR', '4P31D4cdzUl3Afg64Jznri', '4Dr2hJ3EnVh2Aaot6fRwDO', '4P31D4cdzUl3Afg64Jznri', '4Dr2hJ3EnVh2Aaot6fRwDO']
+        rows = audio_features_data[audio_features_data['id'] == track]
+        romantic += float(rows['romantic'].values[0] if not rows.empty else 0)
+        adventurous += float(rows['adventurous'].values[0] if not rows.empty else 0)
+        depressed += float(rows['depressed'].values[0] if not rows.empty else 0)
+        powerful += float(rows['powerful'].values[0] if not rows.empty else 0)
+        popularity += float(rows['popularity'].values[0] if not rows.empty else 0)
 
         val = [user_id, romantic / len(user_track_data.loc[users][1]), adventurous / len(user_track_data.loc[users][1]), depressed / len(user_track_data.loc[users][1]), powerful / len(user_track_data.loc[users][1]), popularity / len(user_track_data.loc[users][1])]
         query = """
@@ -278,58 +262,11 @@ def user_features_update():
     cursor.close()
     conn.close()
 
+audio_features_update()
+user_features_update()
 
-import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
 
-def make_playlist(user_id, song_count):
-    db_params = {
-        'user': 'postgres',
-        'password': '12345678',
-        'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-        'port': '5432',
-        'database': 'postgres'
-    }
 
-    # 데이터베이스에 연결
-    conn = psycopg2.connect(**db_params)
-    cursor = conn.cursor()
-
-    # 컬럼 정보 조회 쿼리 실행
-    cursor.execute(f"""
-                select user_id, f1,f2,f3,f4,f5 from user_features where user_id = {user_id};
-    """)
-
-    # 결과 가져오기
-    user_data = pd.DataFrame(cursor.fetchall(),columns=['user_id','romantic', 'adventurous', 'depressed','powerful', 'popularity'])
-    
-    # 컬럼 정보 조회 쿼리 실행
-    cursor.execute("""
-                select id, romantic, adventurous, depressed,powerful, popularity from audio_features;
-    """)
-
-    # 결과 가져오기
-    track_data = pd.DataFrame(cursor.fetchall(),columns=['track_id','romantic', 'adventurous', 'depressed','powerful', 'popularity'])
-    
-    user_features = user_data[['romantic', 'adventurous', 'depressed', 'powerful', 'popularity']]
-    track_features = track_data[['romantic', 'adventurous', 'depressed', 'powerful', 'popularity']]
-    similarities = cosine_similarity(user_features, track_features)
-    
-    N = song_count  # 추천할 곡의 수
-    top_n_indices = similarities.argsort()[0][-N:][::-1]
-    
-    recommended_playlist = []
-
-    for i, song_index in enumerate(top_n_indices):
-        recommended_song_id = track_data.loc[song_index, 'SongID']
-        similarity_score = similarities[0][song_index]
-        recommended_playlist.append(recommended_song_id)
-
-    
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return recommended_playlist
 
 
 

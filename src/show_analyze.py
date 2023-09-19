@@ -2,6 +2,10 @@
 # 남/여 별 좋아하는 음원 
 # 나이대 별 좋아하는 음원
 # 음원 별 좋아하는 성별/나이대
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
 import psycopg2
 import pandas as pd
 from tqdm import tqdm
@@ -10,6 +14,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
+from config.db_info import db_params
+
 def show_plt_by_track_id(target_track_id):
     # target_track_id = '3ucfniv4fLB3RPA6N9iLM2'
 
@@ -40,14 +46,6 @@ def data_analyze():
         if isinstance(value, Decimal):
             return round(value, 2)
         return value
-    
-    db_params = {
-        'user': 'postgres',
-        'password': '12345678',
-        'host': 'database-1.coea55uwjt5p.ap-northeast-1.rds.amazonaws.com',
-        'port': '5432',
-        'database': 'postgres'
-    }
 
     # 데이터베이스에 연결
     conn = psycopg2.connect(**db_params)
