@@ -2,6 +2,10 @@
 # 남/여 별 좋아하는 음원 
 # 나이대 별 좋아하는 음원
 # 음원 별 좋아하는 성별/나이대
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
 import psycopg2
 import pandas as pd
 from tqdm import tqdm

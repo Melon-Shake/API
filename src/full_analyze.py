@@ -1,4 +1,8 @@
 ## audio_features update
+import sys
+import os
+root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
+sys.path.append(root_path)
 import psycopg2
 import pandas as pd
 from tqdm import tqdm
