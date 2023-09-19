@@ -5,7 +5,7 @@ root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..')
 sys.path.append(root_path)
 import psycopg2
 import pandas as pd
-from tqdm import tqdm
+# from tqdm import tqdm
 import decimal
 from config.db_info import db_params
 import numpy as np
@@ -155,33 +155,33 @@ def audio_features_update():
     # id 기준으로 df 합산
     merged_df = pd.concat([df3, ly_df2], ignore_index=True)
     result = merged_df.groupby('id')[['romantic', 'adventurous', 'depressed','powerful']].sum().reset_index()
-
-    for i in tqdm(range(result.shape[0])):
-        #데이터 삽입
-        insert_query = """
-            INSERT INTO audio_features (romantic, adventurous, depressed, powerful, id) values (%s, %s, %s, %s, %s);
-        """
-        
-        id = df3.iloc[i]['id']
-        insert_values = []
-        for val in df3.iloc[i].values:
-            if isinstance(val, str):
-                # print(val)
-                insert_values.append(val)
-            else:
-                insert_values.append(float(val))
-        cursor.executemany(insert_query, [insert_values])
-        conn.commit()
-        # if df3.iloc[i]['id'] == '4Dr2hJ3EnVh2Aaot6fRwDO':
-        #     return
-        #is_analyze 업데이트
-        flag_update_query = f"""
-        UPDATE spotify_audio_features
-        SET is_analyze = True
-        WHERE id = '{id}';
-        """
-        cursor.execute(flag_update_query)
-        conn.commit()
+    if df3.shape[0] !=0:
+        for i in range(result.shape[0]):
+            #데이터 삽입
+            insert_query = """
+                INSERT INTO audio_features (romantic, adventurous, depressed, powerful, id) values (%s, %s, %s, %s, %s);
+            """
+            
+            id = df3.iloc[i]['id']
+            insert_values = []
+            for val in df3.iloc[i].values:
+                if isinstance(val, str):
+                    # print(val)
+                    insert_values.append(val)
+                else:
+                    insert_values.append(float(val))
+            cursor.executemany(insert_query, [insert_values])
+            conn.commit()
+            # if df3.iloc[i]['id'] == '4Dr2hJ3EnVh2Aaot6fRwDO':
+            #     return
+            #is_analyze 업데이트
+            flag_update_query = f"""
+            UPDATE spotify_audio_features
+            SET is_analyze = True
+            WHERE id = '{id}';
+            """
+            cursor.execute(flag_update_query)
+            conn.commit()
 
 
     cursor.close()
@@ -192,7 +192,7 @@ def audio_features_update():
 # user_features_update
 import psycopg2
 import pandas as pd
-from tqdm import tqdm
+#from tqdm import tqdm
 
 def user_features_update():
     
@@ -226,7 +226,7 @@ def user_features_update():
     result = cursor.fetchall()
     audio_features_data = pd.DataFrame(result, columns=['id', 'romantic', 'adventurous', 'depressed', 'powerful', 'popularity'])
 
-    for users in tqdm(range(user_track_data.shape[0])):
+    for users in range(user_track_data.shape[0]):
         romantic = 0.0
         adventurous = 0.0
         depressed = 0.0
