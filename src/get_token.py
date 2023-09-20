@@ -1,9 +1,9 @@
 
-from model.spotify_token import SpotifyTokenORM, SpotifyTokenEntity
-from model.spotify_client import SpotifyClientORM, SpotifyClientEntity
+from model.spotify_token import SpotifyTokenORM
+from model.spotify_client import SpotifyClientORM
 from model.database import session_scope
 
-import requests, json
+import requests
 
 def func_base64(input):
     import base64

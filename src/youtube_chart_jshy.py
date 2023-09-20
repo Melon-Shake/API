@@ -14,7 +14,7 @@ sys.path.append(root_path)
 from model.ytmusic import js_ChartYoutube, Response, hy_ChartYoutube, js_SumChart
 
 
-# Lucete youtube top100 크롤링
+# youtube top100 크롤링
 def yt_get_weeks():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--headless')  
@@ -116,7 +116,6 @@ def yt_craw(url):
     rank_const.pop(0)
     changes.pop(0)
     views.pop(0)
-    # df = pd.DataFrame({'Title': titles, 'Artist': artists, 'Rank_const': rank_const, 'Change':changes, 'View':views, 'Previous_rank':pre_ranks, 'Url':urls, 'Video_ID':video_ids})
     driver.quit()
     
     youtube_chart = [{'title': title,'artist': artist ,'rank_const': rank_const, 'change':change, 'view':view, 'previous_rank':pre_rank, 'url':url, 'video_Id':video_id} for title, artist, rank_const, change, view, pre_rank, url, video_id in zip(titles,artists,rank_const,changes,views,pre_ranks,urls,video_ids)]
@@ -139,7 +138,7 @@ def yt_craw_start(weeks_ago : int):
 
 hy_chart = yt_craw_start(0)
 
-# ssg youtube api ---------------------------------------------------------------------------------------
+# youtube api 
 key= youtube.key
 
 url = f'https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet%2C%20contentDetails&maxResults=100&playlistId=PL4fGSI1pDJn6jXS_Tv_N9B8Z0HTRVJE0m&key={key}'
@@ -149,13 +148,10 @@ response = requests.get(url)
 if response.status_code == 200:
     response_json = response.json()
     next_page_token = response_json['nextPageToken']
-    # print(next_page_token)
     playlist_item = response_json.get('items')
     youtube_args1 = []
-    # print(type(playlist_item[0]['contentDetails']['videoPublishedAt']))
     for item in playlist_item : 
         youtube_item = js_ChartYoutube(**item)
-        # print(youtube_item)
         youtube_args1.append(youtube_item)
         
         
@@ -167,11 +163,8 @@ if response.status_code == 200:
     
     youtube_args2 = []
     for item2 in playlist_item2:
-        # print(item2.get('contentDetails'))
         youtube_item2 = js_ChartYoutube(**item2)
         youtube_args2.append(youtube_item2)
-        # print(youtube_item2)
-        # print(type(youtube_item2))
 else:
     print('error_code ='+ response.status_code)
 

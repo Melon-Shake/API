@@ -11,3 +11,6 @@ google-auth==1.8.0
 google-auth-httplib2==0.0.3
 google-auth-oauthlib==0.4.1
 pandas==2.1.0
+scikit-learn==1.2.2
+streamlit==1.22.0
+selenium==4.12.0
